@@ -6,20 +6,29 @@
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "generate-types": "npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
+    "invite": "npx tsx scripts/invite.ts"
   },
   "dependencies": {
+    "@neondatabase/neon-js": "0.6.1-beta",
+    "@neondatabase/serverless": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.15",
     "@react-router/node": "7.15.1",
     "@react-router/serve": "7.15.1",
+    "better-auth": "^1.6.11",
+    "clsx": "^2.1.1",
     "isbot": "^5.1.36",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router": "7.15.1"
+    "react-router": "7.15.1",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@react-router/dev": "7.15.1",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^22",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.2.2",
