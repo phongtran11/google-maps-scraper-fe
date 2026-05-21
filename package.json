@@ -8,7 +8,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "generate-types": "npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
-    "invite": "npx tsx scripts/invite.ts"
+    "invite": "npx tsx --env-file=.env scripts/invite.ts"
   },
   "dependencies": {
     "@neondatabase/neon-js": "0.6.1-beta",

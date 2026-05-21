@@ -1,19 +1,13 @@
-import { Link } from "react-router";
-import type { Route } from "./+types/businesses.$id";
-import { pool } from "~/lib/db.server";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
+import { pool } from "~/lib/server/db.server";
 import type { BusinessRow, NoteRow } from "~/lib/types";
-import { ChevronLeftIcon } from "~/components/icons/chevron-left";
-import { BusinessDetails } from "~/components/organisms/business-details";
-import { ReviewImages } from "~/components/organisms/review-images";
-import { NotesSection } from "~/components/organisms/notes-section";
-import { BusinessSidebar } from "~/components/organisms/business-sidebar";
+import { BusinessDetails } from "./components/business-details";
+import { ReviewImages } from "./components/review-images";
+import { NotesSection } from "./components/notes-section";
+import { BusinessSidebar } from "./components/business-sidebar";
 
-export function meta({ data }: Route.MetaArgs) {
-  const name = data?.business.business_name ?? "Chi Tiết Doanh Nghiệp";
-  return [{ title: `${name} - Quản Trị` }];
-}
-
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
   const businessResult = await pool.query(
     `SELECT * FROM businesses WHERE id = $1`,
     [params.id],
@@ -36,21 +30,21 @@ export async function loader({ params }: Route.LoaderArgs) {
   };
 }
 
-export default function BusinessDetail({ loaderData }: Route.ComponentProps) {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  const name = data?.business.business_name ?? "Chi Tiết Doanh Nghiệp";
+  return [{ title: `${name} - Quản Trị` }];
+};
+
+export default function BusinessDetail() {
+  const loaderData = useLoaderData<typeof loader>();
   const b = loaderData.business;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeftIcon className="h-4 w-4" />
-          Quay lại
-        </Link>
-        <span className="text-muted-foreground">/</span>
-        <h1 className="text-lg font-semibold truncate">{b.business_name}</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground truncate">
+          {b.business_name}
+        </h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

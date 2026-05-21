@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
-import { auth } from "~/lib/auth.server";
-import { pool } from "~/lib/db.server";
+import { auth } from "~/lib/server/auth.server";
+import { pool } from "~/lib/server/db.server";
 
 export async function requireAuth(request: Request) {
   const session = await auth.api.getSession({

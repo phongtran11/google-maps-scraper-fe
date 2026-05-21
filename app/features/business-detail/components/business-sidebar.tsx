@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/molecules/card";
-import { RatingBadge } from "~/components/atoms/rating-badge";
-import { Badge } from "~/components/atoms/badge";
-import { ExternalLinkIcon } from "~/components/icons/external-link";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
+import { RatingBadge } from "~/shared/components/rating-badge";
+import { Badge } from "~/shared/components/badge";
+import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { StatusCard } from "./status-card";
 import type { BusinessRow } from "~/lib/types";
 import { formatZaloPhone } from "~/lib/format";

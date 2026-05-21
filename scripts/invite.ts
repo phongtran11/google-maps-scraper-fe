@@ -1,15 +1,15 @@
-import { pool } from "~/lib/db.server";
+import { pool } from "~/lib/server/db.server";
 
 const email = process.argv[2];
 
 if (!email) {
-  console.error("Usage: pnpm invite <email>");
-  process.exit(1);
+    console.error("Usage: pnpm invite <email>");
+    process.exit(1);
 }
 
 await pool.query(
-  `INSERT INTO user_invites (email) VALUES ($1) ON CONFLICT (email) DO NOTHING`,
-  [email],
+    `INSERT INTO user_invites (email) VALUES ($1) ON CONFLICT (email) DO NOTHING`,
+    [email],
 );
 
 console.log(`Invited ${email}`);

@@ -1,4 +1,4 @@
-import { Badge } from "~/components/atoms/badge";
+import { Badge } from "~/shared/components/badge";
 
 interface RatingBadgeProps {
   rating: number | null;

@@ -1,11 +1,11 @@
-import type { Route } from "./+types/api.businesses.$id.notes";
-import { pool } from "~/lib/db.server";
-import { requireAuth } from "~/lib/require-auth";
-import { verifySameOrigin } from "~/lib/csrf.server";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import { pool } from "~/lib/server/db.server";
+import { requireAuth } from "~/lib/server/require-auth.server";
+import { verifySameOrigin } from "~/lib/server/csrf.server";
 
 const MAX_NOTE_LENGTH = 5000;
 
-export async function loader({ request, params }: Route.LoaderArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   await requireAuth(request);
 
   const result = await pool.query(
@@ -19,9 +19,12 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { notes: result.rows };
 }
 
-export async function action({ request, params }: Route.ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   if (request.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    return Response.json(
+      { message: "Method not allowed", error: "method_not_allowed" },
+      { status: 405 },
+    );
   }
 
   verifySameOrigin(request);
@@ -32,11 +35,17 @@ export async function action({ request, params }: Route.ActionArgs) {
   const content = formData.get("content")?.toString()?.trim();
 
   if (!content) {
-    return new Response("Content is required", { status: 400 });
+    return Response.json(
+      { message: "Content is required", error: "content_required" },
+      { status: 400 },
+    );
   }
 
   if (content.length > MAX_NOTE_LENGTH) {
-    return new Response("Content is too long", { status: 400 });
+    return Response.json(
+      { message: "Content is too long", error: "content_too_long" },
+      { status: 400 },
+    );
   }
 
   const businessCheck = await pool.query(
@@ -45,7 +54,10 @@ export async function action({ request, params }: Route.ActionArgs) {
   );
 
   if (businessCheck.rows.length === 0) {
-    return new Response("Business not found", { status: 404 });
+    return Response.json(
+      { message: "Business not found", error: "business_not_found" },
+      { status: 404 },
+    );
   }
 
   const result = await pool.query(
@@ -62,5 +74,5 @@ export async function action({ request, params }: Route.ActionArgs) {
     [params.id],
   );
 
-  return { notes: notes.rows };
+  return Response.json({ notes: notes.rows }, { status: 201 });
 }

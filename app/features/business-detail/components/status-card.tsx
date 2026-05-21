@@ -4,8 +4,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/components/molecules/card";
-import { Badge } from "~/components/atoms/badge";
+} from "~/shared/components/card";
+import { Badge } from "~/shared/components/badge";
 import { STATUS_MAP, NEXT_STATUS } from "~/lib/constants";
 
 interface StatusCardProps {

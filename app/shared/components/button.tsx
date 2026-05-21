@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import type { ComponentProps } from "react";
 import { cn } from "~/lib/utils";
-import { Spinner } from "~/components/icons/spinner";
+import { Spinner } from "~/shared/icons/spinner";
 
 const buttonVariants = {
   variant: {
@@ -14,6 +14,8 @@ const buttonVariants = {
       "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
     ghost: "hover:bg-accent hover:text-accent-foreground",
     link: "text-primary underline-offset-4 hover:underline",
+    destructiveOutline:
+      "border border-destructive/20 text-destructive bg-background shadow-sm hover:bg-destructive/10 hover:border-destructive/30",
   },
   size: {
     default: "h-10 px-4 py-2",

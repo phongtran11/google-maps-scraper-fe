@@ -1,16 +1,14 @@
 import { useState } from "react";
-import type { Route } from "./+types/login";
-import { authClient } from "~/lib/auth-client";
-import { Spinner } from "~/components/icons/spinner";
-import { Google } from "~/components/icons/google";
+import type { MetaFunction } from "react-router";
 import { useSearchParams } from "react-router";
+import { authClient } from "~/lib/auth-client";
+import { Spinner } from "~/shared/icons/spinner";
+import { Google } from "~/shared/icons/google";
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Đăng Nhập - Bảng Điều Khiển" },
-    { name: "description", content: "Đăng nhập để truy cập bảng điều khiển" },
-  ];
-}
+export const meta: MetaFunction = () => [
+  { title: "Đăng Nhập - Bảng Điều Khiển" },
+  { name: "description", content: "Đăng nhập để truy cập bảng điều khiển" },
+];
 
 export default function Login() {
   const [loading, setLoading] = useState(false);

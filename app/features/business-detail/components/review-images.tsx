@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/components/molecules/card";
+} from "~/shared/components/card";
 
 interface ReviewImagesProps {
   urls: string[];

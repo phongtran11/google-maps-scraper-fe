@@ -18,3 +18,16 @@ export const NEXT_STATUS: Record<string, string[]> = {
 };
 
 export const AREAS = ["Ngãi Giao", "Suối Nghệ", "Nghĩa Thành", "Bình Giã"] as const;
+
+/** Options for the status dropdown filter. First entry is the "all" sentinel. */
+export const STATUS_FILTER_OPTIONS: { key: string; label: string }[] = [
+  { key: "", label: "Tất cả trạng thái" },
+  ...Object.entries(STATUS_MAP).map(([key, { label }]) => ({ key, label })),
+];
+
+/** Options for the area dropdown filter. First entry is the "all" sentinel. */
+export const AREA_FILTER_OPTIONS: { key: string; label: string }[] = [
+  { key: "", label: "Tất cả khu vực" },
+  ...AREAS.map((a) => ({ key: a, label: a })),
+];
+

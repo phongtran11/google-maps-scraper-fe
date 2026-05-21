@@ -59,6 +59,8 @@ App available at `http://localhost:5173`.
 pnpm invite your.email@gmail.com
 ```
 
+> The `invite` script uses `tsx --env-file=.env` to load environment variables from `.env` (Vite dev server does this automatically, but `tsx` does not).
+
 Then visit `http://localhost:5173/login` and sign in with Google.
 
 ### Generate types
@@ -79,11 +81,10 @@ pnpm run typecheck
 
 ### Business Dashboard (`/`)
 
-- **Responsive card grid** — business name, rating, category, address, phone, search keyword
-- **Area filter chips** — Ngãi Giao, Suối Nghệ, Nghĩa Thành, Bình Giã; URL-driven, persists across pagination
-- **Infinite scroll** — auto-loads 20 more businesses as you scroll
-- **Status badge** — color-coded on each card (Mới / Đã tiếp cận / Đã liên hệ / Tiềm năng / Từ chối)
-- **Count display** — "Hiển thị 20 doanh nghiệp tại Ngãi Giao trên tổng số 145"
+- **Table view** — business name, phone, address, status badge, action buttons (Chi tiết, Zalo, Maps)
+- **Filter bar** — search by name, filter by status (Mới → Từ chối), filter by area (Ngãi Giao, Suối Nghệ, Nghĩa Thành, Bình Giã) with submit button
+- **Server-side pagination** — page/limit URL params, pagination controls with page numbers + prev/next
+- **Empty state** — contextual message when no businesses match filters
 
 ### Business Detail (`/businesses/:id`)
 
@@ -121,23 +122,20 @@ Mới ──→ Đã tiếp cận ──→ Đã liên hệ ──→ Tiềm nă
 
 ```
 app/
-  lib/               # auth, db, constants, types, format, utils
-  hooks/             # useInfiniteScroll, useNotesManager
-  components/
-    atoms/           # Button, Input, Badge, RatingBadge, Field
-    molecules/       # Card, Alert, Toast, Dialog, BusinessCard
-    organisms/       # Table, StatusCard, NotesSection, BusinessSidebar, BusinessDetails, ReviewImages
-    icons/           # Spinner, Google, ChevronLeft, ExternalLink
-  routes/
-    login.tsx        # Google sign-in
-    app-layout.tsx   # Protected layout (auth guard + header)
-    dashboard.tsx    # Business grid + filters + infinite scroll
-    businesses.$id.tsx  # Business detail + status + notes + zalo
-    api/
-      auth.$.ts      # Better Auth handler
-      businesses.ts  # GET paginated businesses
-      businesses.$id.notes.ts   # GET/POST notes
-      businesses.$id.status.ts  # PATCH status
+  features/
+    dashboard/          # Dashboard route, API, components (table, filters)
+    business-detail/    # Business detail route, APIs, components, hooks
+    auth/               # Login route + Better Auth API handler
+    layout/             # App-layout route, sidebar, breadcrumbs
+  shared/
+    components/         # Design system: Button, Input, Badge, Card, Table, Dialog, etc.
+    icons/              # SVG icon components (15 icons)
+    hooks/              # useTheme
+    lib/                # pagination utility
+  lib/                  # Shared infra: auth, db, constants, types, format, utils, csrf
+  routes/               # Thin re-exports (1 line/file) → delegates to features/
+  routes.ts             # Central route config
+  root.tsx              # ToastProvider wrapper + dark mode script
 ```
 
 ## Database
@@ -189,9 +187,10 @@ type Business = Tables<"businesses">;
 
 - [ ] **Login flow** — Visit `/login`, sign in with invited Google account, verify redirect to dashboard
 - [ ] **Invite rejection** — Sign in with a non-invited Google account, verify error message
-- [ ] **Area filter** — Click each area chip, verify URL updates and results filter
-- [ ] **Infinite scroll** — Scroll to bottom, verify more businesses load
-- [ ] **Business detail** — Click a business card, verify detail page loads with all fields
+- [ ] **Filter bar** — Select area and status, click "Lọc", verify URL updates and results filter
+- [ ] **Pagination** — Navigate between pages, verify URL updates and correct data loads
+- [ ] **Search** — Type business name and submit, verify results filter
+- [ ] **Business detail** — Click a business row, verify detail page loads with all fields
 - [ ] **Status change** — Change status via buttons, verify optimistic update and persistence
 - [ ] **Notes** — Add a note, verify it appears in list with correct timestamp and author
 - [ ] **Zalo button** — Click Zalo button, verify it opens correct deep link with formatted phone

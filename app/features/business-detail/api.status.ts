@@ -1,13 +1,19 @@
-import type { Route } from "./+types/api.businesses.$id.status";
-import { pool } from "~/lib/db.server";
-import { requireAuth } from "~/lib/require-auth";
-import { verifySameOrigin } from "~/lib/csrf.server";
+import type { ActionFunctionArgs } from "react-router";
+import { pool } from "~/lib/server/db.server";
+import { requireAuth } from "~/lib/server/require-auth.server";
+import { verifySameOrigin } from "~/lib/server/csrf.server";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 
-export async function action({ request, params }: Route.ActionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
   if (request.method !== "PATCH") {
-    return new Response("Method not allowed", { status: 405 });
+    return Response.json(
+      {
+        message: "Method not allowed",
+        error: "method_not_allowed",
+      },
+      { status: 405 },
+    );
   }
 
   verifySameOrigin(request);
@@ -18,7 +24,13 @@ export async function action({ request, params }: Route.ActionArgs) {
   const status = formData.get("status")?.toString();
 
   if (!status || !ALLOWED.includes(status)) {
-    return new Response("Invalid status", { status: 400 });
+    return Response.json(
+      {
+        message: "Invalid status",
+        error: "invalid_status",
+      },
+      { status: 400 },
+    );
   }
 
   const result = await pool.query(
@@ -27,8 +39,20 @@ export async function action({ request, params }: Route.ActionArgs) {
   );
 
   if (result.rows.length === 0) {
-    return new Response("Business not found", { status: 404 });
+    return Response.json(
+      {
+        message: "Business not found",
+        error: "business_not_found",
+      },
+      { status: 404 },
+    );
   }
 
-  return { status: result.rows[0].status };
+  return Response.json(
+    {
+      message: "Status updated successfully",
+      data: result.rows[0],
+    },
+    { status: 200 },
+  );
 }

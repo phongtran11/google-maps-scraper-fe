@@ -1,5 +1,5 @@
 import { Button } from "./button";
-import { useTheme } from "~/hooks/useTheme";
+import { useTheme } from "~/shared/hooks/useTheme";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();

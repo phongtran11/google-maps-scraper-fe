@@ -17,8 +17,8 @@ import {
   Action,
 } from "@radix-ui/react-toast";
 import { cn } from "~/lib/utils";
-import { Button } from "~/components/atoms/button";
-import { X } from "~/components/icons/x";
+import { Button } from "~/shared/components/button";
+import { X } from "~/shared/icons/x";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */

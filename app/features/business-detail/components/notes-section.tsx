@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/molecules/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
 import { relativeTime } from "~/lib/format";
-import { useNotesManager } from "~/hooks/useNotesManager";
+import { useNotesManager } from "../hooks/useNotesManager";
 import type { NoteRow } from "~/lib/types";
 
 interface NotesSectionProps {

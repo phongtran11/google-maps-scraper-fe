@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/molecules/card";
-import { Field } from "~/components/atoms/field";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
+import { Field } from "~/shared/components/field";
 import type { BusinessRow } from "~/lib/types";
 
 interface BusinessDetailsProps {

@@ -7,9 +7,9 @@ import {
   CardTitle,
   CardContent,
   CardFooter,
-} from "~/components/molecules/card";
-import { Badge } from "~/components/atoms/badge";
-import { ExternalLinkIcon } from "~/components/icons/external-link";
+} from "~/shared/components/card";
+import { Badge } from "~/shared/components/badge";
+import { ExternalLinkIcon } from "~/shared/icons/external-link";
 
 interface BusinessCardProps {
   business: BusinessRow;
