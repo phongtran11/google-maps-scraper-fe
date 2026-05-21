@@ -22,6 +22,7 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  DataTable,
   tableVariants,
 } from "./table";
-export type { TableProps } from "./table";
+export type { TableProps, DataTableProps, DataTableColumn } from "./table";

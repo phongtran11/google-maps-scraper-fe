@@ -1,6 +1,10 @@
-import { redirect } from "react-router";
+import { redirect, createContext } from "react-router";
 import { auth } from "~/lib/server/auth.server";
 import { pool } from "~/lib/server/db.server";
+
+export type SessionType = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
+
+export const sessionContext = createContext<SessionType>();
 
 export async function requireAuth(request: Request) {
   const session = await auth.api.getSession({

@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { getPageNumbers } from "~/shared/lib/pagination";
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { ChevronRightIcon } from "~/shared/icons/chevron-right";
+import { Select } from "./select";
 
 export interface PaginationProps {
   /** Currently active page (1-indexed). */
@@ -14,6 +15,10 @@ export interface PaginationProps {
   pageSize: number;
   /** Returns the URL/href for a given page number. */
   getPageUrl: (page: number) => string;
+  /** Available page size options. When provided, a dropdown is rendered. */
+  pageSizeOptions?: number[];
+  /** Called when the user selects a new page size. Should navigate/reset to page 1. */
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 export function Pagination({
@@ -22,24 +27,42 @@ export function Pagination({
   totalCount,
   pageSize,
   getPageUrl,
+  pageSizeOptions,
+  onPageSizeChange,
 }: PaginationProps) {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1 && !pageSizeOptions) return null;
 
   const pageNumbers = getPageNumbers(page, totalPages);
-  const rangeFrom = Math.min((page - 1) * pageSize + 1, totalCount);
+  const rangeFrom = totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);
   const rangeTo = Math.min(page * pageSize, totalCount);
 
   return (
     <div className="flex items-center justify-between border-t border-border px-4 py-4 bg-muted/20">
-      {/* Summary label */}
-      <div className="text-sm text-muted-foreground">
-        Hiển thị{" "}
-        <span className="font-medium text-foreground">{rangeFrom}</span>{" "}
-        đến{" "}
-        <span className="font-medium text-foreground">{rangeTo}</span>{" "}
-        trong số{" "}
-        <span className="font-medium text-foreground">{totalCount}</span>{" "}
-        doanh nghiệp
+      {/* Summary label + page-size selector */}
+      <div className="flex items-center gap-3">
+        <span className="text-sm text-muted-foreground">
+          Hiển thị{" "}
+          <span className="font-medium text-foreground">{rangeFrom}</span>{" "}
+          đến{" "}
+          <span className="font-medium text-foreground">{rangeTo}</span>{" "}
+          trong số{" "}
+          <span className="font-medium text-foreground">{totalCount}</span>{" "}
+          doanh nghiệp
+        </span>
+        {pageSizeOptions && onPageSizeChange && (
+          <div className="flex items-center gap-1.5">
+            <Select
+              options={pageSizeOptions.map((n) => ({
+                key: String(n),
+                label: String(n),
+              }))}
+              value={String(pageSize)}
+              onChange={(v) => onPageSizeChange(Number(v))}
+              selectSize="sm"
+              aria-label="Số dòng mỗi trang"
+            />
+          </div>
+        )}
       </div>
 
       {/* Page controls */}
