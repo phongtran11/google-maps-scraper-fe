@@ -27,7 +27,7 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Bảng Điều Khiển</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Trang Quản Trị</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Đăng nhập bằng tài khoản Google để tiếp tục
           </p>
@@ -35,7 +35,8 @@ export default function Login() {
 
         {error && (
           <div className="rounded-md border border-destructive bg-destructive/10 p-4 text-sm text-destructive">
-            Tài khoản của bạn không được phép truy cập. Liên hệ quản trị viên để được mời.
+            Tài khoản của bạn không được phép truy cập. Liên hệ quản trị viên để
+            được mời.
           </div>
         )}
 

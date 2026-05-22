@@ -1,0 +1,27 @@
+type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+/**
+ * Validates that the request method is one of the allowed methods.
+ * Throws a 405 Method Not Allowed Response if validation fails.
+ */
+export function validateMethod(
+  request: Request,
+  allowedMethods: HTTPMethod | HTTPMethod[],
+) {
+  const method = request.method.toUpperCase();
+  const methods = Array.isArray(allowedMethods)
+    ? allowedMethods
+    : [allowedMethods];
+  const upperCaseMethods = methods.map((m) => m.toUpperCase());
+
+  if (!upperCaseMethods.includes(method)) {
+    throw Response.json(
+      {
+        message: "Method not allowed",
+        code: "method_not_allowed",
+        error: `Method ${request.method} is not allowed. Only ${methods.join(", ")} is supported.`,
+      },
+      { status: 405 },
+    );
+  }
+}

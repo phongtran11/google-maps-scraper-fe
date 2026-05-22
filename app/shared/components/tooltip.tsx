@@ -1,0 +1,174 @@
+import React, { useState, useEffect, useRef, useId } from "react";
+import { createPortal } from "react-dom";
+import { cn } from "~/lib/utils";
+
+export interface TooltipProps {
+  content: React.ReactNode;
+  children: React.ReactElement;
+  delay?: number;
+  className?: string;
+}
+
+export const Tooltip = React.memo(function Tooltip({
+  content,
+  children,
+  delay = 200,
+  className,
+}: TooltipProps) {
+  const [isVisible, setIsVisible] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(
+    null,
+  );
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const showTimeout = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  const tooltipId = useId();
+
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (showTimeout.current) clearTimeout(showTimeout.current);
+      if (hideTimeout.current) clearTimeout(hideTimeout.current);
+    };
+  }, []);
+
+  const updateCoords = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top,
+        left: rect.left + rect.width / 2,
+      });
+    }
+  };
+
+  const showTooltip = () => {
+    if (hideTimeout.current) {
+      clearTimeout(hideTimeout.current);
+      hideTimeout.current = null;
+    }
+    if (!showTimeout.current && !isVisible) {
+      showTimeout.current = setTimeout(() => {
+        updateCoords();
+        setIsVisible(true);
+      }, delay);
+    } else if (isVisible) {
+      // If already visible, just ensure it stays visible (e.g. hovered from trigger to tooltip)
+      updateCoords();
+    }
+  };
+
+  const hideTooltip = () => {
+    if (showTimeout.current) {
+      clearTimeout(showTimeout.current);
+      showTimeout.current = null;
+    }
+    if (!hideTimeout.current) {
+      hideTimeout.current = setTimeout(() => {
+        setIsVisible(false);
+      }, 100);
+    }
+  };
+
+  // Re-position or hide on scroll / resize / keydown
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleScrollResize = () => {
+      updateCoords();
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsVisible(false);
+      }
+    };
+
+    // Capture scrolls on any container to keep position correct
+    window.addEventListener("scroll", handleScrollResize, true);
+    window.addEventListener("resize", handleScrollResize, { passive: true });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", handleScrollResize, true);
+      window.removeEventListener("resize", handleScrollResize);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isVisible]);
+
+  // Ensure children is a single React element
+  const child = React.Children.only(children) as React.ReactElement<any>;
+
+  // Merge refs
+  const handleRef = (node: HTMLElement | null) => {
+    triggerRef.current = node;
+    const { ref } = child as any;
+    if (typeof ref === "function") {
+      ref(node);
+    } else if (ref && typeof ref === "object") {
+      ref.current = node;
+    }
+  };
+
+  const triggerProps = {
+    ref: handleRef,
+    "aria-describedby": isVisible ? tooltipId : undefined,
+    onMouseEnter: (e: React.MouseEvent) => {
+      child.props.onMouseEnter?.(e);
+      showTooltip();
+    },
+    onMouseLeave: (e: React.MouseEvent) => {
+      child.props.onMouseLeave?.(e);
+      hideTooltip();
+    },
+    onFocus: (e: React.FocusEvent) => {
+      child.props.onFocus?.(e);
+      showTooltip();
+    },
+    onBlur: (e: React.FocusEvent) => {
+      child.props.onBlur?.(e);
+      hideTooltip();
+    },
+  };
+
+  const clonedChild = React.cloneElement(child, triggerProps);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!content) return children;
+
+  return (
+    <>
+      {clonedChild}
+      {mounted &&
+        isVisible &&
+        coords &&
+        createPortal(
+          <div
+            id={tooltipId}
+            style={{
+              position: "fixed",
+              top: `${coords.top - 6}px`,
+              left: `${coords.left}px`,
+              transform: "translate(-50%, -100%)",
+              zIndex: 9999,
+            }}
+            className={cn(
+              "px-3 py-1.5 text-xs font-normal leading-relaxed rounded-md bg-popover text-popover-foreground border border-border shadow-md max-w-[280px] break-words animate-in fade-in zoom-in-95 duration-150 select-none",
+              className,
+            )}
+            role="tooltip"
+            onMouseEnter={showTooltip}
+            onMouseLeave={hideTooltip}
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+});
+Tooltip.displayName = "Tooltip";

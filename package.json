@@ -5,10 +5,13 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "start": "export $(grep -v '^#' .env | xargs) && react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "generate-types": "npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
-    "invite": "npx tsx --env-file=.env scripts/invite.ts"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate-types": "export $(grep -v '^#' .env | xargs) && npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
+    "invite": "npx tsx --env-file=.env scripts/invite.ts",
+    "migrate": "npx tsx --env-file=.env scripts/migrate.ts"
   },
   "dependencies": {
     "@neondatabase/neon-js": "0.6.1-beta",
@@ -27,12 +30,19 @@
   "devDependencies": {
     "@react-router/dev": "7.15.1",
     "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22",
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "4.1.7",
+    "jsdom": "^29.1.1",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.7"
   }
 }

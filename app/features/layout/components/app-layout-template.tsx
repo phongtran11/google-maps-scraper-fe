@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { cn } from "~/lib/utils";
 import { Menu } from "~/shared/icons/menu";
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { AdminSidebar } from "./admin-sidebar";
 import type { BreadcrumbItem } from "../breadcrumbs";
+import { Button } from "~/shared/components";
 
 export interface AppLayoutTemplateProps {
   currentUser: {
@@ -29,6 +30,15 @@ export function AppLayoutTemplate({
   children,
 }: AppLayoutTemplateProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCloseMobile = useCallback(() => {
+    setIsMobileOpen(false);
+  }, []);
+
+  const handleOpenMobile = useCallback(() => {
+    setIsMobileOpen(true);
+  }, []);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">
@@ -56,7 +66,7 @@ export function AppLayoutTemplate({
             "absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300",
             isMobileOpen ? "opacity-100" : "opacity-0",
           )}
-          onClick={() => setIsMobileOpen(false)}
+          onClick={handleCloseMobile}
         />
 
         {/* Drawer Content */}
@@ -70,8 +80,8 @@ export function AppLayoutTemplate({
             currentPath={currentPath}
             user={currentUser}
             onSignOut={onSignOut}
-            onClickItem={() => setIsMobileOpen(false)}
-            onClose={() => setIsMobileOpen(false)}
+            onClickItem={handleCloseMobile}
+            onClose={handleCloseMobile}
           />
         </aside>
       </div>
@@ -82,23 +92,25 @@ export function AppLayoutTemplate({
         <header className="flex h-14 items-center gap-3 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-4 sm:px-6 sticky top-0 z-40 shrink-0">
           {/* Hamburger Menu (Mobile only) */}
           <button
-            onClick={() => setIsMobileOpen(true)}
+            onClick={handleOpenMobile}
             className="md:hidden p-2 -ml-2 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
           </button>
 
+
           {/* Back Button (for child pages) */}
           {!isRoot && (
             <>
-              <Link
-                to="/"
-                className="inline-flex items-center justify-center rounded-md h-8 w-8 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors shrink-0"
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => navigate(-1)}
                 aria-label="Quay lại"
               >
-                <ChevronLeftIcon className="h-5 w-5" />
-              </Link>
+                <ChevronLeftIcon className="h-4 w-4" />
+              </Button>
               <span className="text-muted-foreground/45 shrink-0 select-none">
                 |
               </span>

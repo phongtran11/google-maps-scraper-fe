@@ -5,8 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "~/shared/components/card";
-import { Badge } from "~/shared/components/badge";
+import { Select } from "~/shared/components/select";
 import { STATUS_MAP, NEXT_STATUS } from "~/lib/constants";
+import { ROUTES } from "~/lib/routes";
 
 interface StatusCardProps {
   businessId: number;
@@ -18,11 +19,46 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
 
   const optimisticStatus =
     fetcher.formData?.get("status")?.toString() ?? status;
-  const current = STATUS_MAP[optimisticStatus] ?? {
-    label: optimisticStatus,
-    variant: "secondary" as const,
-  };
+
   const next = NEXT_STATUS[optimisticStatus] ?? [];
+  const hasNoTransitions = next.length === 0;
+
+  const options = Object.entries(STATUS_MAP).map(([key, value]) => {
+    const isCurrent = key === optimisticStatus;
+    const isNext = next.includes(key);
+
+    const dotColorClass =
+      {
+        new: "bg-muted-foreground/80",
+        approached: "bg-info",
+        contacted: "bg-warning",
+        qualified: "bg-success",
+        rejected: "bg-destructive",
+      }[key] || "bg-muted-foreground";
+
+    return {
+      key,
+      label: (
+        <span className="flex items-center gap-2 font-medium">
+          <span className={`h-2 w-2 rounded-full ${dotColorClass}`} />
+          <span>{value.label}</span>
+        </span>
+      ),
+      disabled: !isCurrent && !isNext,
+    };
+  });
+
+  const handleStatusChange = (newStatus: string) => {
+    if (newStatus !== optimisticStatus) {
+      fetcher.submit(
+        { status: newStatus },
+        {
+          method: "patch",
+          action: ROUTES.api.businessStatus.buildPath(businessId),
+        },
+      );
+    }
+  };
 
   return (
     <Card>
@@ -30,37 +66,14 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
         <CardTitle>Trạng Thái</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <Badge
-          variant={current.variant}
-          size="md"
-          className="w-full justify-center"
-        >
-          {current.label}
-        </Badge>
-
-        {next.length > 0 && (
-          <fetcher.Form
-            method="patch"
-            action={`/api/businesses/${businessId}/status`}
-            className="flex flex-wrap gap-2"
-          >
-            {next.map((s) => {
-              const m = STATUS_MAP[s];
-              return (
-                <button
-                  key={s}
-                  type="submit"
-                  name="status"
-                  value={s}
-                  disabled={fetcher.state === "submitting"}
-                  className="inline-flex items-center rounded-md border border-input bg-background px-2.5 py-1 text-xs font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                >
-                  Chuyển sang {m.label}
-                </button>
-              );
-            })}
-          </fetcher.Form>
-        )}
+        <Select
+          options={options}
+          value={optimisticStatus}
+          onChange={handleStatusChange}
+          disabled={fetcher.state === "submitting" || hasNoTransitions}
+          aria-label="Chọn trạng thái doanh nghiệp"
+          className="w-full"
+        />
 
         {optimisticStatus === "rejected" && (
           <p className="text-xs text-muted-foreground">

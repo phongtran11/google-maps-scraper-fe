@@ -1,12 +1,14 @@
 import { betterAuth } from "better-auth";
 import { pool } from "~/lib/server/db.server";
+import { ROUTES } from "~/lib/routes";
 
 export const auth = betterAuth({
   database: pool,
-  errorURL: "/login?error=unauthorized",
+  errorURL: `${ROUTES.login.path}?error=unauthorized`,
   onAPIError: {
-    errorURL: "/login?error=unauthorized",
+    errorURL: `${ROUTES.login.path}?error=unauthorized`,
   },
+
   logger: {
     level: process.env.NODE_ENV === "production" ? "error" : "debug",
   },

@@ -3,6 +3,8 @@ export { Button, buttonVariants } from "./button";
 export type { ButtonProps } from "./button";
 export { Field } from "./field";
 export { Input } from "./input";
+export { Textarea } from "./textarea";
+export type { TextareaProps } from "./textarea";
 export { RatingBadge } from "./rating-badge";
 export { Select } from "./select";
 export { ThemeToggle } from "./theme-toggle";
@@ -26,3 +28,6 @@ export {
   tableVariants,
 } from "./table";
 export type { TableProps, DataTableProps, DataTableColumn } from "./table";
+export { Tooltip } from "./tooltip";
+export type { TooltipProps } from "./tooltip";
+

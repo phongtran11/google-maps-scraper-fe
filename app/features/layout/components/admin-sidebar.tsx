@@ -1,13 +1,12 @@
+import { memo } from "react";
 import { NavLink } from "react-router";
 import { MapPin } from "~/shared/icons/map-pin";
 import { LayoutDashboard } from "~/shared/icons/layout-dashboard";
-import { BarChart } from "~/shared/icons/bar-chart";
-import { UserCheck } from "~/shared/icons/user-check";
-import { Settings } from "~/shared/icons/settings";
 import { X } from "~/shared/icons/x";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { SidebarProfile } from "./sidebar-profile";
 import { Button } from "~/shared/components/button";
+import { ROUTES } from "~/lib/routes";
 
 interface AdminSidebarProps {
   currentPath: string;
@@ -21,7 +20,7 @@ interface AdminSidebarProps {
   onClose?: () => void;
 }
 
-export function AdminSidebar({
+export const AdminSidebar = memo(function AdminSidebar({
   currentPath,
   user,
   onSignOut,
@@ -29,35 +28,15 @@ export function AdminSidebar({
   onClose,
 }: AdminSidebarProps) {
   const isDashboardActive =
-    currentPath === "/" || currentPath.startsWith("/businesses/");
+    currentPath === ROUTES.dashboard.path ||
+    ROUTES.businessDetail.pattern.test(currentPath);
 
   const navItems = [
     {
-      label: "Trang Quản Trị",
-      to: "/",
+      label: ROUTES.dashboard.label,
+      to: ROUTES.dashboard.path,
       isActive: isDashboardActive,
       icon: <LayoutDashboard className="h-4 w-4" />,
-    },
-    {
-      label: "Báo cáo & Thống kê",
-      to: "#",
-      isActive: false,
-      isUpcoming: true,
-      icon: <BarChart className="h-4 w-4" />,
-    },
-    {
-      label: "Phân công liên hệ",
-      to: "#",
-      isActive: false,
-      isUpcoming: true,
-      icon: <UserCheck className="h-4 w-4" />,
-    },
-    {
-      label: "Cấu hình scraper",
-      to: "#",
-      isActive: false,
-      isUpcoming: true,
-      icon: <Settings className="h-4 w-4" />,
     },
   ];
 
@@ -65,7 +44,7 @@ export function AdminSidebar({
     <>
       <div className="flex h-14 items-center justify-between px-6 border-b border-border">
         <NavLink
-          to="/"
+          to={ROUTES.dashboard.path}
           className="flex items-center gap-2.5 font-bold text-lg tracking-tight"
           onClick={onClickItem}
         >
@@ -93,7 +72,6 @@ export function AdminSidebar({
             label={item.label}
             to={item.to}
             isActive={item.isActive}
-            isUpcoming={item.isUpcoming}
             icon={item.icon}
             onClick={onClickItem}
           />
@@ -103,5 +81,5 @@ export function AdminSidebar({
       <SidebarProfile user={user} onSignOut={onSignOut} />
     </>
   );
-}
+});
 export type { AdminSidebarProps };

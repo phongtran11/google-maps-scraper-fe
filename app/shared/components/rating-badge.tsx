@@ -16,7 +16,11 @@ export function RatingBadge({ rating, size = "sm" }: RatingBadgeProps) {
   if (num == null) return null;
   const variant = num >= 4.5 ? "success" : num >= 4 ? "info" : "warning";
   return (
-    <Badge variant={variant} size={size}>
+    <Badge
+      variant={variant}
+      size={size}
+      aria-label={`Đánh giá ${num.toFixed(1)} trên 5 sao`}
+    >
       {num.toFixed(1)}
     </Badge>
   );

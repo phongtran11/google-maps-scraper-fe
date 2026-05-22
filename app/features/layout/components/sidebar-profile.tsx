@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ThemeToggle } from "~/shared/components/theme-toggle";
 import { LogOut } from "~/shared/icons/log-out";
 import { Button } from "~/shared/components/button";
@@ -11,7 +12,8 @@ interface SidebarProfileProps {
   onSignOut: () => void;
 }
 
-export function SidebarProfile({ user, onSignOut }: SidebarProfileProps) {
+export const SidebarProfile = memo(function SidebarProfile({ user, onSignOut }: SidebarProfileProps) {
+
   return (
     <div className="mt-auto border-t border-border p-4 space-y-4">
       <div className="flex items-center gap-3">
@@ -50,5 +52,6 @@ export function SidebarProfile({ user, onSignOut }: SidebarProfileProps) {
       </div>
     </div>
   );
-}
+});
+
 

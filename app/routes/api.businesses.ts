@@ -5,11 +5,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const offset = Number.parseInt(url.searchParams.get("offset") ?? "0", 10);
   const limit = Math.min(Number.parseInt(url.searchParams.get("limit") ?? "20", 10), 50);
-  const area = url.searchParams.get("area") || "";
+  const region = url.searchParams.get("region") || "";
   const search = url.searchParams.get("search") || "";
   const status = url.searchParams.get("status") || "";
 
-  const businesses = await getBusinesses({ limit, offset, area, search, status });
+  const businesses = await getBusinesses({ limit, offset, region, search, status });
 
   return Response.json({ businesses }, { status: 200 });
 }

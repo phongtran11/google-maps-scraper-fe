@@ -1,6 +1,7 @@
 import { redirect, createContext } from "react-router";
 import { auth } from "~/lib/server/auth.server";
 import { pool } from "~/lib/server/db.server";
+import { ROUTES } from "~/lib/routes";
 
 export type SessionType = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
 
@@ -12,7 +13,7 @@ export async function requireAuth(request: Request) {
   });
 
   if (!session) {
-    throw redirect("/login");
+    throw redirect(ROUTES.login.path);
   }
 
   const inviteCheck = await pool.query(
@@ -20,8 +21,9 @@ export async function requireAuth(request: Request) {
     [session.user.email],
   );
   if (inviteCheck.rows.length === 0) {
-    throw redirect("/login?error=unauthorized");
+    throw redirect(`${ROUTES.login.path}?error=unauthorized`);
   }
 
   return session;
 }
+

@@ -71,6 +71,7 @@ export type Database = {
           content: string
           created_at: string
           created_by: string
+          deleted_at: string | null
           id: number
         }
         Insert: {
@@ -78,6 +79,7 @@ export type Database = {
           content: string
           created_at?: string
           created_by: string
+          deleted_at?: string | null
           id?: number
         }
         Update: {
@@ -85,6 +87,7 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string
+          deleted_at?: string | null
           id?: number
         }
         Relationships: [

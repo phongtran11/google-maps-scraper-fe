@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "~/lib/utils";
 
@@ -36,6 +36,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
+    const generatedId = useId();
+
     return (
       <div className="relative flex items-center">
         {prefixIcon && (
@@ -45,7 +47,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           ref={ref}
+          id={props.id ?? generatedId}
           disabled={disabled}
+          aria-invalid={error || undefined}
           data-error={error || undefined}
           className={cn(
             "flex w-full file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",

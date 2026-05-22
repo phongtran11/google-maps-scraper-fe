@@ -10,6 +10,7 @@ import {
 } from "~/shared/components/card";
 import { Badge } from "~/shared/components/badge";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
+import { ROUTES } from "~/lib/routes";
 
 interface BusinessCardProps {
   business: BusinessRow;
@@ -22,7 +23,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
   };
 
   return (
-    <Link to={`/businesses/${b.id}`} className="group block">
+    <Link to={ROUTES.businessDetail.buildPath(b.id)} className="group block">
       <Card
         variant="elevated"
         className="flex flex-col h-full transition-shadow group-hover:shadow-xl"

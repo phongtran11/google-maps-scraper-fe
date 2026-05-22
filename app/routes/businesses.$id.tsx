@@ -19,7 +19,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const notesResult = await pool.query(
     `SELECT id, content, created_by, created_at
      FROM business_notes
-     WHERE business_id = $1
+     WHERE business_id = $1 AND deleted_at IS NULL
      ORDER BY created_at DESC`,
     [params.id],
   );

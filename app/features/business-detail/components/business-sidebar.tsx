@@ -1,6 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
-import { RatingBadge } from "~/shared/components/rating-badge";
-import { Badge } from "~/shared/components/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "~/shared/components/card";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { StatusCard } from "./status-card";
 import type { BusinessRow } from "~/lib/types";
@@ -10,7 +13,15 @@ interface BusinessSidebarProps {
   business: BusinessRow;
 }
 
-function LinkCard({ title, href, label }: { title: string; href: string; label: string }) {
+function LinkCard({
+  title,
+  href,
+  label,
+}: {
+  title: string;
+  href: string;
+  label: string;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -36,35 +47,9 @@ export function BusinessSidebar({ business: b }: BusinessSidebarProps) {
 
   return (
     <div className="space-y-6">
-      <StatusCard
-        businessId={b.id}
-        status={b.status ?? "new"}
-      />
+      <StatusCard businessId={b.id} status={b.status ?? "new"} />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Đánh Giá</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-3">
-            <RatingBadge rating={b.rating} size="md" />
-            <span className="text-2xl font-bold">
-              {Number(b.rating) ? Number(b.rating).toFixed(1) : "-"}
-            </span>
-          </div>
-          {b.review_count != null && (
-            <p className="text-sm text-muted-foreground">
-              {b.review_count} đánh giá
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <LinkCard
-        title="Bản Đồ"
-        href={b.maps_url}
-        label="Xem trên Google Maps"
-      />
+      <LinkCard title="Bản Đồ" href={b.maps_url} label="Xem trên Google Maps" />
 
       {zaloPhone && (
         <LinkCard
@@ -72,17 +57,6 @@ export function BusinessSidebar({ business: b }: BusinessSidebarProps) {
           href={`https://zalo.me/${zaloPhone}`}
           label="Gửi tin nhắn Zalo"
         />
-      )}
-
-      {b.category && (
-        <Badge variant="secondary" size="md" className="w-full justify-center">
-          {b.category}
-        </Badge>
-      )}
-      {b.region && (
-        <Badge variant="outline" size="md" className="w-full justify-center">
-          {b.region}
-        </Badge>
       )}
     </div>
   );

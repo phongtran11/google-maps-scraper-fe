@@ -1,34 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Input } from "~/shared/components/input";
 import { Select } from "~/shared/components/select";
 import { Button } from "~/shared/components/button";
 import { SearchIcon } from "~/shared/icons/search";
-import { AREA_FILTER_OPTIONS, STATUS_FILTER_OPTIONS } from "~/lib/constants";
+import { REGION_FILTER_OPTIONS } from "~/lib/constants";
+import { useTransition } from "react";
 
 export function FilterBar() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pending, startTransition] = useTransition();
 
-  const [search, setSearch] = useState(
-    () => searchParams.get("search") || "",
-  );
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
 
-  const [area, setArea] = useState(() => searchParams.get("area") || "");
+  const [region, setRegion] = useState(() => searchParams.get("region") || "");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
-    const next = new URLSearchParams(searchParams);
 
-    if (search) next.set("search", search);
-    else next.delete("search");
+    startTransition(() => {
+      const next = new URLSearchParams(searchParams);
 
-    if (area) next.set("area", area);
-    else next.delete("area");
+      if (search) next.set("search", search);
+      else next.delete("search");
 
-    next.set("page", "1");
+      if (region) next.set("region", region);
+      else next.delete("region");
 
-    setSearchParams(next);
+      next.set("page", "1");
+
+      setSearchParams(next);
+    });
   };
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") || "");
+    setRegion(searchParams.get("region") || "");
+  }, [searchParams]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
@@ -42,17 +50,16 @@ export function FilterBar() {
         className="min-w-[200px] max-w-xs"
       />
 
-
       <Select
-        options={AREA_FILTER_OPTIONS}
-        value={area}
-        onChange={setArea}
+        options={REGION_FILTER_OPTIONS}
+        value={region}
+        onChange={setRegion}
         selectSize="md"
         className="min-w-[180px]"
         aria-label="Lọc theo khu vực"
       />
 
-      <Button type="submit">
+      <Button loading={pending} type="submit">
         Lọc
       </Button>
     </form>

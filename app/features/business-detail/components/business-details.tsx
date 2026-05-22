@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "~/shared/components/card";
 import { Field } from "~/shared/components/field";
 import type { BusinessRow } from "~/lib/types";
 
@@ -18,14 +23,8 @@ export function BusinessDetails({ business: b }: BusinessDetailsProps) {
           <Field label="Danh Mục">{b.category}</Field>
           <Field label="Địa Chỉ">{b.address}</Field>
           <Field label="Điện Thoại">{b.phone}</Field>
+          <Field label="Website">{b.website}</Field>
           <Field label="Khu Vực">{b.region}</Field>
-          <Field label="Từ Khóa Tìm Kiếm">{b.search_keyword}</Field>
-          <Field label="Thu Thập Lúc">
-            {b.scraped_at ? new Date(b.scraped_at).toLocaleString() : null}
-          </Field>
-          <Field label="Tạo Lúc">
-            {new Date(b.created_at).toLocaleString()}
-          </Field>
         </dl>
       </CardContent>
     </Card>

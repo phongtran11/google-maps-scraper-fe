@@ -1,4 +1,4 @@
-import { useRef, useEffect, forwardRef } from "react";
+import { useRef, useEffect, forwardRef, useId, createContext, useContext } from "react";
 import type { ComponentProps, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "~/lib/utils";
@@ -13,6 +13,16 @@ const dialogSizes = {
 
 type DialogSize = keyof typeof dialogSizes;
 
+interface DialogContextValue {
+  titleId: string;
+  descriptionId: string;
+}
+
+const DialogContext = createContext<DialogContextValue>({
+  titleId: "",
+  descriptionId: "",
+});
+
 interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,6 +32,8 @@ interface DialogProps {
 function Dialog({ open, onOpenChange, children }: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<Element | null>(null);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useEffect(() => {
     if (open) {
@@ -78,14 +90,18 @@ function Dialog({ open, onOpenChange, children }: DialogProps) {
         onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
-      <div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        className="relative z-50 w-full"
-      >
-        {children}
-      </div>
+      <DialogContext.Provider value={{ titleId, descriptionId }}>
+        <div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
+          className="relative z-50 w-full"
+        >
+          {children}
+        </div>
+      </DialogContext.Provider>
     </div>,
     document.body,
   );
@@ -124,19 +140,25 @@ const DialogHeader = forwardRef<HTMLDivElement, ComponentProps<"div">>(
 DialogHeader.displayName = "DialogHeader";
 
 const DialogTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h2">>(
-  ({ className, ...props }, ref) => (
-    <h2
-      ref={ref}
-      className={cn("text-lg font-semibold leading-none tracking-tight", className)}
-      {...props}
-    />
-  ),
+  ({ className, ...props }, ref) => {
+    const { titleId } = useContext(DialogContext);
+    return (
+      <h2
+        ref={ref}
+        id={titleId}
+        className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+        {...props}
+      />
+    );
+  },
 );
 DialogTitle.displayName = "DialogTitle";
 
 function DialogDescription({ className, ...props }: ComponentProps<"p">) {
+  const { descriptionId } = useContext(DialogContext);
   return (
     <p
+      id={descriptionId}
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />

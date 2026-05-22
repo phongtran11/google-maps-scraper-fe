@@ -39,7 +39,7 @@ interface Toast {
 }
 
 interface ToastContextValue {
-  toast: (props: Omit<Toast, "id">) => void;
+  toast: (props: Omit<Toast, "id">) => string;
   dismiss: (id: string) => void;
 }
 

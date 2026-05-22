@@ -1,20 +1,12 @@
 import type { ActionFunctionArgs } from "react-router";
 import { pool } from "~/lib/server/db.server";
 import { verifySameOrigin } from "~/lib/server/csrf.server";
+import { validateMethod } from "~/lib/server/request.server";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (request.method !== "PATCH") {
-    return Response.json(
-      {
-        message: "Method not allowed",
-        error: "method_not_allowed",
-      },
-      { status: 405 },
-    );
-  }
-
+  validateMethod(request, "PATCH");
   verifySameOrigin(request);
 
   const formData = await request.formData();

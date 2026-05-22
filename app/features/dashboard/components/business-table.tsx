@@ -1,20 +1,26 @@
-import { Link, useSearchParams } from "react-router";
+import { useMemo } from "react";
+import {
+  Link,
+  useNavigate,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
 import type { BusinessRow } from "~/lib/types";
-import { STATUS_MAP } from "~/lib/constants";
+import { STATUS_MAP, REGIONS } from "~/lib/constants";
 import { formatZaloPhone } from "~/lib/format";
 import { Badge } from "~/shared/components/badge";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { Button } from "~/shared/components/button";
 import { DataTable } from "~/shared/components/table";
 import type { DataTableColumn } from "~/shared/components/table";
-
-const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+import { Tooltip } from "~/shared/components/tooltip";
+import { ROUTES } from "~/lib/routes";
 
 export interface BusinessTableProps {
   businesses: BusinessRow[];
-  totalCount?: number;
-  page?: number;
-  pageSize?: number;
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 
 export function BusinessTable({
@@ -23,40 +29,29 @@ export function BusinessTable({
   page,
   pageSize,
 }: BusinessTableProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const area = searchParams.get("area") || "";
+  const [searchParams] = useSearchParams();
+  const regionCode = searchParams.get("region") || "";
+  const regionLabel = REGIONS[regionCode as keyof typeof REGIONS] || "";
 
-  const getPageUrl = (p: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", String(p));
-    return `?${params.toString()}`;
-  };
+  const navigation = useNavigation();
 
-  const handlePageSizeChange = (newPageSize: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("limit", String(newPageSize));
-    params.set("page", "1");
-    setSearchParams(params);
-  };
-
-  const hasPagination = totalCount != null && page != null && pageSize != null;
-  const totalPages = hasPagination ? Math.ceil(totalCount / pageSize) : 0;
-
-  const emptyMessage = area
-    ? `Không có doanh nghiệp nào tại ${area}.`
+  const emptyMessage = regionLabel
+    ? `Không có doanh nghiệp nào tại ${regionLabel}.`
     : "Chưa có doanh nghiệp nào được thu thập.";
 
-  const columns: DataTableColumn<BusinessRow>[] = [
+  const columns = useMemo<DataTableColumn<BusinessRow>[]>(() => [
     {
       header: "Tên Doanh Nghiệp",
       cell: (b) => (
         <div className="space-y-1">
-          <Link
-            to={`/businesses/${b.id}`}
-            className="text-primary font-semibold hover:underline block max-w-[240px] md:max-w-[320px] truncate"
-          >
-            {b.business_name}
-          </Link>
+          <Tooltip content={b.business_name}>
+            <Link
+              to={ROUTES.businessDetail.buildPath(b.id)}
+              className="text-primary font-semibold hover:underline block max-w-[240px] md:max-w-[320px] truncate"
+            >
+              {b.business_name}
+            </Link>
+          </Tooltip>
         </div>
       ),
       cellClassName: "font-medium",
@@ -70,12 +65,11 @@ export function BusinessTable({
     {
       header: "Địa Chỉ",
       cell: (b) => (
-        <p
-          className="text-sm text-muted-foreground truncate max-w-3xs"
-          title={b.address || ""}
-        >
-          {b.address || "-"}
-        </p>
+        <Tooltip content={b.address}>
+          <p className="text-sm text-muted-foreground truncate max-w-3xs">
+            {b.address || "-"}
+          </p>
+        </Tooltip>
       ),
     },
     {
@@ -99,7 +93,7 @@ export function BusinessTable({
         return (
           <div className="flex items-center justify-end gap-1.5">
             <Link
-              to={`/businesses/${b.id}`}
+              to={ROUTES.businessDetail.buildPath(b.id)}
               className="inline-flex h-8 px-2.5 items-center justify-center rounded-md border border-input bg-background text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               Chi tiết
@@ -135,7 +129,7 @@ export function BusinessTable({
       },
       align: "right",
     },
-  ];
+  ], []);
 
   return (
     <DataTable
@@ -144,19 +138,12 @@ export function BusinessTable({
       keyExtractor={(b) => b.id}
       emptyMessage={emptyMessage}
       stickyHeader={true}
-      pagination={
-        hasPagination
-          ? {
-            page,
-            totalPages,
-            totalCount,
-            pageSize,
-            getPageUrl,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onPageSizeChange: handlePageSizeChange,
-          }
-          : undefined
-      }
+      isLoading={navigation.state !== "idle"}
+      pagination={{
+        page,
+        totalCount,
+        pageSize,
+      }}
     />
   );
 }

@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { ComponentProps } from "react";
+import { useSearchParams } from "react-router";
 import { cn } from "~/lib/utils";
 import { Pagination, type PaginationProps } from "./pagination";
 
@@ -35,7 +36,12 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
     },
     ref,
   ) => (
-    <div className={cn("relative w-full overflow-auto rounded-md border border-border max-h-[600px] md:max-h-[calc(100vh-320px)] overflow-y-auto", wrapperClassName)}>
+    <div
+      className={cn(
+        "relative w-full overflow-auto rounded-md border border-border max-h-[600px] md:max-h-[calc(100vh-320px)] overflow-y-auto",
+        wrapperClassName,
+      )}
+    >
       <table
         ref={ref}
         className={cn(
@@ -61,16 +67,15 @@ const TableHeader = forwardRef<
 ));
 TableHeader.displayName = "TableHeader";
 
-const TableBody = forwardRef<
-  HTMLTableSectionElement,
-  ComponentProps<"tbody">
->(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
-    {...props}
-  />
-));
+const TableBody = forwardRef<HTMLTableSectionElement, ComponentProps<"tbody">>(
+  ({ className, ...props }, ref) => (
+    <tbody
+      ref={ref}
+      className={cn("[&_tr:last-child]:border-0", className)}
+      {...props}
+    />
+  ),
+);
 TableBody.displayName = "TableBody";
 
 const TableFooter = forwardRef<
@@ -158,7 +163,10 @@ interface DataTableProps<T> {
   skeletonRows?: number;
   emptyMessage?: string;
   emptyState?: React.ReactNode;
-  pagination?: PaginationProps;
+  pagination?: Omit<PaginationProps, "getPageUrl" | "totalPages"> & {
+    getPageUrl?: (page: number) => string;
+    totalPages?: number;
+  };
   variant?: keyof typeof tableVariants.variant;
   tableSize?: keyof typeof tableVariants.size;
   stickyHeader?: boolean;
@@ -171,7 +179,7 @@ function DataTable<T>({
   columns,
   keyExtractor,
   isLoading = false,
-  skeletonRows = 5,
+  skeletonRows = 20,
   emptyMessage,
   emptyState,
   pagination,
@@ -181,9 +189,39 @@ function DataTable<T>({
   className,
   wrapperClassName,
 }: DataTableProps<T>) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const resolvedPagination = pagination
+    ? {
+        ...pagination,
+        totalPages:
+          pagination.totalPages ??
+          Math.ceil(pagination.totalCount / pagination.pageSize),
+        getPageUrl:
+          pagination.getPageUrl ||
+          ((p: number) => {
+            const params = new URLSearchParams(searchParams);
+            params.set("page", String(p));
+            return `?${params.toString()}`;
+          }),
+        onPageSizeChange:
+          pagination.onPageSizeChange ||
+          ((newPageSize: number) => {
+            const params = new URLSearchParams(searchParams);
+            params.set("limit", String(newPageSize));
+            params.set("page", "1");
+            setSearchParams(params);
+          }),
+      }
+    : undefined;
   return (
     <div className={cn("space-y-0", className)}>
-      <Table variant={variant} tableSize={tableSize} stickyHeader={stickyHeader} wrapperClassName={wrapperClassName}>
+      <Table
+        variant={variant}
+        tableSize={tableSize}
+        stickyHeader={stickyHeader}
+        wrapperClassName={wrapperClassName}
+      >
         <TableHeader>
           <TableRow>
             {columns.map((col) => (
@@ -201,8 +239,8 @@ function DataTable<T>({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading
-            ? Array.from({ length: skeletonRows }).map((_, rowIdx) => (
+          {isLoading ? (
+            Array.from({ length: skeletonRows }).map((_, rowIdx) => (
               <TableRow key={`skeleton-${rowIdx}`}>
                 {columns.map((col, colIdx) => (
                   <TableCell
@@ -211,7 +249,7 @@ function DataTable<T>({
                   >
                     <div
                       className={cn(
-                        "h-4 animate-pulse rounded bg-muted",
+                        "h-5.5 animate-pulse rounded bg-muted",
                         colIdx % 2 === 0 ? "w-full" : "w-3/4",
                       )}
                     />
@@ -219,46 +257,46 @@ function DataTable<T>({
                 ))}
               </TableRow>
             ))
-            : data.length === 0
-              ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    {emptyState ?? (
-                      <span className="text-muted-foreground">
-                        {emptyMessage ?? "Không có dữ liệu"}
-                      </span>
-                    )}
-                  </TableCell>
-                </TableRow>
-              )
-              : data.map((item, index) => (
-                <TableRow key={keyExtractor(item)}>
-                  {columns.map((col) => {
-                    const cellKey = col.id ?? col.header;
-                    const cellValue = col.cell
-                      ? col.cell(item, index)
-                      : col.accessor
-                        ? String(item[col.accessor] ?? "")
-                        : null;
+          ) : data.length === 0 && !isLoading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                {emptyState ?? (
+                  <span className="text-muted-foreground">
+                    {emptyMessage ?? "Không có dữ liệu"}
+                  </span>
+                )}
+              </TableCell>
+            </TableRow>
+          ) : (
+            data.map((item, index) => (
+              <TableRow key={keyExtractor(item)}>
+                {columns.map((col) => {
+                  const cellKey = col.id ?? col.header;
+                  const cellValue = col.cell
+                    ? col.cell(item, index)
+                    : col.accessor
+                      ? String(item[col.accessor] ?? "")
+                      : null;
 
-                    return (
-                      <TableCell
-                        key={cellKey}
-                        className={cn(
-                          col.align === "center" && "text-center",
-                          col.align === "right" && "text-right",
-                          col.cellClassName,
-                        )}
-                      >
-                        {cellValue}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))}
+                  return (
+                    <TableCell
+                      key={cellKey}
+                      className={cn(
+                        col.align === "center" && "text-center",
+                        col.align === "right" && "text-right",
+                        col.cellClassName,
+                      )}
+                    >
+                      {cellValue}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
-      {pagination && <Pagination {...pagination} />}
+      {resolvedPagination && <Pagination {...resolvedPagination} />}
     </div>
   );
 }

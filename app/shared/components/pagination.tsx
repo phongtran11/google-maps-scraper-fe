@@ -27,27 +27,30 @@ export function Pagination({
   totalCount,
   pageSize,
   getPageUrl,
-  pageSizeOptions,
+  pageSizeOptions = [20, 50, 100],
   onPageSizeChange,
 }: PaginationProps) {
-  if (totalPages <= 1 && !pageSizeOptions) return null;
+  const showPageSizeSelector = !!(pageSizeOptions && onPageSizeChange);
+  if (totalPages <= 1 && !showPageSizeSelector) return null;
 
   const pageNumbers = getPageNumbers(page, totalPages);
-  const rangeFrom = totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);
+  const rangeFrom =
+    totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);
   const rangeTo = Math.min(page * pageSize, totalCount);
 
   return (
-    <div className="flex items-center justify-between border-t border-border px-4 py-4 bg-muted/20">
+    <nav
+      aria-label="Phân trang"
+      className="flex items-center justify-between border-t border-border px-4 py-4 bg-muted/20"
+    >
       {/* Summary label + page-size selector */}
       <div className="flex items-center gap-3">
         <span className="text-sm text-muted-foreground">
           Hiển thị{" "}
-          <span className="font-medium text-foreground">{rangeFrom}</span>{" "}
-          đến{" "}
-          <span className="font-medium text-foreground">{rangeTo}</span>{" "}
-          trong số{" "}
-          <span className="font-medium text-foreground">{totalCount}</span>{" "}
-          doanh nghiệp
+          <span className="font-medium text-foreground">{rangeFrom}</span> đến{" "}
+          <span className="font-medium text-foreground">{rangeTo}</span> trong
+          số <span className="font-medium text-foreground">{totalCount}</span>{" "}
+          bản ghi
         </span>
         {pageSizeOptions && onPageSizeChange && (
           <div className="flex items-center gap-1.5">
@@ -118,6 +121,6 @@ export function Pagination({
           <ChevronRightIcon className="h-4 w-4" />
         </Link>
       </div>
-    </div>
+    </nav>
   );
 }

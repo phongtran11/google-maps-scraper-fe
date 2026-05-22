@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useId } from "react";
+import type { ReactNode } from "react";
 import { cn } from "~/lib/utils";
 import { ChevronDownIcon } from "~/shared/icons/chevron-down";
 
 interface SelectOption {
   key: string;
-  label: string;
+  label: ReactNode;
+  disabled?: boolean;
 }
 
 const selectVariants = {
@@ -23,6 +25,7 @@ interface SelectProps {
   selectSize?: keyof typeof selectVariants.size;
   className?: string;
   "aria-label"?: string;
+  disabled?: boolean;
 }
 
 function Select({
@@ -33,11 +36,13 @@ function Select({
   selectSize = "md",
   className,
   "aria-label": ariaLabel,
+  disabled,
 }: SelectProps) {
   const [open, setOpen] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const generatedId = useId();
 
   const selectedOption = options.find((o) => o.key === value);
 
@@ -53,6 +58,19 @@ function Select({
     },
     [onChange, close],
   );
+
+  // Initialize focusIndex when the dropdown is opened
+  useEffect(() => {
+    if (open) {
+      const activeIndex = options.findIndex((o) => o.key === value);
+      const initialIndex =
+        activeIndex !== -1 && !options[activeIndex].disabled
+          ? activeIndex
+          : options.findIndex((o) => !o.disabled);
+      setFocusIndex(initialIndex >= 0 ? initialIndex : 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -72,20 +90,38 @@ function Select({
     if (!open) return;
     function handleKey(e: KeyboardEvent) {
       switch (e.key) {
-        case "ArrowDown":
+        case "ArrowDown": {
           e.preventDefault();
-          setFocusIndex((prev) => Math.min(prev + 1, options.length - 1));
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setFocusIndex((prev) => Math.max(prev - 1, 0));
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (focusIndex >= 0 && focusIndex < options.length) {
-            select(options[focusIndex].key);
+          let nextIndex = focusIndex + 1;
+          while (nextIndex < options.length && options[nextIndex].disabled) {
+            nextIndex++;
+          }
+          if (nextIndex < options.length) {
+            setFocusIndex(nextIndex);
           }
           break;
+        }
+        case "ArrowUp": {
+          e.preventDefault();
+          let prevIndex = focusIndex - 1;
+          while (prevIndex >= 0 && options[prevIndex].disabled) {
+            prevIndex--;
+          }
+          if (prevIndex >= 0) {
+            setFocusIndex(prevIndex);
+          }
+          break;
+        }
+        case "Enter": {
+          e.preventDefault();
+          if (focusIndex >= 0 && focusIndex < options.length) {
+            const opt = options[focusIndex];
+            if (!opt.disabled) {
+              select(opt.key);
+            }
+          }
+          break;
+        }
         case "Escape":
           e.preventDefault();
           close();
@@ -109,13 +145,15 @@ function Select({
       <button
         type="button"
         aria-label={ariaLabel}
+        disabled={disabled}
+        aria-expanded={open}
+        aria-haspopup="listbox"
         onClick={() => setOpen((prev) => !prev)}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
             if (!open) {
               setOpen(true);
-              setFocusIndex(0);
             }
           }
         }}
@@ -141,7 +179,9 @@ function Select({
       {open && (
         <ul
           ref={listRef}
+          id={`${generatedId}-listbox`}
           role="listbox"
+          aria-label={ariaLabel}
           className={cn(
             "absolute z-50 mt-1 w-full rounded-md border border-border bg-popover p-1 shadow-md",
             "transition-all duration-150",
@@ -150,14 +190,26 @@ function Select({
           {options.map((opt, i) => (
             <li
               key={opt.key}
+              id={`${generatedId}-option-${i}`}
               role="option"
               aria-selected={opt.key === value}
-              onClick={() => select(opt.key)}
-              onMouseEnter={() => setFocusIndex(i)}
+              aria-disabled={opt.disabled}
+              onClick={() => {
+                if (!opt.disabled) {
+                  select(opt.key);
+                }
+              }}
+              onMouseEnter={() => {
+                if (!opt.disabled) {
+                  setFocusIndex(i);
+                }
+              }}
               className={cn(
                 "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-                "hover:bg-accent hover:text-accent-foreground",
-                focusIndex === i && "bg-accent text-accent-foreground",
+                opt.disabled
+                  ? "cursor-not-allowed opacity-40 text-muted-foreground"
+                  : "hover:bg-accent hover:text-accent-foreground",
+                !opt.disabled && focusIndex === i && "bg-accent text-accent-foreground",
                 opt.key === value && "font-medium",
               )}
             >
@@ -174,3 +226,4 @@ Select.displayName = "Select";
 
 export { Select, selectVariants };
 export type { SelectProps, SelectOption };
+
