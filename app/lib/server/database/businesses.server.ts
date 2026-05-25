@@ -65,13 +65,20 @@ export async function getBusinessesCount({
   search = "",
   status = "",
 }: Pick<BusinessFilter, "region" | "search" | "status"> = {}): Promise<number> {
-  const { where, params } = buildWhereClause({ region, search, status });
+  const hasFilters = !!(region || search || status);
 
+  if (!hasFilters) {
+    const result = await sql.query(
+      `SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
+    );
+    return Number(result[0].count);
+  }
+
+  const { where, params } = buildWhereClause({ region, search, status });
   const result = await sql.query(
-    `SELECT COUNT(*) as count FROM businesses ${where}`,
+    `SELECT COUNT(*) AS count FROM businesses ${where}`,
     params,
   );
-
   return Number((result[0] as { count: string | number }).count);
 }
 
