@@ -52,7 +52,8 @@ export async function getBusinesses({
   params.push(limit, offset);
 
   const result = await sql.query(
-    `SELECT * FROM businesses ${where} ORDER BY id DESC LIMIT $${nextIdx} OFFSET $${nextIdx + 1}`,
+    `SELECT id, business_name, phone, address, status, region, rating
+     FROM businesses ${where} ORDER BY id DESC LIMIT $${nextIdx} OFFSET $${nextIdx + 1}`,
     params,
   );
 
