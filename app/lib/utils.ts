@@ -8,9 +8,10 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Safely extracts a string search parameter.
  */
-export function getStringParam(url: URL | string, key: string, defaultValue = ""): string {
+export function getStringParam(url: URL | string, key: string, defaultValue = "", maxLength?: number): string {
   const searchParams = typeof url === "string" ? new URL(url).searchParams : url.searchParams;
-  return searchParams.get(key) || defaultValue;
+  const value = searchParams.get(key) || defaultValue;
+  return maxLength && value.length > maxLength ? value.slice(0, maxLength) : value;
 }
 
 /**

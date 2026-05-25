@@ -8,9 +8,9 @@ export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const region = getStringParam(url, "region");
-  const search = getStringParam(url, "search");
-  const status = getStringParam(url, "status");
+  const region = getStringParam(url, "region", "", 200);
+  const search = getStringParam(url, "search", "", 200);
+  const status = getStringParam(url, "status", "", 50);
   const page = getIntParam(url, "page", 1, { min: 1 });
   const limit = getIntParam(url, "limit", 20, { min: 1 });
   const offset = (page - 1) * limit;
