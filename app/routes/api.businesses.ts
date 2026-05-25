@@ -8,7 +8,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const limit = getIntParam(url, "limit", 20, { min: 1, max: 50 });
   const region = getStringParam(url, "region", "", 200);
   const search = getStringParam(url, "search", "", 200);
-  const status = getStringParam(url, "status");
+  const status = getStringParam(url, "status", "", 50);
 
   const businesses = await getBusinesses({
     limit,
