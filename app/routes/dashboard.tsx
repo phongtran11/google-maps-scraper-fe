@@ -2,22 +2,17 @@ import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { DashboardTemplate } from "~/features/dashboard/components/dashboard-template";
 import { getBusinesses, getBusinessesCount } from "~/lib/server/db.server";
+import { getIntParam, getStringParam } from "~/lib/utils";
 
 export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const region = url.searchParams.get("region") || "";
-  const search = url.searchParams.get("search") || "";
-  const status = url.searchParams.get("status") || "";
-  const page = Math.max(
-    1,
-    Number.parseInt(url.searchParams.get("page") ?? "1", 10),
-  );
-  const limit = Math.max(
-    20,
-    Number.parseInt(url.searchParams.get("limit") ?? "20"),
-  );
+  const region = getStringParam(url, "region");
+  const search = getStringParam(url, "search");
+  const status = getStringParam(url, "status");
+  const page = getIntParam(url, "page", 1, { min: 1 });
+  const limit = getIntParam(url, "limit", 20, { min: 1 });
   const offset = (page - 1) * limit;
 
   const [businesses, totalCount] = await Promise.all([

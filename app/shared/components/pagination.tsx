@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { getPageNumbers } from "~/shared/lib/pagination";
+import { getPageNumbers } from "~/lib/utils";
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { ChevronRightIcon } from "~/shared/icons/chevron-right";
 import { Select } from "./select";

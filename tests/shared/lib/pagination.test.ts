@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getPageNumbers } from "~/shared/lib/pagination";
+import { getPageNumbers } from "~/lib/utils";
 
 describe("getPageNumbers", () => {
   it("returns all pages when totalPages <= 7", () => {

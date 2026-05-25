@@ -6,6 +6,7 @@ import { BusinessDetails } from "~/features/business-detail/components/business-
 import { ReviewImages } from "~/features/business-detail/components/review-images";
 import { NotesSection } from "~/features/business-detail/components/notes-section";
 import { BusinessSidebar } from "~/features/business-detail/components/business-sidebar";
+import { PageHeader } from "~/shared/components";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const businessResult = await pool.query(
@@ -41,11 +42,7 @@ export default function BusinessDetail() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground truncate">
-          {b.business_name}
-        </h1>
-      </div>
+      <PageHeader title={b.business_name} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">

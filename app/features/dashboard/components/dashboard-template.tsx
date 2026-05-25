@@ -1,6 +1,7 @@
 import type { BusinessRow } from "~/lib/types";
 import { FilterBar } from "./filter-bar";
 import { BusinessTable } from "./business-table";
+import { PageHeader } from "~/shared/components";
 
 export interface DashboardTemplateProps {
   businesses: BusinessRow[];
@@ -17,9 +18,7 @@ export function DashboardTemplate({
 }: DashboardTemplateProps) {
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Trang quản trị</h2>
-      </div>
+      <PageHeader title="Trang quản trị" />
 
       <FilterBar />
 
