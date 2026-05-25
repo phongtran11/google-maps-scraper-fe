@@ -143,9 +143,10 @@ app/
 ### Querying
 
 ```ts
-import { pool } from "~/lib/db.server";
+import { sql } from "~/lib/server/db.server";
 
-const result = await pool.query(
+// Returns a flat array of row objects directly
+const result = await sql.query(
   `SELECT * FROM businesses WHERE address ILIKE $1 ORDER BY created_at DESC LIMIT $2`,
   [`%Ngãi Giao%`, 20],
 );
@@ -178,7 +179,7 @@ type Business = Tables<"businesses">;
 - [ ] **BETTER_AUTH_URL** — Set to your production domain (e.g., `https://dashboard.example.com`)
 - [ ] **Google OAuth redirect URIs** — Add production domain to Google Cloud Console (`https://dashboard.example.com/api/auth/callback/google`)
 - [ ] **BETTER_AUTH_SECRET** — Generate a strong random secret (`openssl rand -base64 48`), do NOT reuse dev secret
-- [ ] **Neon database** — Ensure production project has the schema (run `pnpm run dev` locally against production DB once to trigger `setupDatabase()`)
+- [ ] **Neon database** — Ensure production project has the schema (run `pnpm run db:migrate` in the `google-maps-scraper` backend directory against the production database to execute the schema migrations)
 - [ ] **Invite users** — `pnpm invite admin@example.com` against production `NEON_DATABASE_URL`
 - [ ] **Typecheck passes** — `pnpm run typecheck` with zero errors
 - [ ] **Build succeeds** — `pnpm run build` completes without errors

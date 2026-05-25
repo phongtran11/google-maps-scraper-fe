@@ -7,6 +7,10 @@ export const ROUTES = {
     path: "/login",
     label: "Đăng nhập",
   },
+  invite: {
+    path: "/invite",
+    label: "Mời Thành Viên",
+  },
   businessDetail: {
     path: "/businesses/:id",
     pattern: /^\/businesses\/[^/]+$/,

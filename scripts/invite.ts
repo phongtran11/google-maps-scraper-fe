@@ -1,4 +1,4 @@
-import { pool } from "~/lib/server/db.server";
+import { pool } from "~/lib/server/database/db.server";
 
 const email = process.argv[2];
 

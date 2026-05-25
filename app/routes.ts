@@ -11,6 +11,7 @@ export default [
 
   layout("routes/app-layout.tsx", [
     index("routes/dashboard.tsx"),
+    route("invite", "routes/invite.tsx"),
     route("api/businesses", "routes/api.businesses.ts"),
     route("api/businesses/:id/notes", "routes/api.businesses.$id.notes.ts"),
     route("api/businesses/:id/status", "routes/api.businesses.$id.status.ts"),

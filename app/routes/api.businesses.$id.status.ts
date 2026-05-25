@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "react-router";
-import { pool } from "~/lib/server/db.server";
 import { verifySameOrigin } from "~/lib/server/csrf.server";
+import { sql } from "~/lib/server/database/db.server";
 import { validateMethod } from "~/lib/server/request.server";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
@@ -22,12 +22,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     );
   }
 
-  const result = await pool.query(
+  const result = await sql.query(
     `UPDATE businesses SET status = $1 WHERE id = $2 RETURNING status`,
     [status, params.id],
   );
 
-  if (result.rows.length === 0) {
+  if (result.length === 0) {
     return Response.json(
       {
         message: "Business not found",
@@ -40,7 +40,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return Response.json(
     {
       message: "Status updated successfully",
-      data: result.rows[0],
+      data: result[0],
     },
     { status: 200 },
   );

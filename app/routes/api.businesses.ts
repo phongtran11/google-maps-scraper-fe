@@ -10,7 +10,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const search = getStringParam(url, "search");
   const status = getStringParam(url, "status");
 
-  const businesses = await getBusinesses({ limit, offset, region, search, status });
+  const businesses = await getBusinesses({
+    limit,
+    offset,
+    region,
+    search,
+    status,
+  });
 
   return Response.json({ businesses }, { status: 200 });
 }

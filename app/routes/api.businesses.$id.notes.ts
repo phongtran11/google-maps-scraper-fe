@@ -1,5 +1,12 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { pool } from "~/lib/server/db.server";
+import { checkBusinessExists } from "~/lib/server/database/businesses.server";
+import {
+  getBusinessNotes,
+  getBusinessNote,
+  createBusinessNote,
+  updateBusinessNote,
+  deleteBusinessNote,
+} from "~/lib/server/database/business-notes.server";
 import { sessionContext } from "~/lib/server/require-auth.server";
 import { verifySameOrigin } from "~/lib/server/csrf.server";
 import { validateMethod } from "~/lib/server/request.server";
@@ -7,15 +14,11 @@ import { validateMethod } from "~/lib/server/request.server";
 const MAX_NOTE_LENGTH = 5000;
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const result = await pool.query(
-    `SELECT id, content, created_by, created_at
-     FROM business_notes
-     WHERE business_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC`,
-    [params.id],
-  );
-
-  return { notes: result.rows };
+  if (!params.id) {
+    return { notes: [] };
+  }
+  const notes = await getBusinessNotes(params.id);
+  return { notes };
 }
 
 export async function action({ request, params, context }: ActionFunctionArgs) {
@@ -25,12 +28,19 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   const session = context.get(sessionContext);
   const userEmail = session.user.email;
 
-  const businessCheck = await pool.query(
-    `SELECT 1 FROM businesses WHERE id = $1`,
-    [params.id],
-  );
+  if (!params.id) {
+    return Response.json(
+      {
+        message: "Business ID is required",
+        code: "business_id_required",
+        error: "Business ID is required",
+      },
+      { status: 400 },
+    );
+  }
 
-  if (businessCheck.rows.length === 0) {
+  const businessExists = await checkBusinessExists(params.id);
+  if (!businessExists) {
     return Response.json(
       {
         message: "Business not found",
@@ -69,11 +79,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    await pool.query(
-      `INSERT INTO business_notes (business_id, content, created_by)
-       VALUES ($1, $2, $3)`,
-      [params.id, content, userEmail],
-    );
+    await createBusinessNote(params.id, content, userEmail);
   } else if (method === "PATCH") {
     const noteId = formData.get("noteId")?.toString();
     const content = formData.get("content")?.toString()?.trim();
@@ -111,13 +117,8 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    // Check ownership
-    const noteCheck = await pool.query(
-      `SELECT created_by FROM business_notes WHERE id = $1 AND deleted_at IS NULL`,
-      [noteId],
-    );
-
-    if (noteCheck.rows.length === 0) {
+    const note = await getBusinessNote(noteId);
+    if (!note) {
       return Response.json(
         {
           message: "Note not found",
@@ -128,7 +129,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    if (noteCheck.rows[0].created_by !== userEmail) {
+    if (note.created_by !== userEmail) {
       return Response.json(
         {
           message: "Permission denied",
@@ -139,10 +140,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    await pool.query(
-      `UPDATE business_notes SET content = $1 WHERE id = $2`,
-      [content, noteId],
-    );
+    await updateBusinessNote(noteId, content);
   } else if (method === "DELETE") {
     const noteId = formData.get("noteId")?.toString();
 
@@ -157,13 +155,8 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    // Check ownership
-    const noteCheck = await pool.query(
-      `SELECT created_by FROM business_notes WHERE id = $1 AND deleted_at IS NULL`,
-      [noteId],
-    );
-
-    if (noteCheck.rows.length === 0) {
+    const note = await getBusinessNote(noteId);
+    if (!note) {
       return Response.json(
         {
           message: "Note not found",
@@ -174,7 +167,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    if (noteCheck.rows[0].created_by !== userEmail) {
+    if (note.created_by !== userEmail) {
       return Response.json(
         {
           message: "Permission denied",
@@ -185,19 +178,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    await pool.query(
-      `UPDATE business_notes SET deleted_at = NOW() WHERE id = $1`,
-      [noteId],
-    );
+    await deleteBusinessNote(noteId);
   }
 
-  const notes = await pool.query(
-    `SELECT id, content, created_by, created_at
-     FROM business_notes
-     WHERE business_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC`,
-    [params.id],
-  );
-
-  return Response.json({ notes: notes.rows });
+  const notes = await getBusinessNotes(params.id);
+  return Response.json({ notes });
 }

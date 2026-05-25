@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { pool } from "~/lib/server/db.server";
+import { pool, sql } from "~/lib/server/database/db.server";
 import { ROUTES } from "~/lib/routes";
 
 export const auth = betterAuth({
@@ -22,18 +22,18 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async (session) => {
-          const result = await pool.query(
+          const result = await sql.query(
             `SELECT email FROM "user" WHERE id = $1`,
             [session.userId],
           );
-          const userEmail: string | undefined = result.rows[0]?.email;
+          const userEmail: string | undefined = result[0]?.email;
           if (!userEmail) return false;
 
-          const inviteCheck = await pool.query(
+          const inviteCheck = await sql.query(
             `SELECT 1 FROM user_invites WHERE email = $1`,
             [userEmail],
           );
-          if (inviteCheck.rows.length === 0) return false;
+          if (inviteCheck.length === 0) return false;
         },
       },
     },

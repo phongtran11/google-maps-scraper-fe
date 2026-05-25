@@ -3,6 +3,7 @@ import { NavLink } from "react-router";
 import { MapPin } from "~/shared/icons/map-pin";
 import { LayoutDashboard } from "~/shared/icons/layout-dashboard";
 import { X } from "~/shared/icons/x";
+import { UserCheck } from "~/shared/icons/user-check";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { SidebarProfile } from "./sidebar-profile";
 import { Button } from "~/shared/components/button";
@@ -37,6 +38,12 @@ export const AdminSidebar = memo(function AdminSidebar({
       to: ROUTES.dashboard.path,
       isActive: isDashboardActive,
       icon: <LayoutDashboard className="h-4 w-4" />,
+    },
+    {
+      label: ROUTES.invite.label,
+      to: ROUTES.invite.path,
+      isActive: currentPath === ROUTES.invite.path,
+      icon: <UserCheck className="h-4 w-4" />,
     },
   ];
 

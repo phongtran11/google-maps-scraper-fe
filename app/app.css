@@ -90,6 +90,16 @@ html.dark {
   --color-input: var(--input);
   --color-ring: var(--ring);
   --radius: var(--radius);
+
+  --animate-progress: progress-linear 1.5s infinite linear;
+  @keyframes progress-linear {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
 }
 
 @layer base {

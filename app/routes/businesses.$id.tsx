@@ -1,7 +1,7 @@
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
-import { pool } from "~/lib/server/db.server";
-import type { BusinessRow, NoteRow } from "~/lib/types";
+import { getBusinessById } from "~/lib/server/database/businesses.server";
+import { getBusinessNotes } from "~/lib/server/database/business-notes.server";
 import { BusinessDetails } from "~/features/business-detail/components/business-details";
 import { ReviewImages } from "~/features/business-detail/components/review-images";
 import { NotesSection } from "~/features/business-detail/components/notes-section";
@@ -9,25 +9,20 @@ import { BusinessSidebar } from "~/features/business-detail/components/business-
 import { PageHeader } from "~/shared/components";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const businessResult = await pool.query(
-    `SELECT * FROM businesses WHERE id = $1`,
-    [params.id],
-  );
-  if (businessResult.rows.length === 0) {
+  if (!params.id) {
+    throw new Response("Mã doanh nghiệp không hợp lệ", { status: 400 });
+  }
+
+  const business = await getBusinessById(params.id);
+  if (!business) {
     throw new Response("Không tìm thấy doanh nghiệp", { status: 404 });
   }
 
-  const notesResult = await pool.query(
-    `SELECT id, content, created_by, created_at
-     FROM business_notes
-     WHERE business_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC`,
-    [params.id],
-  );
+  const notes = await getBusinessNotes(params.id);
 
   return {
-    business: businessResult.rows[0] as BusinessRow,
-    notes: notesResult.rows as NoteRow[],
+    business,
+    notes,
   };
 }
 
