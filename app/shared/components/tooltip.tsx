@@ -98,7 +98,13 @@ const TooltipComponent = memo(function Tooltip({
   }, [isVisible]);
 
   // Ensure children is a single React element
-  const child = Children.only(children) as ReactElement<{ ref?: Ref<HTMLElement> }>;
+  const child = Children.only(children) as ReactElement<{
+    ref?: Ref<HTMLElement>;
+    onMouseEnter?: (e: MouseEvent) => void;
+    onMouseLeave?: (e: MouseEvent) => void;
+    onFocus?: (e: FocusEvent) => void;
+    onBlur?: (e: FocusEvent) => void;
+  }>;
 
   // Merge refs
   const handleRef = (node: HTMLElement | null) => {
