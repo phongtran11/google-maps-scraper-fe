@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { Input } from "~/shared/components/input";
-import { Select } from "~/shared/components/select";
-import { Button } from "~/shared/components/button";
+import { Input, Select, Button } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
 import { REGION_FILTER_OPTIONS } from "~/lib/constants";
 import { useTransition } from "react";

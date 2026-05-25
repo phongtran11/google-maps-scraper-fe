@@ -3,8 +3,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/shared/components/card";
-import { Field } from "~/shared/components/field";
+} from "~/shared/components";
+import { Field } from "~/shared/components";
 import type { BusinessRow } from "~/lib/types";
 
 interface BusinessDetailsProps {

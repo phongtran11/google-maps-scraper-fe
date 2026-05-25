@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/shared/components/card";
+} from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { StatusCard } from "./status-card";
 import type { BusinessRow } from "~/lib/types";

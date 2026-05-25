@@ -3,12 +3,9 @@ import { Link, useSearchParams } from "react-router";
 import type { BusinessRow } from "~/lib/types";
 import { STATUS_MAP, REGIONS } from "~/lib/constants";
 import { formatZaloPhone } from "~/lib/format";
-import { Badge } from "~/shared/components/badge";
-import { ExternalLinkIcon } from "~/shared/icons/external-link";
-import { Button } from "~/shared/components/button";
-import { DataTable } from "~/shared/components/table";
+import { Badge, Button, DataTable, Tooltip } from "~/shared/components";
 import type { DataTableColumn } from "~/shared/components/table";
-import { Tooltip } from "~/shared/components/tooltip";
+import { ExternalLinkIcon } from "~/shared/icons";
 import { ROUTES } from "~/lib/routes";
 
 export interface BusinessTableProps {
