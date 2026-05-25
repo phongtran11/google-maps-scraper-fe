@@ -17,7 +17,7 @@ export const NEXT_STATUS: Record<string, string[]> = {
   approached: ["new", "contacted", "qualified", "rejected"],
   contacted: ["new", "approached", "qualified", "rejected"],
   qualified: ["new", "approached", "contacted", "rejected"],
-  rejected: ["new", "approached", "contacted", "qualified"],
+  rejected: [],
 };
 
 /** Options for the status dropdown filter. First entry is the "all" sentinel. */
