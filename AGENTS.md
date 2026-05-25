@@ -132,3 +132,10 @@ app/
 - **`tsx` does NOT auto-load `.env`**: Scripts run via `npx tsx` (like `pnpm invite`) must include `--env-file=.env` flag. Vite/React Router dev server loads `.env` automatically.
 - `FilterBar` uses local state for form fields — only pushes to URL search params on submit (the "Lọc" button). This means external URL manipulation (e.g. back/forward) won't sync with the form until submit.
 - `.env` must contain `NEON_DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`.
+
+## Rate limiting
+
+Rate limiting is not implemented in application code. Recommended approaches:
+- **Cloudflare**: Use WAF rate limiting rules (preferred for production)
+- **Nginx**: `limit_req_zone` + `limit_req` directives (if self-hosted)
+- Apply to mutation endpoints: `/api/businesses/:id/notes`, `/api/businesses/:id/status`, `/invite`
