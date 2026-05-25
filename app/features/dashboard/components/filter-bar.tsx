@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
 import { Input, Select, Button } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
 import { REGION_FILTER_OPTIONS } from "~/lib/constants";
-import { useTransition } from "react";
 
 export function FilterBar() {
   const [searchParams, setSearchParams] = useSearchParams();
