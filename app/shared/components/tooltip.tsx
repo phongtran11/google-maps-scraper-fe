@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef, useId } from "react";
+import { memo, useState, useEffect, useRef, useId, Children, cloneElement } from "react";
+import type { ReactNode, ReactElement, Ref, MouseEvent, FocusEvent } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "~/lib/utils";
 
 export interface TooltipProps {
-  content: React.ReactNode;
-  children: React.ReactElement;
+  content: ReactNode;
+  children: ReactElement;
   delay?: number;
   className?: string;
 }
 
-export const Tooltip = React.memo(function Tooltip({
+const TooltipComponent = memo(function Tooltip({
   content,
   children,
   delay = 200,
@@ -20,8 +21,8 @@ export const Tooltip = React.memo(function Tooltip({
     null,
   );
   const triggerRef = useRef<HTMLElement | null>(null);
-  const showTimeout = useRef<NodeJS.Timeout | null>(null);
-  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  const showTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tooltipId = useId();
 
   // Clean up timeouts on unmount
@@ -97,12 +98,12 @@ export const Tooltip = React.memo(function Tooltip({
   }, [isVisible]);
 
   // Ensure children is a single React element
-  const child = React.Children.only(children) as React.ReactElement<any>;
+  const child = Children.only(children) as ReactElement<{ ref?: Ref<HTMLElement> }>;
 
   // Merge refs
   const handleRef = (node: HTMLElement | null) => {
     triggerRef.current = node;
-    const { ref } = child as any;
+    const { ref } = child as { ref?: Ref<HTMLElement> };
     if (typeof ref === "function") {
       ref(node);
     } else if (ref && typeof ref === "object") {
@@ -113,25 +114,25 @@ export const Tooltip = React.memo(function Tooltip({
   const triggerProps = {
     ref: handleRef,
     "aria-describedby": isVisible ? tooltipId : undefined,
-    onMouseEnter: (e: React.MouseEvent) => {
+    onMouseEnter: (e: MouseEvent) => {
       child.props.onMouseEnter?.(e);
       showTooltip();
     },
-    onMouseLeave: (e: React.MouseEvent) => {
+    onMouseLeave: (e: MouseEvent) => {
       child.props.onMouseLeave?.(e);
       hideTooltip();
     },
-    onFocus: (e: React.FocusEvent) => {
+    onFocus: (e: FocusEvent) => {
       child.props.onFocus?.(e);
       showTooltip();
     },
-    onBlur: (e: React.FocusEvent) => {
+    onBlur: (e: FocusEvent) => {
       child.props.onBlur?.(e);
       hideTooltip();
     },
   };
 
-  const clonedChild = React.cloneElement(child, triggerProps);
+  const clonedChild = cloneElement(child, triggerProps);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -171,4 +172,6 @@ export const Tooltip = React.memo(function Tooltip({
     </>
   );
 });
-Tooltip.displayName = "Tooltip";
+TooltipComponent.displayName = "Tooltip";
+
+export { TooltipComponent as Tooltip };
