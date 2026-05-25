@@ -9,14 +9,18 @@ function parseId(id: string | number): number {
 
 export async function getBusinessNotes(
   businessId: string | number,
+  limit = 50,
+  offset = 0,
 ): Promise<NoteRow[]> {
   const id = parseId(businessId);
+
   const result = await sql.query(
     `SELECT id, content, created_by, created_at
      FROM business_notes
      WHERE business_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC`,
-    [id],
+     ORDER BY created_at DESC
+     LIMIT $2 OFFSET $3`,
+    [id, limit, offset],
   );
   return result as NoteRow[];
 }
