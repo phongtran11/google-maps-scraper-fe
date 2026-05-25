@@ -11,7 +11,7 @@ export function useNotesManager({
   businessId,
   initialNotes,
 }: UseNotesManagerOptions) {
-  const noteFetcher = useFetcher<{ notes: NoteRow[] }>();
+  const noteFetcher = useFetcher<{ notes?: NoteRow[]; error?: string; message?: string }>();
 
   const notes = noteFetcher.data?.notes ?? initialNotes;
 

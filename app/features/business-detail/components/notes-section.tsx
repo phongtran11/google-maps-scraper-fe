@@ -245,6 +245,12 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
           isSubmitting={isSubmitting}
         />
 
+        {noteFetcher.data?.error && (
+          <p className="text-sm text-destructive">
+            Lỗi: {noteFetcher.data.message || "Đã xảy ra lỗi"}
+          </p>
+        )}
+
         {notes.length > 0 && (
           <div className="space-y-3 pt-2">
             {notes.map((n) => (
