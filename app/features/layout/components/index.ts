@@ -1,4 +1,4 @@
 export { AppLayoutTemplate } from "./app-layout-template";
+export type { AppLayoutTemplateProps } from "./app-layout-template";
 export { AdminSidebar } from "./admin-sidebar";
-export { SidebarNavItem } from "./sidebar-nav-item";
-export { SidebarProfile } from "./sidebar-profile";
+export type { AdminSidebarProps } from "./admin-sidebar";
