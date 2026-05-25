@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router";
-import { getBusinesses } from "~/lib/server/db.server";
+import { getBusinesses } from "~/lib/server/database/businesses.server";
 import { getIntParam, getStringParam } from "~/lib/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
