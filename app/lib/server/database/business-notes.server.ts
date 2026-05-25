@@ -1,15 +1,22 @@
 import { sql } from "./db.server";
 import type { NoteRow } from "../../types";
 
+function parseId(id: string | number): number {
+  const num = typeof id === "string" ? parseInt(id, 10) : id;
+  if (isNaN(num)) throw new Error("Invalid ID");
+  return num;
+}
+
 export async function getBusinessNotes(
   businessId: string | number,
 ): Promise<NoteRow[]> {
+  const id = parseId(businessId);
   const result = await sql.query(
     `SELECT id, content, created_by, created_at
      FROM business_notes
      WHERE business_id = $1 AND deleted_at IS NULL
      ORDER BY created_at DESC`,
-    [businessId],
+    [id],
   );
   return result as NoteRow[];
 }
@@ -17,9 +24,10 @@ export async function getBusinessNotes(
 export async function getBusinessNote(
   noteId: string | number,
 ): Promise<NoteRow | null> {
+  const id = parseId(noteId);
   const result = await sql.query(
     `SELECT * FROM business_notes WHERE id = $1 AND deleted_at IS NULL`,
-    [noteId],
+    [id],
   );
   return result.length > 0 ? (result[0] as NoteRow) : null;
 }
