@@ -15,7 +15,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   if (!session) {
     return Response.json(
       { message: "Không có quyền truy cập", error: "unauthorized" },
-      { status: 401 },
+      { status: 401, headers: { "Cache-Control": "no-store" } },
     );
   }
 
@@ -26,7 +26,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     if (!status || !ALLOWED.includes(status)) {
       return Response.json(
         { message: "Trạng thái không hợp lệ", error: "invalid_status" },
-        { status: 400 },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
       );
     }
 
@@ -38,7 +38,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     if (currentResult.length === 0) {
       return Response.json(
         { message: "Không tìm thấy doanh nghiệp", error: "business_not_found" },
-        { status: 404 },
+        { status: 404, headers: { "Cache-Control": "no-store" } },
       );
     }
 
@@ -51,7 +51,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
           message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
           error: "invalid_transition",
         },
-        { status: 400 },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
       );
     }
 
@@ -62,13 +62,13 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
     return Response.json(
       { message: "Status updated successfully", data: result[0] },
-      { status: 200 },
+      { status: 200, headers: { "Cache-Control": "no-store" } },
     );
   } catch (err) {
     console.error("Status action error:", err);
     return Response.json(
       { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error" },
-      { status: 500 },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
     );
   }
 }

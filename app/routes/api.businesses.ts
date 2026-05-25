@@ -19,7 +19,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       status,
     });
 
-    return Response.json({ businesses }, { status: 200 });
+    return Response.json({ businesses }, {
+      status: 200,
+      headers: { "Cache-Control": "private, max-age=10" },
+    });
   } catch (err) {
     console.error("api.businesses loader error:", err);
     return Response.json(
