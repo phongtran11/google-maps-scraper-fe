@@ -16,9 +16,11 @@ async function logQuery<T>(
   try {
     const result = await executor();
     const duration = (performance.now() - start).toFixed(2);
-    console.log(
-      `[${label}] Query: ${queryText.trim()} | Params: ${JSON.stringify(params)} | Time: ${duration}ms`,
-    );
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `[${label}] Query: ${queryText.trim()} | Params: ${JSON.stringify(params)} | Time: ${duration}ms`,
+      );
+    }
     return result;
   } catch (err) {
     const duration = (performance.now() - start).toFixed(2);
@@ -59,9 +61,11 @@ pool.query = async function (queryText: any, values?: any, cb?: any) {
           `❌ [Pool] Error: ${err.message} | Query: ${logText.trim()} | Params: ${JSON.stringify(logParams)} | Time: ${duration}ms`,
         );
       } else {
-        console.log(
-          `[Pool] Query: ${logText.trim()} | Params: ${JSON.stringify(logParams)} | Time: ${duration}ms`,
-        );
+        if (process.env.NODE_ENV === "development") {
+          console.log(
+            `[Pool] Query: ${logText.trim()} | Params: ${JSON.stringify(logParams)} | Time: ${duration}ms`,
+          );
+        }
       }
       cb(err, result);
     });
