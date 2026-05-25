@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import { cn } from "~/lib/utils";
@@ -32,13 +32,13 @@ export function AppLayoutTemplate({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleCloseMobile = useCallback(() => {
+  const handleCloseMobile = () => {
     setIsMobileOpen(false);
-  }, []);
+  };
 
-  const handleOpenMobile = useCallback(() => {
+  const handleOpenMobile = () => {
     setIsMobileOpen(true);
-  }, []);
+  };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-background">

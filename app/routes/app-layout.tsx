@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useMatches, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { requireAuth, sessionContext } from "~/lib/server/require-auth.server";
 import { authClient } from "~/lib/auth-client";
 import { AppLayoutTemplate } from "~/features/layout/components/app-layout-template";
@@ -24,7 +24,6 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
 export default function AppLayout() {
   const loaderData = useLoaderData<typeof loader>();
-  const { data: session } = authClient.useSession();
   const location = useLocation();
   const matches = useMatches();
 
@@ -38,19 +37,15 @@ export default function AppLayout() {
     });
   }, []);
 
-  const sessionUser = session?.user;
-  const loaderUser = loaderData.user;
-  const currentUser = useMemo(() => ({
-    name: sessionUser?.name ?? loaderUser.name,
-    email: sessionUser?.email ?? loaderUser.email,
-    image: sessionUser?.image ?? null,
-  }), [sessionUser?.name, sessionUser?.email, sessionUser?.image, loaderUser.name, loaderUser.email]);
+  const currentUser = {
+    name: loaderData.user.name,
+    email: loaderData.user.email,
+    image: loaderData.user.image ?? null,
+  };
 
   const isRoot = location.pathname === ROUTES.dashboard.path;
 
-  const breadcrumbs = useMemo(() => {
-    return getBreadcrumbs(location.pathname, matches as unknown as RouteMatch[]);
-  }, [location.pathname, matches]);
+  const breadcrumbs = getBreadcrumbs(location.pathname, matches as unknown as RouteMatch[]);
 
   return (
     <AppLayoutTemplate

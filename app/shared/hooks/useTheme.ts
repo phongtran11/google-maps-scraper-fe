@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
@@ -55,18 +55,18 @@ export function useTheme() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = () => {
     setTheme((prev) => {
       const next: Theme = prev === "dark" ? "light" : "dark";
       localStorage.setItem(STORAGE_KEY, next);
       return next;
     });
-  }, []);
+  };
 
-  const setThemeExplicit = useCallback((next: Theme) => {
+  const setThemeExplicit = (next: Theme) => {
     localStorage.setItem(STORAGE_KEY, next);
     setTheme(next);
-  }, []);
+  };
 
   return { theme, toggleTheme, setTheme: setThemeExplicit } as const;
 }

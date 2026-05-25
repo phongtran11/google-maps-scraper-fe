@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useId } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import type { ReactNode } from "react";
 import { cn } from "~/lib/utils";
 import { ChevronDownIcon } from "~/shared/icons/chevron-down";
@@ -46,18 +46,15 @@ function Select({
 
   const selectedOption = options.find((o) => o.key === value);
 
-  const close = useCallback(() => {
+  const close = () => {
     setOpen(false);
     setFocusIndex(-1);
-  }, []);
+  };
 
-  const select = useCallback(
-    (key: string) => {
-      onChange(key);
-      close();
-    },
-    [onChange, close],
-  );
+  const select = (key: string) => {
+    onChange(key);
+    close();
+  };
 
   // Initialize focusIndex when the dropdown is opened
   useEffect(() => {
