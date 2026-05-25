@@ -1,5 +1,6 @@
 import { sql } from "./db.server";
 import type { BusinessRow } from "../../types";
+import { STATUS_MAP, REGIONS } from "../../constants";
 
 export interface BusinessFilter {
   limit?: number;
@@ -18,7 +19,7 @@ export function buildWhereClause(filter: BusinessFilter): {
   const params: (string | number)[] = [];
   let idx = 1;
 
-  if (filter.region) {
+  if (filter.region && REGIONS[filter.region as keyof typeof REGIONS]) {
     conditions.push(`region = $${idx++}`);
     params.push(filter.region);
   }
@@ -26,7 +27,7 @@ export function buildWhereClause(filter: BusinessFilter): {
     conditions.push(`business_name ILIKE $${idx++}`);
     params.push(`%${filter.search}%`);
   }
-  if (filter.status) {
+  if (filter.status && STATUS_MAP[filter.status]) {
     conditions.push(`status = $${idx++}`);
     params.push(filter.status);
   }
