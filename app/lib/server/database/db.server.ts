@@ -108,3 +108,41 @@ sqlWrapper.query = async function (queryText: string, params?: any[]) {
 };
 
 export const sql: SqlQueryClient = sqlWrapper;
+
+export async function setupDatabase(): Promise<void> {
+  await sql.query(`
+    CREATE TABLE IF NOT EXISTS user_invites (
+      email TEXT PRIMARY KEY,
+      invited_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `);
+
+  await sql.query(`
+    CREATE TABLE IF NOT EXISTS business_notes (
+      id SERIAL PRIMARY KEY,
+      business_id INTEGER NOT NULL,
+      content TEXT NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      deleted_at TIMESTAMPTZ
+    )
+  `);
+
+  await sql.query(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'businesses' AND column_name = 'status'
+      ) THEN
+        ALTER TABLE businesses ADD COLUMN status TEXT DEFAULT 'new';
+      END IF;
+    END $$;
+  `);
+
+  await sql.query(`CREATE INDEX IF NOT EXISTS idx_businesses_status ON businesses(status)`);
+  await sql.query(`CREATE INDEX IF NOT EXISTS idx_businesses_region ON businesses(region)`);
+  await sql.query(`CREATE INDEX IF NOT EXISTS idx_businesses_status_id ON businesses(status, id DESC)`);
+  await sql.query(`CREATE INDEX IF NOT EXISTS idx_business_notes_bid ON business_notes(business_id, deleted_at, created_at DESC)`);
+  await sql.query(`CREATE INDEX IF NOT EXISTS idx_user_invites_email ON user_invites(email)`);
+}

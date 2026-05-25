@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { pool, sql } from "~/lib/server/database/db.server";
+import { pool, sql, setupDatabase } from "~/lib/server/database/db.server";
 import { ROUTES } from "~/lib/routes";
 
 export const auth = betterAuth({
@@ -22,6 +22,7 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async (session) => {
+          await setupDatabase();
           const result = await sql.query(
             `SELECT email FROM "user" WHERE id = $1`,
             [session.userId],
