@@ -2,6 +2,9 @@ import { Pool, neon } from "@neondatabase/serverless";
 
 export const pool = new Pool({
   connectionString: process.env.NEON_DATABASE_URL,
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 });
 
 const sqlRaw = neon(process.env.NEON_DATABASE_URL!);
