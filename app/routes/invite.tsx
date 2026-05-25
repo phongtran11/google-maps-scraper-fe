@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { MetaFunction, ActionFunctionArgs } from "react-router";
 import { Form, useActionData, useNavigation } from "react-router";
+import { verifySameOrigin } from "~/lib/server/csrf.server";
 import { createInvite, checkInviteExists } from "~/lib/server/database/invites.server";
 import {
   Card,
@@ -26,6 +27,8 @@ interface ActionData {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  verifySameOrigin(request);
+
   const formData = await request.formData();
   const email = formData.get("email")?.toString()?.trim();
 
