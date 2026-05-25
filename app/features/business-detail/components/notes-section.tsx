@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRouteLoaderData } from "react-router";
+import { useRouteLoaderData, useFetcher } from "react-router";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ interface NotesSectionProps {
 }
 
 interface NoteInputProps {
-  noteFetcher: any;
+  noteFetcher: ReturnType<typeof useFetcher>;
   action: string;
   isSubmitting: boolean;
 }
@@ -67,7 +67,7 @@ function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
 interface NoteItemProps {
   note: NoteRow;
   currentUserEmail: string | undefined;
-  noteFetcher: any;
+  noteFetcher: ReturnType<typeof useFetcher>;
   action: string;
 }
 
@@ -230,7 +230,8 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
     initialNotes,
   });
 
-  const appLayoutData = useRouteLoaderData<any>("routes/app-layout");
+  type AppLayoutData = { user: { name: string; email: string; image?: string | null } };
+  const appLayoutData = useRouteLoaderData<AppLayoutData>("routes/app-layout");
   const currentUserEmail = appLayoutData?.user?.email;
 
   return (
