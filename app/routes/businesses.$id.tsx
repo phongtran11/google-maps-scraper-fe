@@ -9,21 +9,31 @@ import { BusinessSidebar } from "~/features/business-detail/components/business-
 import { PageHeader } from "~/shared/components";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  if (!params.id) {
-    throw new Response("Mã doanh nghiệp không hợp lệ", { status: 400 });
+  try {
+    if (!params.id) {
+      throw new Response("Mã doanh nghiệp không hợp lệ", { status: 400 });
+    }
+
+    const id = parseInt(params.id, 10);
+    if (isNaN(id)) {
+      throw new Response("Mã doanh nghiệp không hợp lệ", { status: 400 });
+    }
+
+    const [business, notes] = await Promise.all([
+      getBusinessById(id),
+      getBusinessNotes(id),
+    ]);
+
+    if (!business) {
+      throw new Response("Không tìm thấy doanh nghiệp", { status: 404 });
+    }
+
+    return { business, notes };
+  } catch (err) {
+    if (err instanceof Response) throw err;
+    console.error("Business detail loader error:", err);
+    throw new Response("Lỗi máy chủ. Vui lòng thử lại sau.", { status: 500 });
   }
-
-  const business = await getBusinessById(params.id);
-  if (!business) {
-    throw new Response("Không tìm thấy doanh nghiệp", { status: 404 });
-  }
-
-  const notes = await getBusinessNotes(params.id);
-
-  return {
-    business,
-    notes,
-  };
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
