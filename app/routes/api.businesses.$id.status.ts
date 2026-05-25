@@ -19,48 +19,56 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     );
   }
 
-  const formData = await request.formData();
-  const status = formData.get("status")?.toString();
+  try {
+    const formData = await request.formData();
+    const status = formData.get("status")?.toString();
 
-  if (!status || !ALLOWED.includes(status)) {
+    if (!status || !ALLOWED.includes(status)) {
+      return Response.json(
+        { message: "Invalid status", error: "invalid_status" },
+        { status: 400 },
+      );
+    }
+
+    const currentResult = await sql.query(
+      `SELECT status FROM businesses WHERE id = $1`,
+      [params.id],
+    );
+
+    if (currentResult.length === 0) {
+      return Response.json(
+        { message: "Business not found", error: "business_not_found" },
+        { status: 404 },
+      );
+    }
+
+    const currentStatus = currentResult[0].status;
+    const allowedTransitions = NEXT_STATUS[currentStatus] ?? [];
+
+    if (currentStatus !== status && !allowedTransitions.includes(status)) {
+      return Response.json(
+        {
+          message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
+          error: "invalid_transition",
+        },
+        { status: 400 },
+      );
+    }
+
+    const result = await sql.query(
+      `UPDATE businesses SET status = $1 WHERE id = $2 RETURNING status`,
+      [status, params.id],
+    );
+
     return Response.json(
-      { message: "Invalid status", error: "invalid_status" },
-      { status: 400 },
+      { message: "Status updated successfully", data: result[0] },
+      { status: 200 },
+    );
+  } catch (err) {
+    console.error("Status action error:", err);
+    return Response.json(
+      { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error" },
+      { status: 500 },
     );
   }
-
-  const currentResult = await sql.query(
-    `SELECT status FROM businesses WHERE id = $1`,
-    [params.id],
-  );
-
-  if (currentResult.length === 0) {
-    return Response.json(
-      { message: "Business not found", error: "business_not_found" },
-      { status: 404 },
-    );
-  }
-
-  const currentStatus = currentResult[0].status;
-  const allowedTransitions = NEXT_STATUS[currentStatus] ?? [];
-
-  if (currentStatus !== status && !allowedTransitions.includes(status)) {
-    return Response.json(
-      {
-        message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
-        error: "invalid_transition",
-      },
-      { status: 400 },
-    );
-  }
-
-  const result = await sql.query(
-    `UPDATE businesses SET status = $1 WHERE id = $2 RETURNING status`,
-    [status, params.id],
-  );
-
-  return Response.json(
-    { message: "Status updated successfully", data: result[0] },
-    { status: 200 },
-  );
 }
