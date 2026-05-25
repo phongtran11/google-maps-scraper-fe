@@ -14,7 +14,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   const session = context.get(sessionContext);
   if (!session) {
     return Response.json(
-      { message: "Unauthorized", error: "unauthorized" },
+      { message: "Không có quyền truy cập", error: "unauthorized" },
       { status: 401 },
     );
   }
@@ -25,7 +25,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
     if (!status || !ALLOWED.includes(status)) {
       return Response.json(
-        { message: "Invalid status", error: "invalid_status" },
+        { message: "Trạng thái không hợp lệ", error: "invalid_status" },
         { status: 400 },
       );
     }
@@ -37,7 +37,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
     if (currentResult.length === 0) {
       return Response.json(
-        { message: "Business not found", error: "business_not_found" },
+        { message: "Không tìm thấy doanh nghiệp", error: "business_not_found" },
         { status: 404 },
       );
     }

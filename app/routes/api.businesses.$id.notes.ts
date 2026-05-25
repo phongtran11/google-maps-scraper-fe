@@ -14,11 +14,19 @@ import { validateMethod } from "~/lib/server/request.server";
 const MAX_NOTE_LENGTH = 5000;
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  if (!params.id) {
-    return { notes: [] };
+  try {
+    if (!params.id) {
+      return { notes: [] };
+    }
+    const notes = await getBusinessNotes(params.id);
+    return { notes };
+  } catch (err) {
+    console.error("Notes loader error:", err);
+    return Response.json(
+      { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error", notes: [] },
+      { status: 500 },
+    );
   }
-  const notes = await getBusinessNotes(params.id);
-  return { notes };
 }
 
 export async function action({ request, params, context }: ActionFunctionArgs) {
@@ -31,9 +39,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   if (!params.id) {
     return Response.json(
       {
-        message: "Business ID is required",
+        message: "Thiếu mã doanh nghiệp",
         code: "business_id_required",
-        error: "Business ID is required",
+        error: "business_id_required",
       },
       { status: 400 },
     );
@@ -44,9 +52,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     if (!businessExists) {
       return Response.json(
         {
-          message: "Business not found",
+          message: "Không tìm thấy doanh nghiệp",
           code: "business_not_found",
-          error: "business not found",
+          error: "business_not_found",
         },
         { status: 404 },
       );
@@ -61,9 +69,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!content) {
         return Response.json(
           {
-            message: "Content is required",
+            message: "Nội dung không được để trống",
             code: "content_required",
-            error: "content is required",
+            error: "content_required",
           },
           { status: 400 },
         );
@@ -72,9 +80,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (content.length > MAX_NOTE_LENGTH) {
         return Response.json(
           {
-            message: "Content is too long",
+            message: "Nội dung vượt quá độ dài cho phép",
             code: "content_too_long",
-            error: "content too long",
+            error: "content_too_long",
           },
           { status: 400 },
         );
@@ -90,9 +98,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!noteId) {
         return Response.json(
           {
-            message: "Note ID is required",
+            message: "Thiếu mã ghi chú",
             code: "note_id_required",
-            error: "noteId is required for update",
+            error: "note_id_required",
           },
           { status: 400 },
         );
@@ -101,9 +109,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!content) {
         return Response.json(
           {
-            message: "Content is required",
+            message: "Nội dung không được để trống",
             code: "content_required",
-            error: "content is required",
+            error: "content_required",
           },
           { status: 400 },
         );
@@ -112,9 +120,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (content.length > MAX_NOTE_LENGTH) {
         return Response.json(
           {
-            message: "Content is too long",
+            message: "Nội dung vượt quá độ dài cho phép",
             code: "content_too_long",
-            error: "content too long",
+            error: "content_too_long",
           },
           { status: 400 },
         );
@@ -124,9 +132,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!note) {
         return Response.json(
           {
-            message: "Note not found",
+            message: "Không tìm thấy ghi chú",
             code: "note_not_found",
-            error: "note not found or already deleted",
+            error: "note_not_found",
           },
           { status: 404 },
         );
@@ -135,9 +143,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (note.created_by !== userEmail) {
         return Response.json(
           {
-            message: "Permission denied",
+            message: "Bạn không có quyền thực hiện hành động này",
             code: "permission_denied",
-            error: "You can only edit your own notes",
+            error: "permission_denied",
           },
           { status: 403 },
         );
@@ -151,9 +159,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!noteId) {
         return Response.json(
           {
-            message: "Note ID is required",
+            message: "Thiếu mã ghi chú",
             code: "note_id_required",
-            error: "noteId is required for deletion",
+            error: "note_id_required",
           },
           { status: 400 },
         );
@@ -163,9 +171,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!note) {
         return Response.json(
           {
-            message: "Note not found",
+            message: "Không tìm thấy ghi chú",
             code: "note_not_found",
-            error: "note not found or already deleted",
+            error: "note_not_found",
           },
           { status: 404 },
         );
@@ -174,9 +182,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (note.created_by !== userEmail) {
         return Response.json(
           {
-            message: "Permission denied",
+            message: "Bạn không có quyền thực hiện hành động này",
             code: "permission_denied",
-            error: "You can only delete your own notes",
+            error: "permission_denied",
           },
           { status: 403 },
         );
