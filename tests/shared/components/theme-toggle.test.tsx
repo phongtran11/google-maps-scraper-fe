@@ -28,7 +28,7 @@ describe("ThemeToggle", () => {
   it("shows dark mode aria-label when in light mode", () => {
     render(<ThemeToggle />);
     expect(
-      screen.getByRole("button", { name: "Switch to dark mode" }),
+      screen.getByRole("button", { name: "Chuyển sang chế độ tối" }),
     ).toBeInTheDocument();
   });
 
@@ -36,7 +36,7 @@ describe("ThemeToggle", () => {
     mockTheme = "dark";
     render(<ThemeToggle />);
     expect(
-      screen.getByRole("button", { name: "Switch to light mode" }),
+      screen.getByRole("button", { name: "Chuyển sang chế độ sáng" }),
     ).toBeInTheDocument();
   });
 
@@ -50,7 +50,7 @@ describe("ThemeToggle", () => {
   it("has the correct aria-label based on theme", () => {
     render(<ThemeToggle />);
     const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("aria-label", "Switch to dark mode");
+    expect(button).toHaveAttribute("aria-label", "Chuyển sang chế độ tối");
   });
 
   it("uses ghost variant and icon size", () => {

@@ -28,15 +28,13 @@ export const STATUS_FILTER_OPTIONS: { key: string; label: string }[] = [
 
 export const REGIONS = {
   ba_ria: "Bà Rịa",
-  nghia_thanh: "Nghĩa Thành",
+  chau_duc: "Châu Đức",
   dong_nai: "Đồng Nai",
   vung_tau: "Vũng Tàu",
   hcm: "Hồ Chí Minh",
-  long_dien: "Long Điền",
+  long_dat: "Long Đất",
   phu_my: "Phú Mỹ",
   xuyen_moc: "Xuyên Mộc",
-  ngai_giao: "Ngãi Giao",
-  dat_do: "Đất Đỏ",
 } as const;
 
 /** Options for the area/region dropdown filter. First entry is the "all" sentinel. */
