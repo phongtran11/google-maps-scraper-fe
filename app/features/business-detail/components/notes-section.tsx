@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import { useRouteLoaderData, useFetcher } from "react-router";
 import {
   Card,
@@ -47,10 +47,16 @@ function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
         rows={3}
         placeholder="Nhập ghi chú..."
         className="resize-none"
+        maxLength={5000}
         onKeyDown={handleKeyDown}
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
+      {content.length > 4500 && (
+        <span className="text-xs text-muted-foreground">
+          {5000 - content.length} ký tự còn lại
+        </span>
+      )}
       <Button
         loading={isSubmitting}
         disabled={!content.trim() || isSubmitting}
@@ -71,7 +77,7 @@ interface NoteItemProps {
   action: string;
 }
 
-function NoteItem({
+const NoteItem = memo(function NoteItem({
   note,
   currentUserEmail,
   noteFetcher,
@@ -222,7 +228,7 @@ function NoteItem({
       )}
     </div>
   );
-}
+});
 
 export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
   const { noteFetcher, notes, isSubmitting, action } = useNotesManager({

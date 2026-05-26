@@ -30,9 +30,6 @@ export function Pagination({
   pageSizeOptions = [20, 50, 100],
   onPageSizeChange,
 }: PaginationProps) {
-  const showPageSizeSelector = !!(pageSizeOptions && onPageSizeChange);
-  if (totalPages <= 1 && !showPageSizeSelector) return null;
-
   const pageNumbers = getPageNumbers(page, totalPages);
   const rangeFrom =
     totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);

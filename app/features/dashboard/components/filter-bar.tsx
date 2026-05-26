@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
 import { Input, Select, Button } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
@@ -29,11 +29,6 @@ export function FilterBar() {
       setSearchParams(next);
     });
   };
-
-  useEffect(() => {
-    setSearch(searchParams.get("search") || "");
-    setRegion(searchParams.get("region") || "");
-  }, [searchParams]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">

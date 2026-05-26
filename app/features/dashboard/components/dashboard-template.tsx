@@ -20,7 +20,7 @@ export function DashboardTemplate({
     <div className="space-y-8">
       <PageHeader title="Trang quản trị" />
 
-      <FilterBar />
+      <FilterBar key={JSON.stringify([page, pageSize])} />
 
       <BusinessTable
         businesses={businesses}

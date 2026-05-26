@@ -22,6 +22,9 @@ export function ReviewImages({ urls }: ReviewImagesProps) {
               <img
                 src={url}
                 alt={`Ảnh ${i + 1}`}
+                width={300}
+                height={300}
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="w-full aspect-square object-cover rounded-md border hover:opacity-80 transition-opacity"
                 loading="lazy"
               />
