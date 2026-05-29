@@ -33,5 +33,3 @@ export { Tooltip } from "./tooltip";
 export type { TooltipProps } from "./tooltip";
 export { PageHeader } from "./page-header";
 export type { PageHeaderProps } from "./page-header";
-
-

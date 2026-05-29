@@ -8,7 +8,7 @@ export const auth = betterAuth({
   database: pool,
   trustedOrigins: [
     process.env.BETTER_AUTH_URL!,
-    "https://google-maps-scraper-fe-production.up.railway.app"
+    "https://google-maps-scraper-fe-production.up.railway.app",
   ].filter(Boolean),
   errorURL: `${ROUTES.login.path}?error=unauthorized`,
   onAPIError: {

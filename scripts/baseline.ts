@@ -54,11 +54,13 @@ async function main() {
       )
     `);
 
-    console.log("Clearing existing entries and registering new baseline in drizzle.__drizzle_migrations...");
+    console.log(
+      "Clearing existing entries and registering new baseline in drizzle.__drizzle_migrations...",
+    );
     await client.query(`DELETE FROM "drizzle"."__drizzle_migrations"`);
     await client.query(
       `INSERT INTO "drizzle"."__drizzle_migrations" (hash, created_at) VALUES ($1, $2)`,
-      [hash, when]
+      [hash, when],
     );
     console.log("Baseline successful!");
   } catch (error) {

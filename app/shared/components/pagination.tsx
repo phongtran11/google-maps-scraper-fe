@@ -36,23 +36,20 @@ export function Pagination({
     return null;
   }
 
-  const rangeFrom =
-    totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);
+  const rangeFrom = totalCount === 0 ? 0 : Math.min((page - 1) * pageSize + 1, totalCount);
   const rangeTo = Math.min(page * pageSize, totalCount);
 
   return (
     <nav
       aria-label="Phân trang"
-      className="flex items-center justify-between border-t border-border px-4 py-4 bg-muted/20"
+      className="border-border bg-muted/20 flex items-center justify-between border-t px-4 py-4"
     >
       {/* Summary label + page-size selector */}
       <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">
-          Hiển thị{" "}
-          <span className="font-medium text-foreground">{rangeFrom}</span> đến{" "}
-          <span className="font-medium text-foreground">{rangeTo}</span> trong
-          số <span className="font-medium text-foreground">{totalCount}</span>{" "}
-          bản ghi
+        <span className="text-muted-foreground text-sm">
+          Hiển thị <span className="text-foreground font-medium">{rangeFrom}</span> đến{" "}
+          <span className="text-foreground font-medium">{rangeTo}</span> trong số{" "}
+          <span className="text-foreground font-medium">{totalCount}</span> bản ghi
         </span>
         {pageSizeOptions && onPageSizeChange && (
           <div className="flex items-center gap-1.5">
@@ -75,7 +72,7 @@ export function Pagination({
         {/* Previous */}
         <Link
           to={page > 1 ? getPageUrl(page - 1) : "#"}
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${
+          className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
             page <= 1 ? "pointer-events-none opacity-40" : ""
           }`}
           title="Trang trước"
@@ -89,7 +86,7 @@ export function Pagination({
             return (
               <span
                 key={`ellipsis-${idx}`}
-                className="inline-flex h-8 w-8 items-center justify-center text-sm text-muted-foreground"
+                className="text-muted-foreground inline-flex h-8 w-8 items-center justify-center text-sm"
               >
                 ...
               </span>
@@ -101,7 +98,7 @@ export function Pagination({
             <Link
               key={`page-${num}`}
               to={getPageUrl(num as number)}
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors border ${
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background border-input text-foreground hover:bg-accent hover:text-accent-foreground"
@@ -115,7 +112,7 @@ export function Pagination({
         {/* Next */}
         <Link
           to={page < totalPages ? getPageUrl(page + 1) : "#"}
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${
+          className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
             page >= totalPages ? "pointer-events-none opacity-40" : ""
           }`}
           title="Trang sau"

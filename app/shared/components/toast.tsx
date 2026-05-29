@@ -1,21 +1,6 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  forwardRef,
-} from "react";
+import { createContext, useContext, useState, useCallback, useMemo, forwardRef } from "react";
 import type { ComponentProps, ReactNode } from "react";
-import {
-  Provider,
-  Root,
-  Title,
-  Description,
-  Close,
-  Viewport,
-  Action,
-} from "@radix-ui/react-toast";
+import { Provider, Root, Title, Description, Close, Viewport, Action } from "@radix-ui/react-toast";
 import { cn } from "~/lib/utils";
 import { Button } from "~/shared/components/button";
 import { X } from "~/shared/icons/x";
@@ -92,7 +77,7 @@ const ToastItem = forwardRef<HTMLLIElement, ToastItemProps>(
     <Root
       ref={ref}
       className={cn(
-        "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-md border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[state=closed]:animate-hide data-[state=open]:animate-slide-in data-[swipe=end]:animate-swipe-out data-[swipe=cancel]:transition-[transform_200ms_ease-out]",
+        "group data-[state=closed]:animate-hide data-[state=open]:animate-slide-in data-[swipe=end]:animate-swipe-out pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-md border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)]",
         toastColorVariants[variant],
         className,
       )}
@@ -124,10 +109,7 @@ interface ToastProviderProps {
   position?: ToastPosition;
 }
 
-function ToastProvider({
-  children,
-  position = "bottom-right",
-}: ToastProviderProps) {
+function ToastProvider({ children, position = "bottom-right" }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const addToast = useCallback((props: Omit<Toast, "id">) => {
@@ -140,10 +122,7 @@ function ToastProvider({
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const value = useMemo(
-    () => ({ toast: addToast, dismiss }),
-    [addToast, dismiss],
-  );
+  const value = useMemo(() => ({ toast: addToast, dismiss }), [addToast, dismiss]);
 
   return (
     <ToastContext.Provider value={value}>
@@ -160,22 +139,13 @@ function ToastProvider({
               if (!open) dismiss(t.id);
             }}
           >
-            {t.title && (
-              <Title className="font-medium text-sm">{t.title}</Title>
-            )}
+            {t.title && <Title className="text-sm font-medium">{t.title}</Title>}
             {t.description && (
-              <Description className="text-sm opacity-90 mt-1">
-                {t.description}
-              </Description>
+              <Description className="mt-1 text-sm opacity-90">{t.description}</Description>
             )}
             {t.action && (
               <Action asChild altText={t.action.label}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={t.action.onClick}
-                >
+                <Button variant="outline" size="sm" className="mt-2" onClick={t.action.onClick}>
                   {t.action.label}
                 </Button>
               </Action>

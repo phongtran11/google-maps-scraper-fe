@@ -36,7 +36,7 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
   ) => (
     <div
       className={cn(
-        "relative w-full overflow-auto rounded-md border border-border max-h-[600px] md:max-h-[calc(100vh-320px)] overflow-y-auto",
+        "border-border relative max-h-[600px] w-full overflow-auto overflow-y-auto rounded-md border md:max-h-[calc(100vh-320px)]",
         wrapperClassName,
       )}
     >
@@ -47,7 +47,7 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
           tableVariants.variant[variant],
           tableVariants.size[tableSize],
           stickyHeader &&
-            "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:bg-muted [&_thead_th]:z-10 [&_thead_th]:border-b [&_thead_th]:border-border",
+            "[&_thead_th]:bg-muted [&_thead_th]:border-border [&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10 [&_thead_th]:border-b",
           className,
         )}
         {...props}
@@ -57,38 +57,29 @@ const Table = forwardRef<HTMLTableElement, TableProps>(
 );
 Table.displayName = "Table";
 
-const TableHeader = forwardRef<
-  HTMLTableSectionElement,
-  ComponentProps<"thead">
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
-));
+const TableHeader = forwardRef<HTMLTableSectionElement, ComponentProps<"thead">>(
+  ({ className, ...props }, ref) => (
+    <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  ),
+);
 TableHeader.displayName = "TableHeader";
 
 const TableBody = forwardRef<HTMLTableSectionElement, ComponentProps<"tbody">>(
   ({ className, ...props }, ref) => (
-    <tbody
-      ref={ref}
-      className={cn("[&_tr:last-child]:border-0", className)}
-      {...props}
-    />
+    <tbody ref={ref} className={cn("[&_tr:last-child]:border-0", className)} {...props} />
   ),
 );
 TableBody.displayName = "TableBody";
 
-const TableFooter = forwardRef<
-  HTMLTableSectionElement,
-  ComponentProps<"tfoot">
->(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className,
-    )}
-    {...props}
-  />
-));
+const TableFooter = forwardRef<HTMLTableSectionElement, ComponentProps<"tfoot">>(
+  ({ className, ...props }, ref) => (
+    <tfoot
+      ref={ref}
+      className={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", className)}
+      {...props}
+    />
+  ),
+);
 TableFooter.displayName = "TableFooter";
 
 const TableRow = forwardRef<HTMLTableRowElement, ComponentProps<"tr">>(
@@ -96,7 +87,7 @@ const TableRow = forwardRef<HTMLTableRowElement, ComponentProps<"tr">>(
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-border hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
         className,
       )}
       {...props}
@@ -110,7 +101,7 @@ const TableHead = forwardRef<HTMLTableCellElement, ComponentProps<"th">>(
     <th
       ref={ref}
       className={cn(
-        "h-12 text-left align-middle font-medium text-muted-foreground has-[[role=checkbox]]:pr-0",
+        "text-muted-foreground h-12 text-left align-middle font-medium has-[[role=checkbox]]:pr-0",
         className,
       )}
       {...props}
@@ -121,22 +112,13 @@ TableHead.displayName = "TableHead";
 
 const TableCell = forwardRef<HTMLTableCellElement, ComponentProps<"td">>(
   ({ className, ...props }, ref) => (
-    <td
-      ref={ref}
-      className={cn("align-middle has-[[role=checkbox]]:pr-0", className)}
-      {...props}
-    />
+    <td ref={ref} className={cn("align-middle has-[[role=checkbox]]:pr-0", className)} {...props} />
   ),
 );
 TableCell.displayName = "TableCell";
 
 function TableCaption({ className, ...props }: ComponentProps<"caption">) {
-  return (
-    <caption
-      className={cn("mt-4 text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  );
+  return <caption className={cn("text-muted-foreground mt-4 text-sm", className)} {...props} />;
 }
 TableCaption.displayName = "TableCaption";
 

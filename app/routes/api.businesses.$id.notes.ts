@@ -19,10 +19,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
       return { notes: [] };
     }
     const notes = await getBusinessNotes(params.id);
-    return Response.json({ notes }, {
-      status: 200,
-      headers: { "Cache-Control": "private, max-age=10" },
-    });
+    return Response.json(
+      { notes },
+      {
+        status: 200,
+        headers: { "Cache-Control": "private, max-age=10" },
+      },
+    );
   } catch (err) {
     console.error("Notes loader error:", err);
     return Response.json(
@@ -93,10 +96,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
       await createBusinessNote(params.id, content, userEmail);
       const notes = await getBusinessNotes(params.id);
-      return Response.json(
-        { notes, note: notes[0] },
-        { headers: { "Cache-Control": "no-store" } },
-      );
+      return Response.json({ notes, note: notes[0] }, { headers: { "Cache-Control": "no-store" } });
     } else if (method === "PATCH") {
       const noteId = formData.get("noteId")?.toString();
       const content = formData.get("content")?.toString()?.trim();
@@ -158,10 +158,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       }
 
       await updateBusinessNote(noteId, content);
-      return Response.json(
-        { success: true },
-        { headers: { "Cache-Control": "no-store" } },
-      );
+      return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
     } else if (method === "DELETE") {
       const noteId = formData.get("noteId")?.toString();
 
@@ -200,10 +197,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       }
 
       await deleteBusinessNote(noteId);
-      return Response.json(
-        { success: true },
-        { headers: { "Cache-Control": "no-store" } },
-      );
+      return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
     }
   } catch (err) {
     console.error("Notes action error:", err);

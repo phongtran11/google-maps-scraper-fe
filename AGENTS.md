@@ -115,12 +115,12 @@ app/
 
 ## Database schema (auto-managed)
 
-| Table | Created by | Notes |
-|---|---|---|
-| `user`, `session`, `account`, `verification` | Better Auth adapter | Auto-migrated on first `betterAuth()` call |
-| `user_invites` | `setupDatabase()` | email (unique) + invited_at |
-| `business_notes` | `setupDatabase()` | business_id FK, content, created_by, created_at |
-| `businesses.status` | `setupDatabase()` | ALTER TABLE adds column if missing, default 'new' |
+| Table                                        | Created by          | Notes                                             |
+| -------------------------------------------- | ------------------- | ------------------------------------------------- |
+| `user`, `session`, `account`, `verification` | Better Auth adapter | Auto-migrated on first `betterAuth()` call        |
+| `user_invites`                               | `setupDatabase()`   | email (unique) + invited_at                       |
+| `business_notes`                             | `setupDatabase()`   | business_id FK, content, created_by, created_at   |
+| `businesses.status`                          | `setupDatabase()`   | ALTER TABLE adds column if missing, default 'new' |
 
 ## Gotchas
 
@@ -136,6 +136,7 @@ app/
 ## Rate limiting
 
 Rate limiting is not implemented in application code. Recommended approaches:
+
 - **Cloudflare**: Use WAF rate limiting rules (preferred for production)
 - **Nginx**: `limit_req_zone` + `limit_req` directives (if self-hosted)
 - Apply to mutation endpoints: `/api/businesses/:id/notes`, `/api/businesses/:id/status`, `/invite`

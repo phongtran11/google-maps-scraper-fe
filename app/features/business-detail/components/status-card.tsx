@@ -1,10 +1,5 @@
 import { useFetcher } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/shared/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
 import { Select } from "~/shared/components/select";
 import { STATUS_MAP, NEXT_STATUS } from "~/lib/constants";
 import { ROUTES } from "~/lib/routes";
@@ -17,8 +12,7 @@ interface StatusCardProps {
 export function StatusCard({ businessId, status }: StatusCardProps) {
   const fetcher = useFetcher();
 
-  const optimisticStatus =
-    fetcher.formData?.get("status")?.toString() ?? status;
+  const optimisticStatus = fetcher.formData?.get("status")?.toString() ?? status;
 
   const next = NEXT_STATUS[optimisticStatus] ?? [];
   const hasNoTransitions = next.length === 0;
@@ -76,7 +70,7 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
         />
 
         {optimisticStatus === "rejected" && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Doanh nghiệp này đã bị từ chối và không thể thay đổi trạng thái.
           </p>
         )}

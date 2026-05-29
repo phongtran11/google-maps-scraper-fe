@@ -6,5 +6,4 @@ export const BUSINESS_STATUS = {
   REJECTED: "rejected",
 } as const;
 
-export type BusinessStatus =
-  (typeof BUSINESS_STATUS)[keyof typeof BUSINESS_STATUS];
+export type BusinessStatus = (typeof BUSINESS_STATUS)[keyof typeof BUSINESS_STATUS];

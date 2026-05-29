@@ -54,10 +54,7 @@ describe("RatingBadge", () => {
 
   it("has aria-label with Vietnamese", () => {
     render(<RatingBadge rating={4.5} />);
-    expect(screen.getByText("4.5")).toHaveAttribute(
-      "aria-label",
-      "Đánh giá 4.5 trên 5 sao",
-    );
+    expect(screen.getByText("4.5")).toHaveAttribute("aria-label", "Đánh giá 4.5 trên 5 sao");
   });
 
   it("renders 0.0 for zero rating", () => {

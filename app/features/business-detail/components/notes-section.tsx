@@ -1,11 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import { useRouteLoaderData, useFetcher } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/shared/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
 import { relativeTime } from "~/lib/format";
 import { useNotesManager } from "../hooks/useNotesManager";
 import type { NoteRow } from "~/lib/types";
@@ -53,9 +48,7 @@ function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
         onChange={(e) => setContent(e.target.value)}
       />
       {content.length > 4500 && (
-        <span className="text-xs text-muted-foreground">
-          {5000 - content.length} ký tự còn lại
-        </span>
+        <span className="text-muted-foreground text-xs">{5000 - content.length} ký tự còn lại</span>
       )}
       <Button
         loading={isSubmitting}
@@ -120,30 +113,23 @@ const NoteItem = memo(function NoteItem({
   };
 
   const handleDelete = () => {
-    noteFetcher.submit(
-      { noteId: String(note.id) },
-      { method: "delete", action },
-    );
+    noteFetcher.submit({ noteId: String(note.id) }, { method: "delete", action });
     setShowDeleteConfirm(false);
   };
 
   return (
-    <div className="relative group rounded-md border bg-muted/30 p-3 transition-colors hover:bg-muted/40">
-      <div className="flex items-center justify-between gap-4 mb-2">
+    <div className="group bg-muted/30 hover:bg-muted/40 relative rounded-md border p-3 transition-colors">
+      <div className="mb-2 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-foreground">
-            {note.created_by}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            {relativeTime(note.created_at)}
-          </span>
+          <span className="text-foreground text-xs font-semibold">{note.created_by}</span>
+          <span className="text-muted-foreground text-xs">{relativeTime(note.created_at)}</span>
         </div>
 
         {isCreator && !isEditing && !showDeleteConfirm && (
-          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+          <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <button
               onClick={() => setIsEditing(true)}
-              className="text-[11px] font-medium text-primary hover:underline cursor-pointer"
+              className="text-primary cursor-pointer text-[11px] font-medium hover:underline"
               type="button"
             >
               Sửa
@@ -151,7 +137,7 @@ const NoteItem = memo(function NoteItem({
             <span className="text-muted-foreground/40 text-[10px]">•</span>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="text-[11px] font-medium text-destructive hover:underline cursor-pointer"
+              className="text-destructive cursor-pointer text-[11px] font-medium hover:underline"
               type="button"
             >
               Xóa
@@ -161,21 +147,21 @@ const NoteItem = memo(function NoteItem({
       </div>
 
       {isEditing ? (
-        <form onSubmit={handleEditSubmit} className="space-y-2 mt-1">
+        <form onSubmit={handleEditSubmit} className="mt-1 space-y-2">
           <Textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
             onKeyDown={handleKeyDown}
             rows={2}
-            className="w-full text-sm resize-none"
+            className="w-full resize-none text-sm"
             autoFocus
           />
-          <div className="flex items-center gap-2 justify-end">
+          <div className="flex items-center justify-end gap-2">
             <Button
               size="sm"
               variant="outline"
               type="button"
-              className="h-7 px-2.5 text-xs rounded"
+              className="h-7 rounded px-2.5 text-xs"
               onClick={() => {
                 setIsEditing(false);
                 setEditContent(note.content);
@@ -186,26 +172,24 @@ const NoteItem = memo(function NoteItem({
             <Button
               size="sm"
               type="submit"
-              className="h-7 px-2.5 text-xs rounded"
-              disabled={
-                !editContent.trim() || editContent.trim() === note.content
-              }
+              className="h-7 rounded px-2.5 text-xs"
+              disabled={!editContent.trim() || editContent.trim() === note.content}
             >
               Lưu
             </Button>
           </div>
         </form>
       ) : showDeleteConfirm ? (
-        <div className="flex flex-col gap-2 p-2 border border-destructive/20 rounded bg-destructive/5 mt-1">
-          <p className="text-xs text-destructive font-medium">
+        <div className="border-destructive/20 bg-destructive/5 mt-1 flex flex-col gap-2 rounded border p-2">
+          <p className="text-destructive text-xs font-medium">
             Bạn chắc chắn muốn xóa ghi chú này?
           </p>
-          <div className="flex items-center gap-2 justify-end">
+          <div className="flex items-center justify-end gap-2">
             <Button
               size="sm"
               variant="ghost"
               type="button"
-              className="h-7 px-2.5 text-xs rounded"
+              className="h-7 rounded px-2.5 text-xs"
               onClick={() => setShowDeleteConfirm(false)}
             >
               Hủy
@@ -214,7 +198,7 @@ const NoteItem = memo(function NoteItem({
               size="sm"
               variant="destructive"
               type="button"
-              className="h-7 px-2.5 text-xs rounded"
+              className="h-7 rounded px-2.5 text-xs"
               onClick={handleDelete}
             >
               Xóa
@@ -222,7 +206,7 @@ const NoteItem = memo(function NoteItem({
           </div>
         </div>
       ) : (
-        <p className="text-sm whitespace-pre-wrap text-foreground/90 leading-relaxed">
+        <p className="text-foreground/90 text-sm leading-relaxed whitespace-pre-wrap">
           {note.content}
         </p>
       )}
@@ -246,14 +230,10 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
         <CardTitle>Ghi Chú</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <NoteInput
-          noteFetcher={noteFetcher}
-          action={action}
-          isSubmitting={isSubmitting}
-        />
+        <NoteInput noteFetcher={noteFetcher} action={action} isSubmitting={isSubmitting} />
 
         {noteFetcher.data?.error && (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             Lỗi: {noteFetcher.data.message || "Đã xảy ra lỗi"}
           </p>
         )}
@@ -273,9 +253,7 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
         )}
 
         {notes.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">
-            Chưa có ghi chú nào.
-          </p>
+          <p className="text-muted-foreground py-4 text-center text-sm">Chưa có ghi chú nào.</p>
         )}
       </CardContent>
     </Card>

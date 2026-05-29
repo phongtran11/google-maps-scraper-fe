@@ -4,13 +4,13 @@ React Router 7 full-stack dashboard for scraped Google Maps businesses. Browse, 
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | React Router 7 (SSR) |
-| Database | Neon Serverless Postgres |
-| Auth | Better Auth (Google OAuth, invite-only) |
-| Styling | TailwindCSS v4 |
-| Package manager | pnpm |
+| Layer           | Technology                              |
+| --------------- | --------------------------------------- |
+| Framework       | React Router 7 (SSR)                    |
+| Database        | Neon Serverless Postgres                |
+| Auth            | Better Auth (Google OAuth, invite-only) |
+| Styling         | TailwindCSS v4                          |
+| Package manager | pnpm                                    |
 
 ## Getting Started
 
@@ -112,11 +112,11 @@ Mới ──→ Đã tiếp cận ──→ Đã liên hệ ──→ Tiềm nă
 
 ### Phone Formatting (Zalo)
 
-| Input | Output |
-|---|---|
-| `0987654321` | `https://zalo.me/p/84987654321` |
+| Input          | Output                          |
+| -------------- | ------------------------------- |
+| `0987654321`   | `https://zalo.me/p/84987654321` |
 | `+84987654321` | `https://zalo.me/p/84987654321` |
-| `84987654321` | `https://zalo.me/p/84987654321` |
+| `84987654321`  | `https://zalo.me/p/84987654321` |
 
 ## Architecture
 
@@ -161,12 +161,12 @@ type Business = Tables<"businesses">;
 
 ### Tables
 
-| Table | Purpose |
-|---|---|
-| `businesses` | Scraped business listings |
-| `scrape_runs` | Scraping job history |
-| `business_notes` | Notes per business |
-| `user_invites` | Allowed email list |
+| Table                                        | Purpose                    |
+| -------------------------------------------- | -------------------------- |
+| `businesses`                                 | Scraped business listings  |
+| `scrape_runs`                                | Scraping job history       |
+| `business_notes`                             | Notes per business         |
+| `user_invites`                               | Allowed email list         |
 | `user`, `session`, `account`, `verification` | Better Auth (auto-managed) |
 
 ---

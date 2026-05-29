@@ -19,10 +19,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       throw new Response("Mã doanh nghiệp không hợp lệ", { status: 400 });
     }
 
-    const [business, notes] = await Promise.all([
-      getBusinessById(id),
-      getBusinessNotes(id),
-    ]);
+    const [business, notes] = await Promise.all([getBusinessById(id), getBusinessNotes(id)]);
 
     if (!business) {
       throw new Response("Không tìm thấy doanh nghiệp", { status: 404 });
@@ -50,7 +47,7 @@ export default function BusinessDetail() {
       <PageHeader title={b.business_name} />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           <BusinessDetails business={b} />
           {b.review_image_urls && b.review_image_urls.length > 0 && (
             <ReviewImages urls={b.review_image_urls} />

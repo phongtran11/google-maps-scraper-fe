@@ -22,7 +22,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
       ref={ref}
       role="alert"
       className={cn(
-        "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-current",
+        "relative w-full rounded-lg border p-4 [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg]:text-current [&>svg~*]:pl-7",
         alertVariants.variant[variant],
         className,
       )}
@@ -36,7 +36,7 @@ const AlertTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h5">>(
   ({ className, ...props }, ref) => (
     <h5
       ref={ref}
-      className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+      className={cn("mb-1 leading-none font-medium tracking-tight", className)}
       {...props}
     />
   ),
@@ -44,22 +44,13 @@ const AlertTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h5">>(
 AlertTitle.displayName = "AlertTitle";
 
 function AlertDescription({ className, ...props }: ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-sm [&_p]:leading-relaxed", className)}
-      {...props}
-    />
-  );
+  return <p className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />;
 }
 AlertDescription.displayName = "AlertDescription";
 
 const AlertAction = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("mt-3 flex items-center gap-2", className)}
-      {...props}
-    />
+    <div ref={ref} className={cn("mt-3 flex items-center gap-2", className)} {...props} />
   ),
 );
 AlertAction.displayName = "AlertAction";

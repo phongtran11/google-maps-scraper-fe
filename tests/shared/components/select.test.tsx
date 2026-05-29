@@ -10,7 +10,6 @@ const options = [
 ];
 
 describe("Select", () => {
-
   it("renders with placeholder when no value selected", () => {
     render(<Select options={options} value="" onChange={vi.fn()} />);
     expect(screen.getByText("Chọn…")).toBeInTheDocument();
@@ -22,14 +21,7 @@ describe("Select", () => {
   });
 
   it("renders with custom placeholder", () => {
-    render(
-      <Select
-        options={options}
-        value=""
-        onChange={vi.fn()}
-        placeholder="Chọn một…"
-      />,
-    );
+    render(<Select options={options} value="" onChange={vi.fn()} placeholder="Chọn một…" />);
     expect(screen.getByText("Chọn một…")).toBeInTheDocument();
   });
 
@@ -157,9 +149,7 @@ describe("Select", () => {
   });
 
   it("disabled button prevents interaction", () => {
-    render(
-      <Select options={options} value="" onChange={vi.fn()} disabled />,
-    );
+    render(<Select options={options} value="" onChange={vi.fn()} disabled />);
     expect(screen.getByRole("button")).toBeDisabled();
   });
 

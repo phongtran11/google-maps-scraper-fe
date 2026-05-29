@@ -6,7 +6,7 @@ interface FieldProps {
 export function Field({ label, children }: FieldProps) {
   return (
     <dl>
-      <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <dt className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {label}
       </dt>
       <dd className="mt-1 text-sm">

@@ -1,10 +1,7 @@
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { DashboardTemplate } from "~/features/dashboard/components/dashboard-template";
-import {
-  getBusinesses,
-  getBusinessesCount,
-} from "~/lib/server/database/businesses.server";
+import { getBusinesses, getBusinessesCount } from "~/lib/server/database/businesses.server";
 import { getIntParam, getStringParam } from "~/lib/utils";
 
 export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];

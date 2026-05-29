@@ -69,7 +69,7 @@ export async function getBusinessesCount({
 
   if (!hasFilters) {
     const result = await db.execute<{ count: string }>(
-      sql`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`
+      sql`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
     );
     return Number(result.rows[0]?.count ?? 0);
   }
@@ -83,24 +83,16 @@ export async function getBusinessesCount({
   return Number(result[0]?.count ?? 0);
 }
 
-export async function getBusinessById(
-  id: string | number,
-): Promise<BusinessRow | null> {
+export async function getBusinessById(id: string | number): Promise<BusinessRow | null> {
   const numId = typeof id === "string" ? parseInt(id, 10) : id;
   if (isNaN(numId)) return null;
 
-  const result = await db
-    .select()
-    .from(businesses)
-    .where(eq(businesses.id, numId))
-    .limit(1);
+  const result = await db.select().from(businesses).where(eq(businesses.id, numId)).limit(1);
 
   return result.length > 0 ? (result[0] as unknown as BusinessRow) : null;
 }
 
-export async function checkBusinessExists(
-  id: string | number,
-): Promise<boolean> {
+export async function checkBusinessExists(id: string | number): Promise<boolean> {
   const numId = typeof id === "string" ? parseInt(id, 10) : id;
   if (isNaN(numId)) return false;
 

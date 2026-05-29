@@ -72,7 +72,11 @@ describe("Button", () => {
   it("does not call onClick when loading", async () => {
     const onClick = vi.fn();
     const user = userEvent.setup();
-    render(<Button loading onClick={onClick}>Đang tải</Button>);
+    render(
+      <Button loading onClick={onClick}>
+        Đang tải
+      </Button>,
+    );
     await user.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
   });

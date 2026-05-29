@@ -17,9 +17,7 @@ const TooltipComponent = memo(function Tooltip({
   className,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(
-    null,
-  );
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
   const showTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -164,7 +162,7 @@ const TooltipComponent = memo(function Tooltip({
               zIndex: 9999,
             }}
             className={cn(
-              "px-3 py-1.5 text-xs font-normal leading-relaxed rounded-md bg-popover text-popover-foreground border border-border shadow-md max-w-[280px] break-words animate-in fade-in zoom-in-95 duration-150 select-none",
+              "bg-popover text-popover-foreground border-border animate-in fade-in zoom-in-95 max-w-[280px] rounded-md border px-3 py-1.5 text-xs leading-relaxed font-normal break-words shadow-md duration-150 select-none",
               className,
             )}
             role="tooltip"

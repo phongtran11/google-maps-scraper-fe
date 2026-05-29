@@ -30,7 +30,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       <span
         ref={ref}
         className={cn(
-          "inline-flex items-center whitespace-nowrap rounded-full font-medium transition-colors",
+          "inline-flex items-center rounded-full font-medium whitespace-nowrap transition-colors",
           badgeVariants.variant[variant],
           badgeVariants.size[size],
           className,

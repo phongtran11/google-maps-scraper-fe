@@ -23,7 +23,6 @@ export function buildWhereClause(filter: BusinessFilter): {
     params.push(filter.status);
   }
 
-  const where =
-    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
   return { where, params, nextIdx: idx };
 }

@@ -41,7 +41,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative flex items-center">
         {prefixIcon && (
-          <span className="absolute left-3 flex items-center text-muted-foreground [&_svg]:size-4">
+          <span className="text-muted-foreground absolute left-3 flex items-center [&_svg]:size-4">
             {prefixIcon}
           </span>
         )}
@@ -52,7 +52,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error || undefined}
           data-error={error || undefined}
           className={cn(
-            "flex w-full file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "focus-visible:ring-ring flex w-full file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
             inputVariants.variant[variant],
             inputVariants.inputSize[inputSize],
             prefixIcon && "pl-9",
@@ -63,7 +63,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {suffixIcon && (
-          <span className="absolute right-3 flex items-center text-muted-foreground [&_svg]:size-4">
+          <span className="text-muted-foreground absolute right-3 flex items-center [&_svg]:size-4">
             {suffixIcon}
           </span>
         )}

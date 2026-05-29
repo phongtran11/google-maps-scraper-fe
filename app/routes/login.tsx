@@ -28,28 +28,23 @@ export default function Login() {
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-tight">Trang Quản Trị</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             Đăng nhập bằng tài khoản Google để tiếp tục
           </p>
         </div>
 
         {error && (
-          <div className="rounded-md border border-destructive bg-destructive/10 p-4 text-sm text-destructive">
-            Tài khoản của bạn không được phép truy cập. Liên hệ quản trị viên để
-            được mời.
+          <div className="border-destructive bg-destructive/10 text-destructive rounded-md border p-4 text-sm">
+            Tài khoản của bạn không được phép truy cập. Liên hệ quản trị viên để được mời.
           </div>
         )}
 
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="inline-flex w-full items-center justify-center gap-3 rounded-md border border-input bg-background px-4 py-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex w-full items-center justify-center gap-3 rounded-md border px-4 py-3 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
         >
-          {loading ? (
-            <Spinner className="h-5 w-5" />
-          ) : (
-            <Google className="h-5 w-5" />
-          )}
+          {loading ? <Spinner className="h-5 w-5" /> : <Google className="h-5 w-5" />}
           Đăng nhập với Google
         </button>
       </div>

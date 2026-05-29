@@ -39,7 +39,7 @@ export function FilterBar() {
         onChange={(e) => setSearch(e.target.value)}
         prefixIcon={<SearchIcon />}
         inputSize="md"
-        className="min-w-[200px] max-w-xs"
+        className="max-w-xs min-w-[200px]"
       />
 
       <Select

@@ -5,9 +5,7 @@ import { userInvites } from "~/lib/server/database/schema";
 import { eq } from "drizzle-orm";
 import { ROUTES } from "~/lib/routes";
 
-export type SessionType = NonNullable<
-  Awaited<ReturnType<typeof auth.api.getSession>>
->;
+export type SessionType = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
 
 export const sessionContext = createContext<SessionType>();
 

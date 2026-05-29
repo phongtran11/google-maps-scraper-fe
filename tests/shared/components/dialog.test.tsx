@@ -57,7 +57,10 @@ describe("Dialog", () => {
         </DialogContent>
       </Dialog>,
     );
-    const backdrop = screen.getByText("Tiêu đề").closest(".fixed.inset-0")?.querySelector('[aria-hidden="true"]');
+    const backdrop = screen
+      .getByText("Tiêu đề")
+      .closest(".fixed.inset-0")
+      ?.querySelector('[aria-hidden="true"]');
     if (backdrop) {
       await user.click(backdrop);
     }

@@ -73,10 +73,7 @@ interface DataTableSkeletonProps<T> {
   rows?: number;
 }
 
-function DataTableSkeleton<T>({
-  columns,
-  rows = 20,
-}: DataTableSkeletonProps<T>) {
+function DataTableSkeleton<T>({ columns, rows = 20 }: DataTableSkeletonProps<T>) {
   return (
     <>
       {Array.from({ length: rows }).map((_, rowIdx) => (
@@ -85,7 +82,7 @@ function DataTableSkeleton<T>({
             <TableCell key={col.id} className={col.cellClassName}>
               <div
                 className={cn(
-                  "h-5.5 animate-pulse rounded bg-muted",
+                  "bg-muted h-5.5 animate-pulse rounded",
                   col.id.charCodeAt(0) % 2 === 0 ? "w-full" : "w-3/4",
                 )}
               />
@@ -103,19 +100,11 @@ interface DataTableEmptyProps<T> {
   state?: React.ReactNode;
 }
 
-function DataTableEmpty<T>({
-  columns,
-  message,
-  state,
-}: DataTableEmptyProps<T>) {
+function DataTableEmpty<T>({ columns, message, state }: DataTableEmptyProps<T>) {
   return (
     <TableRow>
       <TableCell colSpan={columns.length} className="h-24 text-center">
-        {state ?? (
-          <span className="text-muted-foreground">
-            {message ?? "Không có dữ liệu"}
-          </span>
-        )}
+        {state ?? <span className="text-muted-foreground">{message ?? "Không có dữ liệu"}</span>}
       </TableCell>
     </TableRow>
   );
@@ -202,17 +191,9 @@ function DataTable<T>({
           {isLoading ? (
             <DataTableSkeleton columns={columns} rows={skeletonRows} />
           ) : data.length === 0 ? (
-            <DataTableEmpty
-              columns={columns}
-              message={emptyMessage}
-              state={emptyState}
-            />
+            <DataTableEmpty columns={columns} message={emptyMessage} state={emptyState} />
           ) : (
-            <DataTableContent
-              data={data}
-              columns={columns}
-              keyExtractor={keyExtractor}
-            />
+            <DataTableContent data={data} columns={columns} keyExtractor={keyExtractor} />
           )}
         </TableBody>
       </Table>

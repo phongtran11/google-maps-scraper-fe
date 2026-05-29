@@ -7,10 +7,7 @@ interface UseNotesManagerOptions {
   initialNotes: NoteRow[];
 }
 
-export function useNotesManager({
-  businessId,
-  initialNotes,
-}: UseNotesManagerOptions) {
+export function useNotesManager({ businessId, initialNotes }: UseNotesManagerOptions) {
   const noteFetcher = useFetcher<{ notes?: NoteRow[]; error?: string; message?: string }>();
 
   const notes = noteFetcher.data?.notes ?? initialNotes;
@@ -22,4 +19,3 @@ export function useNotesManager({
     action: ROUTES.api.businessNotes.buildPath(businessId),
   };
 }
-

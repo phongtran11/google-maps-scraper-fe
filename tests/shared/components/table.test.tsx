@@ -150,27 +150,17 @@ describe("DataTable", () => {
   );
 
   it("renders header columns", () => {
-    render(
-      <DataTable
-        data={data}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
+    render(<DataTable data={data} columns={columns} keyExtractor={(item) => item.id} />, {
+      wrapper: TestWrapper,
+    });
     expect(screen.getByText("ID")).toBeInTheDocument();
     expect(screen.getByText("Tên")).toBeInTheDocument();
   });
 
   it("renders data rows", () => {
-    render(
-      <DataTable
-        data={data}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
+    render(<DataTable data={data} columns={columns} keyExtractor={(item) => item.id} />, {
+      wrapper: TestWrapper,
+    });
     expect(screen.getByText("A")).toBeInTheDocument();
     expect(screen.getByText("B")).toBeInTheDocument();
   });
@@ -191,14 +181,9 @@ describe("DataTable", () => {
   });
 
   it("shows empty message when no data", () => {
-    render(
-      <DataTable
-        data={[]}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
+    render(<DataTable data={[]} columns={columns} keyExtractor={(item) => item.id} />, {
+      wrapper: TestWrapper,
+    });
     expect(screen.getByText("Không có dữ liệu")).toBeInTheDocument();
   });
 
@@ -238,11 +223,7 @@ describe("DataTable", () => {
       },
     ];
     render(
-      <DataTable
-        data={data}
-        columns={columnsWithCustomCell}
-        keyExtractor={(item) => item.id}
-      />,
+      <DataTable data={data} columns={columnsWithCustomCell} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     const strong = screen.getByText("A");
@@ -254,14 +235,9 @@ describe("DataTable", () => {
       { id: "id", header: "ID", accessor: "id" as const, align: "center" as const },
       { id: "name", header: "Tên", accessor: "name" as const, align: "right" as const },
     ];
-    render(
-      <DataTable
-        data={data}
-        columns={alignedColumns}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
+    render(<DataTable data={data} columns={alignedColumns} keyExtractor={(item) => item.id} />, {
+      wrapper: TestWrapper,
+    });
     const headerCenter = screen.getByText("ID");
     const headerRight = screen.getByText("Tên");
     expect(headerCenter.className).toContain("text-center");
@@ -273,14 +249,9 @@ describe("DataTable", () => {
       { id: "id", header: "ID", accessor: "id" },
       { id: "empty", header: "Trống", cell: () => null },
     ];
-    render(
-      <DataTable
-        data={data}
-        columns={columnsWithNull}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
+    render(<DataTable data={data} columns={columnsWithNull} keyExtractor={(item) => item.id} />, {
+      wrapper: TestWrapper,
+    });
     expect(screen.getByText("1")).toBeInTheDocument();
     expect(screen.getByText("Trống")).toBeInTheDocument();
   });
@@ -294,11 +265,7 @@ describe("DataTable", () => {
       },
     ];
     render(
-      <DataTable
-        data={data}
-        columns={columnsWithAccessorFn}
-        keyExtractor={(item) => item.id}
-      />,
+      <DataTable data={data} columns={columnsWithAccessorFn} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     expect(screen.getByText("A-1")).toBeInTheDocument();
@@ -307,7 +274,7 @@ describe("DataTable", () => {
 
   it("renders dash for null/undefined values", () => {
     const dataWithNulls = [{ id: 1, name: null as string | null }];
-    const columnsWithNulls: DataTableColumn<typeof dataWithNulls[0]>[] = [
+    const columnsWithNulls: DataTableColumn<(typeof dataWithNulls)[0]>[] = [
       { id: "name", header: "Name", accessor: "name" },
     ];
     render(
@@ -332,11 +299,7 @@ describe("DataTable", () => {
       },
     ];
     render(
-      <DataTable
-        data={data}
-        columns={columnsWithClasses}
-        keyExtractor={(item) => item.id}
-      />,
+      <DataTable data={data} columns={columnsWithClasses} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     const header = screen.getByText("ID");

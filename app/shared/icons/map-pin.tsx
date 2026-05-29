@@ -1,4 +1,10 @@
-export function MapPin({ className, strokeWidth = 2 }: { className?: string; strokeWidth?: number }) {
+export function MapPin({
+  className,
+  strokeWidth = 2,
+}: {
+  className?: string;
+  strokeWidth?: number;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

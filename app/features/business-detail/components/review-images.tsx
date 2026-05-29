@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/shared/components/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
 
 interface ReviewImagesProps {
   urls: string[];
@@ -16,7 +11,7 @@ export function ReviewImages({ urls }: ReviewImagesProps) {
         <CardTitle>Ảnh ({urls.length})</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {urls.map((url, i) => (
             <a key={i} href={url} target="_blank" rel="noopener noreferrer">
               <img
@@ -25,7 +20,7 @@ export function ReviewImages({ urls }: ReviewImagesProps) {
                 width={300}
                 height={300}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="w-full aspect-square object-cover rounded-md border hover:opacity-80 transition-opacity"
+                className="aspect-square w-full rounded-md border object-cover transition-opacity hover:opacity-80"
                 loading="lazy"
               />
             </a>

@@ -24,7 +24,7 @@ export function SidebarNavItem({
     isActive
       ? "bg-primary/10 text-primary font-semibold"
       : isUpcoming
-        ? "text-muted-foreground/45 hovzer:bg-accent/20 hover:text-muted-foreground/60"
+        ? "text-muted-foreground/45 hover:bg-accent/20 hover:text-muted-foreground/60"
         : "text-muted-foreground hover:bg-accent hover:text-foreground",
   );
 
@@ -35,7 +35,7 @@ export function SidebarNavItem({
           {icon}
           <span>{label}</span>
         </div>
-        <span className="text-[10px] font-semibold bg-muted px-1.5 py-0.5 rounded text-muted-foreground/80">
+        <span className="bg-muted text-muted-foreground/80 rounded px-1.5 py-0.5 text-[10px] font-semibold">
           Sắp có
         </span>
       </div>

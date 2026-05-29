@@ -11,12 +11,7 @@ export interface BusinessTableProps {
   pageSize: number;
 }
 
-export function BusinessTable({
-  businesses,
-  totalCount,
-  page,
-  pageSize,
-}: BusinessTableProps) {
+export function BusinessTable({ businesses, totalCount, page, pageSize }: BusinessTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const regionCode = searchParams.get("region") || "";
   const regionLabel = REGIONS[regionCode as keyof typeof REGIONS] || "";

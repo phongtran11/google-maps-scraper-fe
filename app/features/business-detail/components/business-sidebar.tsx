@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/shared/components";
+import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { StatusCard } from "./status-card";
 import type { BusinessRow } from "~/lib/types";
@@ -13,15 +8,7 @@ interface BusinessSidebarProps {
   business: BusinessRow;
 }
 
-function LinkCard({
-  title,
-  href,
-  label,
-}: {
-  title: string;
-  href: string;
-  label: string;
-}) {
+function LinkCard({ title, href, label }: { title: string; href: string; label: string }) {
   return (
     <Card>
       <CardHeader>
@@ -32,7 +19,7 @@ function LinkCard({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium border border-input bg-background shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           {label}
           <ExternalLinkIcon className="h-3.5 w-3.5" />
@@ -52,11 +39,7 @@ export function BusinessSidebar({ business: b }: BusinessSidebarProps) {
       <LinkCard title="Bản Đồ" href={b.maps_url} label="Xem trên Google Maps" />
 
       {zaloPhone && (
-        <LinkCard
-          title="Zalo"
-          href={`https://zalo.me/${zaloPhone}`}
-          label="Gửi tin nhắn Zalo"
-        />
+        <LinkCard title="Zalo" href={`https://zalo.me/${zaloPhone}`} label="Gửi tin nhắn Zalo" />
       )}
     </div>
   );

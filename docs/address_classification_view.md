@@ -7,30 +7,33 @@ Tài liệu này hướng dẫn chi tiết cách chuẩn hóa địa chỉ (`add
 ---
 
 ## 1. Thông Tin VIEW Table
-* **Tên VIEW**: `v_businesses_classified`
-* **Mục đích**: Mở rộng bảng `businesses` bằng cách bổ sung thêm 2 trường dữ liệu động:
-  * `ward_commune`: Xã/Phường/Thị trấn được trích xuất và chuẩn hóa từ cột `address`.
-  * `district_city`: Quận/Huyện/Thị xã/Thành phố tương ứng.
-* **Cột bổ sung**: Đã bao gồm cột `region` nguyên bản từ `businesses` để phục vụ lọc vùng trong API và Frontend.
-* **Ứng dụng**: Phục vụ trực tiếp cho loader API hoặc bộ lọc (`FilterBar`) trên giao diện Dashboard mà không cần xử lý chuỗi phức tạp ở phía client.
+
+- **Tên VIEW**: `v_businesses_classified`
+- **Mục đích**: Mở rộng bảng `businesses` bằng cách bổ sung thêm 2 trường dữ liệu động:
+  - `ward_commune`: Xã/Phường/Thị trấn được trích xuất và chuẩn hóa từ cột `address`.
+  - `district_city`: Quận/Huyện/Thị xã/Thành phố tương ứng.
+- **Cột bổ sung**: Đã bao gồm cột `region` nguyên bản từ `businesses` để phục vụ lọc vùng trong API và Frontend.
+- **Ứng dụng**: Phục vụ trực tiếp cho loader API hoặc bộ lọc (`FilterBar`) trên giao diện Dashboard mà không cần xử lý chuỗi phức tạp ở phía client.
 
 ---
 
 ## 2. Bối Cảnh Địa Giới Hành Chính Mới (2025)
+
 Các quy tắc phân loại trong VIEW này tuân thủ các thay đổi địa giới hành chính mới nhất của tỉnh Bà Rịa - Vũng Tàu:
-1. **Thành phố Vũng Tàu (Hiệu lực 01/01/2025)**: 
-   * **Phường Vũng Tàu**: Sáp nhập Phường 1, 2, 3, 4, 5, Thắng Nhì, Thắng Tam.
-   * **Phường Tam Thắng**: Sáp nhập Phường 7, 8, 9 và Nguyễn An Ninh.
-   * **Phường Rạch Dừa**: Sáp nhập Phường 10, Thắng Nhất, Rạch Dừa cũ.
-   * **Phường Phước Thắng**: Sáp nhập Phường 11 và Phường 12.
+
+1. **Thành phố Vũng Tàu (Hiệu lực 01/01/2025)**:
+   - **Phường Vũng Tàu**: Sáp nhập Phường 1, 2, 3, 4, 5, Thắng Nhì, Thắng Tam.
+   - **Phường Tam Thắng**: Sáp nhập Phường 7, 8, 9 và Nguyễn An Ninh.
+   - **Phường Rạch Dừa**: Sáp nhập Phường 10, Thắng Nhất, Rạch Dừa cũ.
+   - **Phường Phước Thắng**: Sáp nhập Phường 11 và Phường 12.
 2. **Thành phố Phú Mỹ (Hiệu lực 01/03/2025)**:
-   * Nâng cấp từ Thị xã Phú Mỹ (trước đây là Huyện Tân Thành).
-   * Thành lập mới **Phường Tân Hải** và **Phường Tân Hòa** trên cơ sở hai xã cũ tương ứng.
+   - Nâng cấp từ Thị xã Phú Mỹ (trước đây là Huyện Tân Thành).
+   - Thành lập mới **Phường Tân Hải** và **Phường Tân Hòa** trên cơ sở hai xã cũ tương ứng.
 3. **Huyện Châu Đức (Hiệu lực 01/01/2025)**:
-   * Thành lập **Thị trấn Kim Long** trên cơ sở nguyên trạng xã Kim Long.
+   - Thành lập **Thị trấn Kim Long** trên cơ sở nguyên trạng xã Kim Long.
 4. **Huyện Long Đất (Hiệu lực 01/01/2025)**:
-   * Thành lập trên cơ sở sáp nhập toàn bộ diện tích và dân số của **Huyện Long Điền** và **Huyện Đất Đỏ**.
-   * Thành lập **Xã Tam An** trên cơ sở sáp nhập xã An Nhứt, An Ngãi, và Tam Phước.
+   - Thành lập trên cơ sở sáp nhập toàn bộ diện tích và dân số của **Huyện Long Điền** và **Huyện Đất Đỏ**.
+   - Thành lập **Xã Tam An** trên cơ sở sáp nhập xã An Nhứt, An Ngãi, và Tam Phước.
 
 ---
 
@@ -41,7 +44,7 @@ Dưới đây là mã nguồn SQL được sử dụng để khởi tạo VIEW:
 ```sql
 CREATE OR REPLACE VIEW v_businesses_classified AS
 WITH cleaned_step1 AS (
-  SELECT 
+  SELECT
     *,
     -- 1. Chuyển chữ thường và xóa tỉnh Bà Rịa Vũng Tàu
     regexp_replace(
@@ -88,7 +91,7 @@ cleaned_step3 AS (
     ) as cleaned_address
   FROM cleaned_step2
 )
-SELECT 
+SELECT
   id,
   search_keyword,
   business_name,
@@ -105,9 +108,9 @@ SELECT
   scraped_at,
   created_at,
   is_corrected,
-  
+
   -- 1. Phân loại Xã/Phường/Thị trấn (ward_commune) dựa trên cleaned_address
-  CASE 
+  CASE
     -- 1. THÀNH PHỐ HỒ CHÍ MINH (Đặc trưng)
     WHEN cleaned_address ~* '\y(tân bình|bình tân|củ chi|bà điểm|âu cơ|bảy hiền|cư xá bắc hải|phú thọ hòa|bình trị đông|tôn thất hiệp|rạch bùng bình|bình thới|lạc long quân|bình đông|phú định|dân trí|gò ô môi|đoàn nguyễn tuấn|tân sơn nhất|xóm chiếu|tôn thất thuyết|chợ quán|bình hưng|bùi dương lịch)\y'
       THEN 'Thành phố Hồ Chí Minh'
@@ -128,71 +131,71 @@ SELECT
       THEN 'Thành phố Vũng Tàu (Chưa rõ phường/xã)'
 
     -- 3. THÀNH PHỐ PHÚ MỸ (phu_my)
-    WHEN cleaned_address ILIKE '%tân phước%' OR cleaned_address ILIKE '%tan phuoc%' 
+    WHEN cleaned_address ILIKE '%tân phước%' OR cleaned_address ILIKE '%tan phuoc%'
       THEN 'Phường Tân Phước'
-    WHEN cleaned_address ILIKE '%mỹ xuân%' OR cleaned_address ILIKE '%my xuan%' 
+    WHEN cleaned_address ILIKE '%mỹ xuân%' OR cleaned_address ILIKE '%my xuan%'
       THEN 'Phường Mỹ Xuân'
-    WHEN cleaned_address ILIKE '%hắc dịch%' OR cleaned_address ILIKE '%hac dich%' 
+    WHEN cleaned_address ILIKE '%hắc dịch%' OR cleaned_address ILIKE '%hac dich%'
       THEN 'Phường Hắc Dịch'
-    WHEN cleaned_address ILIKE '%phước hòa%' OR cleaned_address ILIKE '%phuoc hoa%' 
+    WHEN cleaned_address ILIKE '%phước hòa%' OR cleaned_address ILIKE '%phuoc hoa%'
       THEN 'Phường Phước Hòa'
-    WHEN cleaned_address ILIKE '%tân hải%' OR cleaned_address ILIKE '%tan hai%' 
+    WHEN cleaned_address ILIKE '%tân hải%' OR cleaned_address ILIKE '%tan hai%'
       THEN 'Phường Tân Hải'
-    WHEN cleaned_address ILIKE '%tân hòa%' OR cleaned_address ILIKE '%tan hoa%' 
+    WHEN cleaned_address ILIKE '%tân hòa%' OR cleaned_address ILIKE '%tan hoa%'
       THEN 'Phường Tân Hòa'
-    WHEN cleaned_address ILIKE '%châu pha%' OR cleaned_address ILIKE '%chau pha%' 
+    WHEN cleaned_address ILIKE '%châu pha%' OR cleaned_address ILIKE '%chau pha%'
       THEN 'Xã Châu Pha'
-    WHEN cleaned_address ILIKE '%tóc tiên%' OR cleaned_address ILIKE '%toc tien%' 
+    WHEN cleaned_address ILIKE '%tóc tiên%' OR cleaned_address ILIKE '%toc tien%'
       THEN 'Xã Tóc Tiên'
-    WHEN cleaned_address ILIKE '%sông xoài%' OR cleaned_address ILIKE '%song xoai%' 
+    WHEN cleaned_address ILIKE '%sông xoài%' OR cleaned_address ILIKE '%song xoai%'
       THEN 'Xã Sông Xoài'
-    WHEN cleaned_address ILIKE '%phú mỹ%' OR cleaned_address ILIKE '%phu my%' 
+    WHEN cleaned_address ILIKE '%phú mỹ%' OR cleaned_address ILIKE '%phu my%'
       THEN 'Phường Phú Mỹ'
     WHEN cleaned_address ILIKE '%tân thành%' OR cleaned_address ILIKE '%tan thanh%'
       THEN 'Thành phố Phú Mỹ (Chưa rõ phường/xã)'
 
     -- 4. THÀNH PHỐ BÀ RỊA (ba_ria)
-    WHEN cleaned_address ILIKE '%long hương%' OR cleaned_address ILIKE '%long huong%' 
+    WHEN cleaned_address ILIKE '%long hương%' OR cleaned_address ILIKE '%long huong%'
       THEN 'Phường Long Hương'
-    WHEN cleaned_address ILIKE '%phước nguyên%' OR cleaned_address ILIKE '%phuoc nguyen%' 
+    WHEN cleaned_address ILIKE '%phước nguyên%' OR cleaned_address ILIKE '%phuoc nguyen%'
       THEN 'Phường Phước Nguyên'
     WHEN cleaned_address ILIKE '%phước trung%' OR cleaned_address ILIKE '%phuoc trung%' OR cleaned_address ILIKE '%phước hiệp%' OR cleaned_address ILIKE '%phuoc hiep%'
       THEN 'Phường Phước Trung'
-    WHEN cleaned_address ILIKE '%long toàn%' OR cleaned_address ILIKE '%long toan%' 
+    WHEN cleaned_address ILIKE '%long toàn%' OR cleaned_address ILIKE '%long toan%'
       THEN 'Phường Long Toàn'
-    WHEN cleaned_address ILIKE '%long tâm%' OR cleaned_address ILIKE '%long tam%' OR cleaned_address ILIKE '%tam long%' 
+    WHEN cleaned_address ILIKE '%long tâm%' OR cleaned_address ILIKE '%long tam%' OR cleaned_address ILIKE '%tam long%'
       THEN 'Phường Long Tâm'
-    WHEN cleaned_address ILIKE '%kim dinh%' 
+    WHEN cleaned_address ILIKE '%kim dinh%'
       THEN 'Phường Kim Dinh'
-    WHEN cleaned_address ILIKE '%phước hưng%' OR cleaned_address ILIKE '%phuoc hung%' 
+    WHEN cleaned_address ILIKE '%phước hưng%' OR cleaned_address ILIKE '%phuoc hung%'
       THEN 'Phường Phước Hưng'
-    WHEN cleaned_address ILIKE '%hòa long%' OR cleaned_address ILIKE '%hoa long%' 
+    WHEN cleaned_address ILIKE '%hòa long%' OR cleaned_address ILIKE '%hoa long%'
       THEN 'Xã Hòa Long'
-    WHEN cleaned_address ILIKE '%long phước%' OR cleaned_address ILIKE '%long phuoc%' 
+    WHEN cleaned_address ILIKE '%long phước%' OR cleaned_address ILIKE '%long phuoc%'
       THEN 'Xã Long Phước'
-    WHEN cleaned_address ILIKE '%tân hưng%' OR cleaned_address ILIKE '%tan hung%' 
+    WHEN cleaned_address ILIKE '%tân hưng%' OR cleaned_address ILIKE '%tan hung%'
       THEN 'Xã Tân Hưng'
     WHEN cleaned_address ILIKE '%bà rịa%' OR cleaned_address ILIKE '%ba ria%'
       THEN 'Thành phố Bà Rịa (Chưa rõ phường/xã)'
 
     -- 5. HUYỆN CHÂU ĐỨC (chau_duc)
-    WHEN cleaned_address ILIKE '%ngãi giao%' OR cleaned_address ILIKE '%ngai giao%' 
+    WHEN cleaned_address ILIKE '%ngãi giao%' OR cleaned_address ILIKE '%ngai giao%'
       THEN 'Thị trấn Ngãi Giao'
-    WHEN cleaned_address ILIKE '%kim long%' 
+    WHEN cleaned_address ILIKE '%kim long%'
       THEN 'Thị trấn Kim Long'
-    WHEN cleaned_address ILIKE '%bình giã%' OR cleaned_address ILIKE '%binh gia%' 
+    WHEN cleaned_address ILIKE '%bình giã%' OR cleaned_address ILIKE '%binh gia%'
       THEN 'Xã Bình Giã'
-    WHEN cleaned_address ILIKE '%nghĩa thành%' OR cleaned_address ILIKE '%nghia thanh%' 
+    WHEN cleaned_address ILIKE '%nghĩa thành%' OR cleaned_address ILIKE '%nghia thanh%'
       THEN 'Xã Nghĩa Thành'
-    WHEN cleaned_address ILIKE '%suối nghệ%' OR cleaned_address ILIKE '%suoi nghe%' 
+    WHEN cleaned_address ILIKE '%suối nghệ%' OR cleaned_address ILIKE '%suoi nghe%'
       THEN 'Xã Suối Nghệ'
-    WHEN cleaned_address ILIKE '%đá bạc%' OR cleaned_address ILIKE '%da bac%' 
+    WHEN cleaned_address ILIKE '%đá bạc%' OR cleaned_address ILIKE '%da bac%'
       THEN 'Xã Đá Bạc'
-    WHEN cleaned_address ILIKE '%láng lớn%' OR cleaned_address ILIKE '%lang lon%' 
+    WHEN cleaned_address ILIKE '%láng lớn%' OR cleaned_address ILIKE '%lang lon%'
       THEN 'Xã Láng Lớn'
-    WHEN cleaned_address ILIKE '%xuân sơn%' OR cleaned_address ILIKE '%xuan son%' 
+    WHEN cleaned_address ILIKE '%xuân sơn%' OR cleaned_address ILIKE '%xuan son%'
       THEN 'Xã Xuân Sơn'
-    WHEN cleaned_address ILIKE '%xà bang%' OR cleaned_address ILIKE '%xa bang%' 
+    WHEN cleaned_address ILIKE '%xà bang%' OR cleaned_address ILIKE '%xa bang%'
       THEN 'Xã Xà Bang'
     WHEN cleaned_address ILIKE '%châu đức%' OR cleaned_address ILIKE '%chau duc%'
       THEN 'Huyện Châu Đức (Chưa rõ xã/thị trấn)'
@@ -253,13 +256,13 @@ SELECT
 
     ELSE 'Địa bàn khác / Chưa phân loại'
   END as ward_commune,
-  
+
   -- 2. Phân loại Quận/Huyện/Thành phố (district_city) dựa trên cleaned_address
-  CASE 
+  CASE
     -- 1. Tỉnh/Thành phố khác trước (Đồng Nai & HCM)
-    WHEN cleaned_address ILIKE '%đồng nai%' OR cleaned_address ILIKE '%dong nai%' 
+    WHEN cleaned_address ILIKE '%đồng nai%' OR cleaned_address ILIKE '%dong nai%'
       THEN 'Tỉnh Đồng Nai'
-      
+
     WHEN cleaned_address ~* '\y(tân bình|bình tân|củ chi|bà điểm|âu cơ|bảy hiền|cư xá bắc hải|phú thọ hòa|bình trị đông|tôn thất hiệp|rạch bùng bình|bình thới|lạc long quân|bình đông|phú định|dân trí|gò ô môi|đoàn nguyễn tuấn|tân sơn nhất|xóm chiếu|tôn thất thuyết|chợ quán|bình hưng|bùi dương lịch)\y'
       THEN 'Thành phố Hồ Chí Minh'
 
@@ -338,8 +341,9 @@ FROM cleaned_step3;
 ## 4. Kết Quả Thống Kê Phân Bố Doanh Nghiệp Từ VIEW
 
 Truy vấn SQL thống kê:
+
 ```sql
-SELECT 
+SELECT
   district_city,
   ward_commune,
   count(*) as business_count
@@ -350,44 +354,44 @@ ORDER BY 1, 3 DESC;
 
 Bảng kết quả phân bố tổng cộng **544** dòng dữ liệu:
 
-| Quận/Huyện/Thành phố (`district_city`) | Xã/Phường/Thị trấn (`ward_commune`) | Số lượng DN |
-| :--- | :--- | :---: |
-| **Huyện Châu Đức** | Thị trấn Ngãi Giao | 40 |
-| | Thị trấn Kim Long | 25 |
-| | Xã Bình Giã | 10 |
-| | Xã Nghĩa Thành | 9 |
-| | Huyện Châu Đức (Chưa rõ xã/thị trấn) | 5 |
-| | Xã Xà Bang | 1 |
-| | Xã Láng Lớn | 1 |
-| | Xã Xuân Sơn | 1 |
-| **Huyện Long Đất** | Thị trấn Long Hải | 16 |
-| | Thị trấn Long Điền | 16 |
-| | Thị trấn Đất Đỏ | 11 |
-| | Xã Phước Hưng | 1 |
-| **Huyện Xuyên Mộc** | Xã Phước Thuận (Hồ Tràm) | 18 |
-| | Xã Bàu Lâm | 7 |
-| | Xã Xuyên Mộc | 6 |
-| | Xã Hòa Hội | 5 |
-| | Xã Hòa Hiệp | 1 |
-| **Thành phố Bà Rịa** | Thành phố Bà Rịa (Chưa rõ phường/xã) | 25 |
-| | Phường Long Tâm | 15 |
-| | Phường Long Hương | 6 |
-| **Thành phố Hồ Chí Minh** | Thành phố Hồ Chí Minh | 22 |
-| **Thành phố Phú Mỹ** | Phường Phú Mỹ | 66 |
-| | Phường Tân Phước | 13 |
-| | Xã Châu Pha | 12 |
-| | Thành phố Phú Mỹ (Chưa rõ phường/xã) | 9 |
-| | Phường Tân Hải | 6 |
-| | Phường Mỹ Xuân | 4 |
-| **Thành phố Vũng Tàu** | Phường Tam Thắng | 65 |
-| | Thành phố Vũng Tàu (Chưa rõ phường/xã) | 49 |
-| | Phường Rạch Dừa | 32 |
-| | Phường Phước Thắng | 18 |
-| | Xã Long Sơn | 2 |
-| **Tỉnh Đồng Nai** | Xã Phước Thái (Huyện Long Thành) | 13 |
-| | Xã Sông Ray (Huyện Cẩm Mỹ) | 4 |
-| | Xã Xuân Đông (Huyện Cẩm Mỹ) | 4 |
-| | Xã Long Phước | 3 |
-| | Tỉnh Đồng Nai (Chưa rõ xã) | 2 |
-| | Xã Xuân Đường (Huyện Cẩm Mỹ) | 1 |
-| **Tổng cộng** | | **544** |
+| Quận/Huyện/Thành phố (`district_city`) | Xã/Phường/Thị trấn (`ward_commune`)    | Số lượng DN |
+| :------------------------------------- | :------------------------------------- | :---------: |
+| **Huyện Châu Đức**                     | Thị trấn Ngãi Giao                     |     40      |
+|                                        | Thị trấn Kim Long                      |     25      |
+|                                        | Xã Bình Giã                            |     10      |
+|                                        | Xã Nghĩa Thành                         |      9      |
+|                                        | Huyện Châu Đức (Chưa rõ xã/thị trấn)   |      5      |
+|                                        | Xã Xà Bang                             |      1      |
+|                                        | Xã Láng Lớn                            |      1      |
+|                                        | Xã Xuân Sơn                            |      1      |
+| **Huyện Long Đất**                     | Thị trấn Long Hải                      |     16      |
+|                                        | Thị trấn Long Điền                     |     16      |
+|                                        | Thị trấn Đất Đỏ                        |     11      |
+|                                        | Xã Phước Hưng                          |      1      |
+| **Huyện Xuyên Mộc**                    | Xã Phước Thuận (Hồ Tràm)               |     18      |
+|                                        | Xã Bàu Lâm                             |      7      |
+|                                        | Xã Xuyên Mộc                           |      6      |
+|                                        | Xã Hòa Hội                             |      5      |
+|                                        | Xã Hòa Hiệp                            |      1      |
+| **Thành phố Bà Rịa**                   | Thành phố Bà Rịa (Chưa rõ phường/xã)   |     25      |
+|                                        | Phường Long Tâm                        |     15      |
+|                                        | Phường Long Hương                      |      6      |
+| **Thành phố Hồ Chí Minh**              | Thành phố Hồ Chí Minh                  |     22      |
+| **Thành phố Phú Mỹ**                   | Phường Phú Mỹ                          |     66      |
+|                                        | Phường Tân Phước                       |     13      |
+|                                        | Xã Châu Pha                            |     12      |
+|                                        | Thành phố Phú Mỹ (Chưa rõ phường/xã)   |      9      |
+|                                        | Phường Tân Hải                         |      6      |
+|                                        | Phường Mỹ Xuân                         |      4      |
+| **Thành phố Vũng Tàu**                 | Phường Tam Thắng                       |     65      |
+|                                        | Thành phố Vũng Tàu (Chưa rõ phường/xã) |     49      |
+|                                        | Phường Rạch Dừa                        |     32      |
+|                                        | Phường Phước Thắng                     |     18      |
+|                                        | Xã Long Sơn                            |      2      |
+| **Tỉnh Đồng Nai**                      | Xã Phước Thái (Huyện Long Thành)       |     13      |
+|                                        | Xã Sông Ray (Huyện Cẩm Mỹ)             |      4      |
+|                                        | Xã Xuân Đông (Huyện Cẩm Mỹ)            |      4      |
+|                                        | Xã Long Phước                          |      3      |
+|                                        | Tỉnh Đồng Nai (Chưa rõ xã)             |      2      |
+|                                        | Xã Xuân Đường (Huyện Cẩm Mỹ)           |      1      |
+| **Tổng cộng**                          |                                        |   **544**   |

@@ -27,11 +27,7 @@ Card.displayName = "Card";
 
 const CardHeader = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("flex flex-col space-y-1.5 p-6", className)}
-      {...props}
-    />
+    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
   ),
 );
 CardHeader.displayName = "CardHeader";
@@ -40,7 +36,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h3">>(
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
-      className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+      className={cn("text-lg leading-none font-semibold tracking-tight", className)}
       {...props}
     />
   ),
@@ -48,12 +44,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h3">>(
 CardTitle.displayName = "CardTitle";
 
 function CardDescription({ className, ...props }: ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  );
+  return <p className={cn("text-muted-foreground text-sm", className)} {...props} />;
 }
 CardDescription.displayName = "CardDescription";
 
@@ -66,22 +57,10 @@ CardContent.displayName = "CardContent";
 
 const CardFooter = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("flex items-center p-6 pt-0", className)}
-      {...props}
-    />
+    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
   ),
 );
 CardFooter.displayName = "CardFooter";
 
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  cardVariants,
-};
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, cardVariants };
 export type { CardProps };

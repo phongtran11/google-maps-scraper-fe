@@ -15,16 +15,7 @@ interface TextareaProps extends ComponentProps<"textarea"> {
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      className,
-      variant = "default",
-      error = false,
-      disabled,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, variant = "default", error = false, disabled, ...props }, ref) => {
     return (
       <textarea
         ref={ref}
@@ -32,7 +23,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         aria-invalid={error || undefined}
         data-error={error || undefined}
         className={cn(
-          "flex w-full rounded-md px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "focus-visible:ring-ring flex w-full rounded-md px-3 py-2 text-sm shadow-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           textareaVariants.variant[variant],
           error && "border-destructive focus-visible:ring-destructive",
           className,

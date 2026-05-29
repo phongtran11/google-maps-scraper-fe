@@ -1,13 +1,7 @@
 import { Link } from "react-router";
 import type { BusinessRow } from "~/lib/types";
 import { STATUS_MAP } from "~/lib/constants";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "~/shared/components/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "~/shared/components/card";
 import { Badge } from "~/shared/components/badge";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { ROUTES } from "~/lib/routes";
@@ -26,14 +20,14 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
     <Link to={ROUTES.businessDetail.buildPath(b.id)} className="group block">
       <Card
         variant="elevated"
-        className="flex flex-col h-full transition-shadow group-hover:shadow-xl"
+        className="flex h-full flex-col transition-shadow group-hover:shadow-xl"
       >
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-base line-clamp-2 group-hover:text-primary transition-colors">
+            <CardTitle className="group-hover:text-primary line-clamp-2 text-base transition-colors">
               {b.business_name}
             </CardTitle>
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex shrink-0 items-center gap-1.5">
               <Badge variant={s.variant} size="sm">
                 {s.label}
               </Badge>
@@ -41,17 +35,11 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-1 space-y-2">
-          {b.address && (
-            <p className="text-sm text-muted-foreground">{b.address}</p>
-          )}
+          {b.address && <p className="text-muted-foreground text-sm">{b.address}</p>}
           <div className="flex flex-wrap items-center gap-2">
-            {b.phone && (
-              <span className="text-sm text-muted-foreground">{b.phone}</span>
-            )}
+            {b.phone && <span className="text-muted-foreground text-sm">{b.phone}</span>}
             {b.review_count != null && (
-              <span className="text-sm text-muted-foreground">
-                {b.review_count} đánh giá
-              </span>
+              <span className="text-muted-foreground text-sm">{b.review_count} đánh giá</span>
             )}
           </div>
         </CardContent>
@@ -71,7 +59,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
                 window.open(b.maps_url, "_blank", "noopener,noreferrer");
               }
             }}
-            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium border border-input bg-background shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
+            className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Xem trên Maps
             <ExternalLinkIcon className="h-3.5 w-3.5" />

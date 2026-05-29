@@ -54,9 +54,7 @@ describe("ToastProvider", () => {
   });
 
   it("throws error when useToast is used outside provider", () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     function BrokenComponent() {
       useToast();
       return null;

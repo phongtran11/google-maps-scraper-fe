@@ -3,9 +3,9 @@ import type { LoaderFunctionArgs } from "react-router";
 import { useCallback } from "react";
 import { requireAuth, sessionContext } from "~/lib/server/require-auth.server";
 import { authClient } from "~/lib/auth-client";
-import { AppLayoutTemplate } from "~/features/layout/components/app-layout-template";
-import { getBreadcrumbs } from "~/features/layout/breadcrumbs";
-import type { RouteMatch } from "~/features/layout/breadcrumbs";
+import { AppLayoutTemplate } from "~/shared/layouts";
+import { getBreadcrumbs } from "~/lib/utils";
+import type { RouteMatch } from "~/lib/utils";
 import type { Route } from "./+types/app-layout";
 import { ROUTES } from "~/lib/routes";
 
@@ -59,4 +59,3 @@ export default function AppLayout() {
     </AppLayoutTemplate>
   );
 }
-

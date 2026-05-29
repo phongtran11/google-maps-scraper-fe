@@ -11,4 +11,4 @@ export const pool = new Pool({
 });
 
 // Initialize Drizzle ORM client
-export const db = drizzle(pool, { schema });
+export const db = drizzle(pool, { schema, logger: true, casing: "camelCase" });

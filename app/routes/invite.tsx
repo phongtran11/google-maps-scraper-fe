@@ -33,19 +33,13 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = formData.get("email")?.toString()?.trim();
 
   if (!email) {
-    return Response.json(
-      { error: "Email không được để trống." },
-      { status: 400 }
-    );
+    return Response.json({ error: "Email không được để trống." }, { status: 400 });
   }
 
   // Basic email regex validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return Response.json(
-      { error: "Địa chỉ email không hợp lệ." },
-      { status: 400 }
-    );
+    return Response.json({ error: "Địa chỉ email không hợp lệ." }, { status: 400 });
   }
 
   try {
@@ -53,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
     if (exists) {
       return Response.json(
         { error: "Email này đã được thêm vào danh sách mời trước đó." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -63,7 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
     console.error("Invite error:", err);
     return Response.json(
       { error: "Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -88,8 +82,8 @@ export default function InviteUser() {
   }, [actionData, toast]);
 
   return (
-    <div className="flex justify-center items-start pt-8 min-h-[calc(100vh-8rem)]">
-      <Card className="w-full max-w-lg shadow-md border-border">
+    <div className="flex min-h-[calc(100vh-8rem)] items-start justify-center pt-8">
+      <Card className="border-border w-full max-w-lg shadow-md">
         <CardHeader>
           <CardTitle className="text-xl">Mời Thành Viên</CardTitle>
           <CardDescription>
@@ -99,10 +93,7 @@ export default function InviteUser() {
         <CardContent>
           <Form ref={formRef} method="post" className="space-y-4">
             <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-foreground"
-              >
+              <label htmlFor="email" className="text-foreground text-sm font-medium">
                 Địa chỉ Email
               </label>
               <Input
@@ -115,17 +106,11 @@ export default function InviteUser() {
                 error={!!actionData?.error}
               />
               {actionData?.error && (
-                <p className="text-xs text-destructive mt-1">
-                  {actionData.error}
-                </p>
+                <p className="text-destructive mt-1 text-xs">{actionData.error}</p>
               )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4 animate-spin" />

@@ -32,9 +32,7 @@ export async function getBusinessNotes(
   return result as unknown as NoteRow[];
 }
 
-export async function getBusinessNote(
-  noteId: string | number,
-): Promise<NoteRow | null> {
+export async function getBusinessNote(noteId: string | number): Promise<NoteRow | null> {
   const id = parseId(noteId);
   const result = await db
     .select()
@@ -58,23 +56,12 @@ export async function createBusinessNote(
   });
 }
 
-export async function updateBusinessNote(
-  noteId: string | number,
-  content: string,
-): Promise<void> {
+export async function updateBusinessNote(noteId: string | number, content: string): Promise<void> {
   const id = parseId(noteId);
-  await db
-    .update(businessNotes)
-    .set({ content })
-    .where(eq(businessNotes.id, id));
+  await db.update(businessNotes).set({ content }).where(eq(businessNotes.id, id));
 }
 
-export async function deleteBusinessNote(
-  noteId: string | number,
-): Promise<void> {
+export async function deleteBusinessNote(noteId: string | number): Promise<void> {
   const id = parseId(noteId);
-  await db
-    .update(businessNotes)
-    .set({ deleted_at: new Date() })
-    .where(eq(businessNotes.id, id));
+  await db.update(businessNotes).set({ deleted_at: new Date() }).where(eq(businessNotes.id, id));
 }

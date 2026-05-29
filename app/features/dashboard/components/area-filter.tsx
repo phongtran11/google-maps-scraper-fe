@@ -14,7 +14,7 @@ export function AreaFilter({ areas, activeArea, onAreaChange }: AreaFilterProps)
         <button
           key={a}
           onClick={() => onAreaChange(a)}
-          className={`inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+          className={`focus-visible:ring-ring inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
             activeArea === a
               ? "bg-primary text-primary-foreground border-primary shadow-sm"
               : "bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"

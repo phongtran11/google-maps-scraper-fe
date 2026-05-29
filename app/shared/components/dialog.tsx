@@ -116,7 +116,7 @@ const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
     <div
       ref={ref}
       className={cn(
-        "mx-auto rounded-lg border border-border bg-card text-card-foreground shadow-xl",
+        "border-border bg-card text-card-foreground mx-auto rounded-lg border shadow-xl",
         dialogSizes[size],
         className,
       )}
@@ -130,11 +130,7 @@ DialogContent.displayName = "DialogContent";
 
 const DialogHeader = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("flex flex-col gap-1.5 p-6 pb-0", className)}
-      {...props}
-    />
+    <div ref={ref} className={cn("flex flex-col gap-1.5 p-6 pb-0", className)} {...props} />
   ),
 );
 DialogHeader.displayName = "DialogHeader";
@@ -146,7 +142,7 @@ const DialogTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h2">>(
       <h2
         ref={ref}
         id={titleId}
-        className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+        className={cn("text-lg leading-none font-semibold tracking-tight", className)}
         {...props}
       />
     );
@@ -157,19 +153,13 @@ DialogTitle.displayName = "DialogTitle";
 function DialogDescription({ className, ...props }: ComponentProps<"p">) {
   const { descriptionId } = useContext(DialogContext);
   return (
-    <p
-      id={descriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
+    <p id={descriptionId} className={cn("text-muted-foreground text-sm", className)} {...props} />
   );
 }
 DialogDescription.displayName = "DialogDescription";
 
 const DialogBody = forwardRef<HTMLDivElement, ComponentProps<"div">>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("p-6", className)} {...props} />
-  ),
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-6", className)} {...props} />,
 );
 DialogBody.displayName = "DialogBody";
 

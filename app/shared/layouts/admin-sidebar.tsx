@@ -29,8 +29,7 @@ export const AdminSidebar = memo(function AdminSidebar({
   onClose,
 }: AdminSidebarProps) {
   const isDashboardActive =
-    currentPath === ROUTES.dashboard.path ||
-    ROUTES.businessDetail.pattern.test(currentPath);
+    currentPath === ROUTES.dashboard.path || ROUTES.businessDetail.pattern.test(currentPath);
 
   const navItems = [
     {
@@ -49,15 +48,15 @@ export const AdminSidebar = memo(function AdminSidebar({
 
   return (
     <>
-      <div className="flex h-14 items-center justify-between px-6 border-b border-border">
+      <div className="border-border flex h-14 items-center justify-between border-b px-6">
         <NavLink
           to={ROUTES.dashboard.path}
-          className="flex items-center gap-2.5 font-bold text-lg tracking-tight"
+          className="flex items-center gap-2.5 text-lg font-bold tracking-tight"
           onClick={onClickItem}
         >
-          <MapPin className="h-5 w-5 text-primary" strokeWidth={2.5} />
-          <span className="bg-linear-to-r from-primary to-primary/75 bg-clip-text text-transparent">
-            Quản lý Khác Hàng
+          <MapPin className="text-primary h-5 w-5" strokeWidth={2.5} />
+          <span className="from-primary to-primary/75 bg-linear-to-r bg-clip-text text-transparent">
+            Quản lý Khách Hàng
           </span>
         </NavLink>
         {onClose && (
@@ -65,14 +64,14 @@ export const AdminSidebar = memo(function AdminSidebar({
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="h-8 w-8 text-muted-foreground hover:text-foreground md:hidden cursor-pointer"
+            className="text-muted-foreground hover:text-foreground h-8 w-8 cursor-pointer md:hidden"
           >
             <X className="h-5 w-5" />
           </Button>
         )}
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 space-y-1.5 overflow-y-auto px-4 py-4">
         {navItems.map((item) => (
           <SidebarNavItem
             key={item.label}

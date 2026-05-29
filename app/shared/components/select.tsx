@@ -72,10 +72,7 @@ function Select({
   useEffect(() => {
     if (!open) return;
     function handleClick(e: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         close();
       }
     }
@@ -155,19 +152,17 @@ function Select({
           }
         }}
         className={cn(
-          "flex w-full items-center justify-between gap-2 border border-input bg-background text-foreground",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "border-input bg-background text-foreground flex w-full items-center justify-between gap-2 border",
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           "disabled:cursor-not-allowed disabled:opacity-50",
           selectVariants.size[selectSize],
           !selectedOption && "text-muted-foreground",
         )}
       >
-        <span className="truncate text-left">
-          {selectedOption?.label ?? placeholder}
-        </span>
+        <span className="truncate text-left">{selectedOption?.label ?? placeholder}</span>
         <ChevronDownIcon
           className={cn(
-            "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-150",
+            "text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-150",
             open && "rotate-180",
           )}
         />
@@ -180,7 +175,7 @@ function Select({
           role="listbox"
           aria-label={ariaLabel}
           className={cn(
-            "absolute z-50 mt-1 w-full rounded-md border border-border bg-popover p-1 shadow-md",
+            "border-border bg-popover absolute z-50 mt-1 w-full rounded-md border p-1 shadow-md",
             "transition-all duration-150",
           )}
         >
@@ -202,9 +197,9 @@ function Select({
                 }
               }}
               className={cn(
-                "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+                "relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
                 opt.disabled
-                  ? "cursor-not-allowed opacity-40 text-muted-foreground"
+                  ? "text-muted-foreground cursor-not-allowed opacity-40"
                   : "hover:bg-accent hover:text-accent-foreground",
                 !opt.disabled && focusIndex === i && "bg-accent text-accent-foreground",
                 opt.key === value && "font-medium",
@@ -223,4 +218,3 @@ Select.displayName = "Select";
 
 export { Select, selectVariants };
 export type { SelectProps, SelectOption };
-

@@ -12,10 +12,10 @@
 
 **Files affected:**
 
-| File | Line | Change |
-|---|---|---|
-| `app/routes/dashboard.tsx` | 4 | `"~/lib/server/db.server"` → `"~/lib/server/database/businesses.server"` |
-| `app/routes/api.businesses.ts` | 2 | Same import path change |
+| File                           | Line | Change                                                                   |
+| ------------------------------ | ---- | ------------------------------------------------------------------------ |
+| `app/routes/dashboard.tsx`     | 4    | `"~/lib/server/db.server"` → `"~/lib/server/database/businesses.server"` |
+| `app/routes/api.businesses.ts` | 2    | Same import path change                                                  |
 
 **Verification:** `pnpm run typecheck && pnpm run build`
 
@@ -90,7 +90,7 @@ Check `region` against `REGIONS` constant and `status` against `STATUS_MAP` befo
 
 Parse string IDs to number before querying integer columns. Throw on NaN.
 
-### 3.4 Unfiltered COUNT(*) optimization
+### 3.4 Unfiltered COUNT(\*) optimization
 
 **File:** `app/lib/server/database/businesses.server.ts:61-73`
 
@@ -129,6 +129,7 @@ Exception: keep `useCallback` on `handleSignOut` in `app-layout.tsx` as it's pas
 ### 4.3 Create barrel exports
 
 Create `index.ts` in:
+
 - `app/features/dashboard/components/`
 - `app/features/business-detail/components/`
 - `app/features/business-detail/hooks/`
@@ -137,6 +138,7 @@ Create `index.ts` in:
 ### 4.4 Standardize imports to barrel pattern
 
 Convert direct file imports to barrel imports (`~/shared/components`) in:
+
 - `filter-bar.tsx`
 - `business-table.tsx`
 - `business-sidebar.tsx`
@@ -167,13 +169,14 @@ Convert direct file imports to barrel imports (`~/shared/components`) in:
 ### 5.1 Add database indexes
 
 Extend `setupDatabase()` with `CREATE INDEX IF NOT EXISTS` for:
+
 - `businesses(status)`
 - `businesses(region)`
 - `businesses(status, id DESC)`
 - `business_notes(business_id, deleted_at, created_at DESC)`
 - `user_invites(email)`
 
-### 5.2 SELECT * → column list in dashboard query
+### 5.2 SELECT \* → column list in dashboard query
 
 **File:** `app/lib/server/database/businesses.server.ts:54`
 
@@ -259,11 +262,11 @@ PR1 must go first (fixes broken imports). PR2-PR6 can technically be parallelize
 
 ## Files touched (summary)
 
-| PR | Files modified |
-|---|---|
-| PR1 | `dashboard.tsx`, `api.businesses.ts` |
-| PR2 | `invite.tsx`, `api.businesses.$id.status.ts`, `db.server.ts`, `utils.ts`, `constants.ts`, `dashboard.tsx`, `api.businesses.ts`, `AGENTS.md` |
-| PR3 | `dashboard.tsx`, `api.businesses.ts`, `businesses.$id.tsx`, `api.businesses.$id.notes.ts`, `api.businesses.$id.status.ts`, `businesses.server.ts`, `business-notes.server.ts`, `notes-section.tsx` |
+| PR  | Files modified                                                                                                                                                                                                                                                                |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PR1 | `dashboard.tsx`, `api.businesses.ts`                                                                                                                                                                                                                                          |
+| PR2 | `invite.tsx`, `api.businesses.$id.status.ts`, `db.server.ts`, `utils.ts`, `constants.ts`, `dashboard.tsx`, `api.businesses.ts`, `AGENTS.md`                                                                                                                                   |
+| PR3 | `dashboard.tsx`, `api.businesses.ts`, `businesses.$id.tsx`, `api.businesses.$id.notes.ts`, `api.businesses.$id.status.ts`, `businesses.server.ts`, `business-notes.server.ts`, `notes-section.tsx`                                                                            |
 | PR4 | `app-layout.tsx`, `app-layout-template.tsx`, `select.tsx`, `useTheme.ts`, `notes-section.tsx`, `tooltip.tsx`, `root.tsx`, `theme-toggle.tsx`, `constants.ts`, `filter-bar.tsx`, `business-table.tsx`, `business-sidebar.tsx`, `business-details.tsx`, +4 new `index.ts` files |
-| PR5 | `db.server.ts`, `businesses.server.ts`, `businesses.$id.tsx`, `business-notes.server.ts`, `api.businesses.ts`, `dashboard.tsx`, `api.businesses.$id.notes.ts` |
-| PR6 | `app-layout.tsx`, `notes-section.tsx`, `review-images.tsx`, `root.tsx`, `filter-bar.tsx`, `dashboard-template.tsx` |
+| PR5 | `db.server.ts`, `businesses.server.ts`, `businesses.$id.tsx`, `business-notes.server.ts`, `api.businesses.ts`, `dashboard.tsx`, `api.businesses.$id.notes.ts`                                                                                                                 |
+| PR6 | `app-layout.tsx`, `notes-section.tsx`, `review-images.tsx`, `root.tsx`, `filter-bar.tsx`, `dashboard-template.tsx`                                                                                                                                                            |

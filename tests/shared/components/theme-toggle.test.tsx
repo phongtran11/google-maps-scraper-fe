@@ -27,17 +27,13 @@ describe("ThemeToggle", () => {
 
   it("shows dark mode aria-label when in light mode", () => {
     render(<ThemeToggle />);
-    expect(
-      screen.getByRole("button", { name: "Chuyển sang chế độ tối" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Chuyển sang chế độ tối" })).toBeInTheDocument();
   });
 
   it("shows light mode aria-label when in dark mode", () => {
     mockTheme = "dark";
     render(<ThemeToggle />);
-    expect(
-      screen.getByRole("button", { name: "Chuyển sang chế độ sáng" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Chuyển sang chế độ sáng" })).toBeInTheDocument();
   });
 
   it("calls toggleTheme on click", async () => {

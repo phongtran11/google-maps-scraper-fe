@@ -46,10 +46,7 @@ describe("Pagination", () => {
 
   it("renders nav with aria-label", () => {
     renderPagination();
-    expect(screen.getByRole("navigation")).toHaveAttribute(
-      "aria-label",
-      "Phân trang",
-    );
+    expect(screen.getByRole("navigation")).toHaveAttribute("aria-label", "Phân trang");
   });
 
   it("displays range summary", () => {
