@@ -98,6 +98,13 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "business_notes_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "v_businesses_classified"
+            referencedColumns: ["id"]
+          },
         ]
       }
       businesses: {
@@ -107,6 +114,7 @@ export type Database = {
           category: string | null
           created_at: string
           id: number
+          is_corrected: boolean | null
           maps_url: string
           phone: string | null
           rating: number | null
@@ -124,6 +132,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: number
+          is_corrected?: boolean | null
           maps_url: string
           phone?: string | null
           rating?: number | null
@@ -141,6 +150,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           id?: number
+          is_corrected?: boolean | null
           maps_url?: string
           phone?: string | null
           rating?: number | null
@@ -317,7 +327,29 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_businesses_classified: {
+        Row: {
+          address: string | null
+          business_name: string | null
+          category: string | null
+          created_at: string | null
+          district_city: string | null
+          id: number | null
+          is_corrected: boolean | null
+          maps_url: string | null
+          phone: string | null
+          rating: number | null
+          region: string | null
+          review_count: number | null
+          review_image_urls: string[] | null
+          scraped_at: string | null
+          search_keyword: string | null
+          status: string | null
+          ward_commune: string | null
+          website: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       uuid_generate_v1: { Args: never; Returns: string }
