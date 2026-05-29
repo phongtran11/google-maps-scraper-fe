@@ -1,6 +1,8 @@
 import type { ActionFunctionArgs } from "react-router";
 import { verifySameOrigin } from "~/lib/server/csrf.server";
-import { sql } from "~/lib/server/database/db.server";
+import { db } from "~/lib/server/database/db.server";
+import { businesses } from "~/lib/server/database/schema";
+import { eq } from "drizzle-orm";
 import { validateMethod } from "~/lib/server/request.server";
 import { sessionContext } from "~/lib/server/require-auth.server";
 import { NEXT_STATUS } from "~/lib/constants";
@@ -30,10 +32,19 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    const currentResult = await sql.query(
-      `SELECT status FROM businesses WHERE id = $1`,
-      [params.id],
-    );
+    const numId = parseInt(params.id ?? "", 10);
+    if (isNaN(numId)) {
+      return Response.json(
+        { message: "ID không hợp lệ", error: "invalid_id" },
+        { status: 400, headers: { "Cache-Control": "no-store" } },
+      );
+    }
+
+    const currentResult = await db
+      .select({ status: businesses.status })
+      .from(businesses)
+      .where(eq(businesses.id, numId))
+      .limit(1);
 
     if (currentResult.length === 0) {
       return Response.json(
@@ -55,10 +66,11 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    const result = await sql.query(
-      `UPDATE businesses SET status = $1 WHERE id = $2 RETURNING status`,
-      [status, params.id],
-    );
+    const result = await db
+      .update(businesses)
+      .set({ status })
+      .where(eq(businesses.id, numId))
+      .returning({ status: businesses.status });
 
     return Response.json(
       { message: "Status updated successfully", data: result[0] },

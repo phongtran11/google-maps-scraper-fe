@@ -37,9 +37,10 @@ export const REGIONS = {
   xuyen_moc: "Xuyên Mộc",
 } as const;
 
+export type Region = keyof typeof REGIONS;
+
 /** Options for the area/region dropdown filter. First entry is the "all" sentinel. */
 export const REGION_FILTER_OPTIONS: { key: string; label: string }[] = [
   { key: "", label: "Tất cả khu vực" },
   ...Object.entries(REGIONS).map(([key, label]) => ({ key, label })),
 ];
-

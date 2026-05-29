@@ -1,4 +1,11 @@
+.git
+.github
+.env
+.env*
+node_modules
 .react-router
 build
-node_modules
+Dockerfile
+.dockerignore
+pnpm-debug.log
 README.md

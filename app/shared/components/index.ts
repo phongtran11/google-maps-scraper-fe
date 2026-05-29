@@ -24,10 +24,11 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-  DataTable,
   tableVariants,
 } from "./table";
-export type { TableProps, DataTableProps, DataTableColumn } from "./table";
+export type { TableProps } from "./table";
+export { DataTable, DataTableSkeleton, DataTableEmpty } from "./data-table";
+export type { DataTableProps, DataTableColumn } from "./data-table";
 export { Tooltip } from "./tooltip";
 export type { TooltipProps } from "./tooltip";
 export { PageHeader } from "./page-header";

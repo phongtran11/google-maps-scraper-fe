@@ -1,6 +1,8 @@
 import { redirect, createContext } from "react-router";
 import { auth } from "~/lib/server/auth.server";
-import { sql } from "~/lib/server/database/db.server";
+import { db } from "~/lib/server/database/db.server";
+import { userInvites } from "~/lib/server/database/schema";
+import { eq } from "drizzle-orm";
 import { ROUTES } from "~/lib/routes";
 
 export type SessionType = NonNullable<
@@ -18,10 +20,12 @@ export async function requireAuth(request: Request) {
     throw redirect(ROUTES.login.path);
   }
 
-  const inviteCheck = await sql.query(
-    `SELECT 1 FROM user_invites WHERE email = $1`,
-    [session.user.email],
-  );
+  const inviteCheck = await db
+    .select({ id: userInvites.id })
+    .from(userInvites)
+    .where(eq(userInvites.email, session.user.email))
+    .limit(1);
+
   if (inviteCheck.length === 0) {
     throw redirect(`${ROUTES.login.path}?error=unauthorized`);
   }

@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "generate-types": "export $(grep -v '^#' .env | xargs) && npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
     "invite": "npx tsx --env-file=.env scripts/invite.ts",
-    "migrate": "npx tsx --env-file=.env scripts/migrate.ts"
+    "migrate": "npx tsx --env-file=.env scripts/migrate.ts",
+    "db:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
     "@neondatabase/neon-js": "0.6.1-beta",
@@ -21,6 +22,7 @@
     "@react-router/serve": "7.15.1",
     "better-auth": "^1.6.11",
     "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.2",
     "isbot": "^5.1.36",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
@@ -38,6 +40,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "4.1.7",
+    "drizzle-kit": "^0.31.10",
     "jsdom": "^29.1.1",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",

@@ -1,5 +1,5 @@
-export function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
+export function relativeTime(dateInput: string | Date): string {
+  const diff = Date.now() - new Date(dateInput).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return "vừa xong";
   if (mins < 60) return `${mins} phút trước`;

@@ -1,10 +1,13 @@
-import { sql } from "./db.server";
+import { db } from "./db.server";
+import { userInvites } from "./schema";
+import { eq } from "drizzle-orm";
 
 export async function checkInviteExists(email: string): Promise<boolean> {
-  const result = await sql.query(
-    `SELECT 1 FROM user_invites WHERE email = $1`,
-    [email.toLowerCase().trim()],
-  );
+  const result = await db
+    .select({ id: userInvites.id })
+    .from(userInvites)
+    .where(eq(userInvites.email, email.toLowerCase().trim()))
+    .limit(1);
   return result.length > 0;
 }
 
@@ -14,9 +17,6 @@ export async function createInvite(email: string): Promise<boolean> {
   if (exists) {
     return false;
   }
-  await sql.query(
-    `INSERT INTO user_invites (email) VALUES ($1)`,
-    [trimmedEmail],
-  );
+  await db.insert(userInvites).values({ email: trimmedEmail });
   return true;
 }

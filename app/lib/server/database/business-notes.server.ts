@@ -1,5 +1,7 @@
-import { sql } from "./db.server";
+import { db } from "./db.server";
+import { businessNotes } from "./schema";
 import type { NoteRow } from "../../types";
+import { eq, and, isNull, desc } from "drizzle-orm";
 
 function parseId(id: string | number): number {
   const num = typeof id === "string" ? parseInt(id, 10) : id;
@@ -14,26 +16,33 @@ export async function getBusinessNotes(
 ): Promise<NoteRow[]> {
   const id = parseId(businessId);
 
-  const result = await sql.query(
-    `SELECT id, content, created_by, created_at
-     FROM business_notes
-     WHERE business_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC
-     LIMIT $2 OFFSET $3`,
-    [id, limit, offset],
-  );
-  return result as NoteRow[];
+  const result = await db
+    .select({
+      id: businessNotes.id,
+      content: businessNotes.content,
+      created_by: businessNotes.created_by,
+      created_at: businessNotes.created_at,
+    })
+    .from(businessNotes)
+    .where(and(eq(businessNotes.business_id, id), isNull(businessNotes.deleted_at)))
+    .orderBy(desc(businessNotes.created_at))
+    .limit(limit)
+    .offset(offset);
+
+  return result as unknown as NoteRow[];
 }
 
 export async function getBusinessNote(
   noteId: string | number,
 ): Promise<NoteRow | null> {
   const id = parseId(noteId);
-  const result = await sql.query(
-    `SELECT * FROM business_notes WHERE id = $1 AND deleted_at IS NULL`,
-    [id],
-  );
-  return result.length > 0 ? (result[0] as NoteRow) : null;
+  const result = await db
+    .select()
+    .from(businessNotes)
+    .where(and(eq(businessNotes.id, id), isNull(businessNotes.deleted_at)))
+    .limit(1);
+
+  return result.length > 0 ? (result[0] as unknown as NoteRow) : null;
 }
 
 export async function createBusinessNote(
@@ -41,28 +50,31 @@ export async function createBusinessNote(
   content: string,
   createdBy: string,
 ): Promise<void> {
-  await sql.query(
-    `INSERT INTO business_notes (business_id, content, created_by)
-     VALUES ($1, $2, $3)`,
-    [businessId, content, createdBy],
-  );
+  const id = parseId(businessId);
+  await db.insert(businessNotes).values({
+    business_id: id,
+    content,
+    created_by: createdBy,
+  });
 }
 
 export async function updateBusinessNote(
   noteId: string | number,
   content: string,
 ): Promise<void> {
-  await sql.query(`UPDATE business_notes SET content = $1 WHERE id = $2`, [
-    content,
-    noteId,
-  ]);
+  const id = parseId(noteId);
+  await db
+    .update(businessNotes)
+    .set({ content })
+    .where(eq(businessNotes.id, id));
 }
 
 export async function deleteBusinessNote(
   noteId: string | number,
 ): Promise<void> {
-  await sql.query(
-    `UPDATE business_notes SET deleted_at = NOW() WHERE id = $1`,
-    [noteId],
-  );
+  const id = parseId(noteId);
+  await db
+    .update(businessNotes)
+    .set({ deleted_at: new Date() })
+    .where(eq(businessNotes.id, id));
 }

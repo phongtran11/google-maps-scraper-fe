@@ -1,8 +1,6 @@
 import { forwardRef } from "react";
 import type { ComponentProps } from "react";
-import { useSearchParams } from "react-router";
 import { cn } from "~/lib/utils";
-import { Pagination, type PaginationProps } from "./pagination";
 
 const tableVariants = {
   variant: {
@@ -142,166 +140,6 @@ function TableCaption({ className, ...props }: ComponentProps<"caption">) {
 }
 TableCaption.displayName = "TableCaption";
 
-// ---- DataTable composite component ----
-
-interface DataTableColumn<T> {
-  id?: string;
-  header: string;
-  accessor?: keyof T;
-  cell?: (item: T, index: number) => React.ReactNode;
-  className?: string;
-  cellClassName?: string;
-  headerClassName?: string;
-  align?: "left" | "center" | "right";
-}
-
-interface DataTableProps<T> {
-  data: T[];
-  columns: DataTableColumn<T>[];
-  keyExtractor: (item: T) => string | number;
-  isLoading?: boolean;
-  skeletonRows?: number;
-  emptyMessage?: string;
-  emptyState?: React.ReactNode;
-  pagination?: Omit<PaginationProps, "getPageUrl" | "totalPages"> & {
-    getPageUrl?: (page: number) => string;
-    totalPages?: number;
-  };
-  variant?: keyof typeof tableVariants.variant;
-  tableSize?: keyof typeof tableVariants.size;
-  stickyHeader?: boolean;
-  className?: string;
-  wrapperClassName?: string;
-}
-
-function DataTable<T>({
-  data,
-  columns,
-  keyExtractor,
-  isLoading = false,
-  skeletonRows = 20,
-  emptyMessage,
-  emptyState,
-  pagination,
-  variant = "default",
-  tableSize = "md",
-  stickyHeader = false,
-  className,
-  wrapperClassName,
-}: DataTableProps<T>) {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const resolvedPagination = pagination
-    ? {
-        ...pagination,
-        totalPages:
-          pagination.totalPages ??
-          Math.ceil(pagination.totalCount / pagination.pageSize),
-        getPageUrl:
-          pagination.getPageUrl ||
-          ((p: number) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("page", String(p));
-            return `?${params.toString()}`;
-          }),
-        onPageSizeChange:
-          pagination.onPageSizeChange ||
-          ((newPageSize: number) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("limit", String(newPageSize));
-            params.set("page", "1");
-            setSearchParams(params);
-          }),
-      }
-    : undefined;
-  return (
-    <div className={cn("space-y-0", className)}>
-      <Table
-        variant={variant}
-        tableSize={tableSize}
-        stickyHeader={stickyHeader}
-        wrapperClassName={wrapperClassName}
-      >
-        <TableHeader>
-          <TableRow>
-            {columns.map((col) => (
-              <TableHead
-                key={col.id ?? col.header}
-                className={cn(
-                  col.align === "center" && "text-center",
-                  col.align === "right" && "text-right",
-                  col.className ?? col.headerClassName,
-                )}
-              >
-                {col.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: skeletonRows }).map((_, rowIdx) => (
-              <TableRow key={`skeleton-${rowIdx}`}>
-                {columns.map((col, colIdx) => (
-                  <TableCell
-                    key={col.id ?? col.header}
-                    className={col.cellClassName}
-                  >
-                    <div
-                      className={cn(
-                        "h-5.5 animate-pulse rounded bg-muted",
-                        colIdx % 2 === 0 ? "w-full" : "w-3/4",
-                      )}
-                    />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : data.length === 0 && !isLoading ? (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                {emptyState ?? (
-                  <span className="text-muted-foreground">
-                    {emptyMessage ?? "Không có dữ liệu"}
-                  </span>
-                )}
-              </TableCell>
-            </TableRow>
-          ) : (
-            data.map((item, index) => (
-              <TableRow key={keyExtractor(item)}>
-                {columns.map((col) => {
-                  const cellKey = col.id ?? col.header;
-                  const cellValue = col.cell
-                    ? col.cell(item, index)
-                    : col.accessor
-                      ? String(item[col.accessor] ?? "")
-                      : null;
-
-                  return (
-                    <TableCell
-                      key={cellKey}
-                      className={cn(
-                        col.align === "center" && "text-center",
-                        col.align === "right" && "text-right",
-                        col.cellClassName,
-                      )}
-                    >
-                      {cellValue}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-      {resolvedPagination && <Pagination {...resolvedPagination} />}
-    </div>
-  );
-}
-DataTable.displayName = "DataTable";
-
 export {
   Table,
   TableHeader,
@@ -311,7 +149,6 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-  DataTable,
   tableVariants,
 };
-export type { TableProps, DataTableProps, DataTableColumn };
+export type { TableProps };

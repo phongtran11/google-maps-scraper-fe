@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import type { DataTableColumn } from "~/shared/components/table";
+import type { DataTableColumn } from "~/shared/components/data-table";
+import { DataTable } from "~/shared/components/data-table";
 import {
   Table,
   TableHeader,
@@ -11,7 +12,6 @@ import {
   TableRow,
   TableCell,
   TableCaption,
-  DataTable,
 } from "~/shared/components/table";
 
 describe("Table primitives", () => {
@@ -268,65 +268,10 @@ describe("DataTable", () => {
     expect(headerRight.className).toContain("text-right");
   });
 
-  it("renders pagination when provided", () => {
-    render(
-      <DataTable
-        data={data}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-        pagination={{
-          page: 1,
-          totalPages: 5,
-          totalCount: 50,
-          pageSize: 10,
-          getPageUrl: (p) => `/?page=${p}`,
-        }}
-      />,
-      { wrapper: TestWrapper },
-    );
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
-  });
-
-  it("renders pagination with minimal props (auto-calculates totalPages and defaults)", () => {
-    render(
-      <DataTable
-        data={data}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-        pagination={{
-          page: 1,
-          totalCount: 50,
-          pageSize: 10,
-        }}
-      />,
-      { wrapper: TestWrapper },
-    );
-    expect(screen.getByRole("navigation")).toBeInTheDocument();
-    expect(screen.getByText("5")).toBeInTheDocument();
-  });
-
-  it("uses header as key when column has no id", () => {
-    const columnsWithoutId: DataTableColumn<TestItem>[] = [
-      { header: "ID", accessor: "id" },
-      { header: "Tên", accessor: "name" },
-    ];
-    render(
-      <DataTable
-        data={data}
-        columns={columnsWithoutId}
-        keyExtractor={(item) => item.id}
-      />,
-      { wrapper: TestWrapper },
-    );
-    expect(screen.getByText("ID")).toBeInTheDocument();
-    expect(screen.getByText("Tên")).toBeInTheDocument();
-    expect(screen.getByText("A")).toBeInTheDocument();
-  });
-
   it("renders null for column without accessor or cell", () => {
     const columnsWithNull: DataTableColumn<TestItem>[] = [
-      { header: "ID", accessor: "id" },
-      { header: "Trống", cell: () => null },
+      { id: "id", header: "ID", accessor: "id" },
+      { id: "empty", header: "Trống", cell: () => null },
     ];
     render(
       <DataTable
@@ -340,30 +285,49 @@ describe("DataTable", () => {
     expect(screen.getByText("Trống")).toBeInTheDocument();
   });
 
-  it("renders skeleton without column ids", () => {
-    const columnsWithoutId: DataTableColumn<TestItem>[] = [
-      { header: "Cột", accessor: "name" },
+  it("renders accessorFn result", () => {
+    const columnsWithAccessorFn: DataTableColumn<TestItem>[] = [
+      {
+        id: "computed",
+        header: "Computed",
+        accessorFn: (item) => `${item.name}-${item.id}`,
+      },
     ];
-    const { container } = render(
+    render(
       <DataTable
-        data={[]}
-        columns={columnsWithoutId}
+        data={data}
+        columns={columnsWithAccessorFn}
         keyExtractor={(item) => item.id}
-        isLoading
-        skeletonRows={1}
       />,
       { wrapper: TestWrapper },
     );
-    expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
+    expect(screen.getByText("A-1")).toBeInTheDocument();
+    expect(screen.getByText("B-2")).toBeInTheDocument();
   });
 
-  it("handles column with className on header and cells", () => {
+  it("renders dash for null/undefined values", () => {
+    const dataWithNulls = [{ id: 1, name: null as string | null }];
+    const columnsWithNulls: DataTableColumn<typeof dataWithNulls[0]>[] = [
+      { id: "name", header: "Name", accessor: "name" },
+    ];
+    render(
+      <DataTable
+        data={dataWithNulls}
+        columns={columnsWithNulls}
+        keyExtractor={(item) => item.id}
+      />,
+      { wrapper: TestWrapper },
+    );
+    expect(screen.getByText("-")).toBeInTheDocument();
+  });
+
+  it("handles column with headerClassName and cellClassName", () => {
     const columnsWithClasses: DataTableColumn<TestItem>[] = [
       {
         id: "id",
         header: "ID",
         accessor: "id",
-        className: "header-class",
+        headerClassName: "header-class",
         cellClassName: "cell-class",
       },
     ];

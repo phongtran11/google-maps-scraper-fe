@@ -1,5 +1,5 @@
-import type { Tables } from "~/types/database";
+import { businesses, businessNotes } from "./server/database/schema";
 
-export type BusinessRow = Tables<"businesses">;
+export type BusinessRow = typeof businesses.$inferSelect;
 
-export type NoteRow = Tables<"business_notes">;
+export type NoteRow = typeof businessNotes.$inferSelect;

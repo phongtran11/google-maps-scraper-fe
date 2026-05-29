@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
-import { pool, sql, setupDatabase } from "~/lib/server/database/db.server";
+import { pool, db } from "~/lib/server/database/db.server";
+import { user, userInvites } from "~/lib/server/database/schema";
+import { eq } from "drizzle-orm";
 import { ROUTES } from "~/lib/routes";
 
 export const auth = betterAuth({
@@ -21,19 +23,20 @@ export const auth = betterAuth({
   databaseHooks: {
     session: {
       create: {
-        before: async (session) => {
-          await setupDatabase();
-          const result = await sql.query(
-            `SELECT email FROM "user" WHERE id = $1`,
-            [session.userId],
-          );
-          const userEmail: string | undefined = result[0]?.email;
+        before: async (session: any) => {
+          const result = await db
+            .select({ email: user.email })
+            .from(user)
+            .where(eq(user.id, session.userId))
+            .limit(1);
+          const userEmail = result[0]?.email;
           if (!userEmail) return false;
 
-          const inviteCheck = await sql.query(
-            `SELECT 1 FROM user_invites WHERE email = $1`,
-            [userEmail],
-          );
+          const inviteCheck = await db
+            .select({ id: userInvites.id })
+            .from(userInvites)
+            .where(eq(userInvites.email, userEmail))
+            .limit(1);
           if (inviteCheck.length === 0) return false;
         },
       },

@@ -1,6 +1,8 @@
-import { sql } from "./db.server";
+import { db } from "./db.server";
+import { businesses } from "./schema";
 import type { BusinessRow } from "../../types";
 import { STATUS_MAP, REGIONS } from "../../constants";
+import { eq, ilike, and, desc, sql } from "drizzle-orm";
 
 export interface BusinessFilter {
   limit?: number;
@@ -10,31 +12,20 @@ export interface BusinessFilter {
   status?: string;
 }
 
-export function buildWhereClause(filter: BusinessFilter): {
-  where: string;
-  params: (string | number)[];
-  nextIdx: number;
-} {
-  const conditions: string[] = [];
-  const params: (string | number)[] = [];
-  let idx = 1;
+export function buildConditions(filter: BusinessFilter) {
+  const conditions = [];
 
   if (filter.region && REGIONS[filter.region as keyof typeof REGIONS]) {
-    conditions.push(`region = $${idx++}`);
-    params.push(filter.region);
+    conditions.push(eq(businesses.region, filter.region));
   }
   if (filter.search) {
-    conditions.push(`business_name ILIKE $${idx++}`);
-    params.push(`%${filter.search}%`);
+    conditions.push(ilike(businesses.business_name, `%${filter.search}%`));
   }
   if (filter.status && STATUS_MAP[filter.status]) {
-    conditions.push(`status = $${idx++}`);
-    params.push(filter.status);
+    conditions.push(eq(businesses.status, filter.status));
   }
 
-  const where =
-    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-  return { where, params, nextIdx: idx };
+  return conditions;
 }
 
 export async function getBusinesses({
@@ -44,20 +35,29 @@ export async function getBusinesses({
   search = "",
   status = "",
 }: BusinessFilter = {}): Promise<BusinessRow[]> {
-  const { where, params, nextIdx } = buildWhereClause({
-    region,
-    search,
-    status,
-  });
-  params.push(limit, offset);
+  const conditions = buildConditions({ region, search, status });
 
-  const result = await sql.query(
-    `SELECT id, business_name, phone, address, status, region, rating
-     FROM businesses ${where} ORDER BY id DESC LIMIT $${nextIdx} OFFSET $${nextIdx + 1}`,
-    params,
-  );
+  const query = db
+    .select({
+      id: businesses.id,
+      business_name: businesses.business_name,
+      phone: businesses.phone,
+      address: businesses.address,
+      status: businesses.status,
+      region: businesses.region,
+      rating: businesses.rating,
+    })
+    .from(businesses)
+    .orderBy(desc(businesses.id))
+    .limit(limit)
+    .offset(offset);
 
-  return result as BusinessRow[];
+  if (conditions.length > 0) {
+    query.where(and(...conditions));
+  }
+
+  const result = await query;
+  return result as unknown as BusinessRow[];
 }
 
 export async function getBusinessesCount({
@@ -68,34 +68,47 @@ export async function getBusinessesCount({
   const hasFilters = !!(region || search || status);
 
   if (!hasFilters) {
-    const result = await sql.query(
-      `SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
+    const result = await db.execute<{ count: string }>(
+      sql`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`
     );
-    return Number(result[0].count);
+    return Number(result.rows[0]?.count ?? 0);
   }
 
-  const { where, params } = buildWhereClause({ region, search, status });
-  const result = await sql.query(
-    `SELECT COUNT(*) AS count FROM businesses ${where}`,
-    params,
-  );
-  return Number((result[0] as { count: string | number }).count);
+  const conditions = buildConditions({ region, search, status });
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(businesses)
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+  return Number(result[0]?.count ?? 0);
 }
 
 export async function getBusinessById(
   id: string | number,
 ): Promise<BusinessRow | null> {
-  const result = await sql.query(`SELECT * FROM businesses WHERE id = $1`, [
-    id,
-  ]);
-  return result.length > 0 ? (result[0] as BusinessRow) : null;
+  const numId = typeof id === "string" ? parseInt(id, 10) : id;
+  if (isNaN(numId)) return null;
+
+  const result = await db
+    .select()
+    .from(businesses)
+    .where(eq(businesses.id, numId))
+    .limit(1);
+
+  return result.length > 0 ? (result[0] as unknown as BusinessRow) : null;
 }
 
 export async function checkBusinessExists(
   id: string | number,
 ): Promise<boolean> {
-  const result = await sql.query(`SELECT 1 FROM businesses WHERE id = $1`, [
-    id,
-  ]);
+  const numId = typeof id === "string" ? parseInt(id, 10) : id;
+  if (isNaN(numId)) return false;
+
+  const result = await db
+    .select({ id: businesses.id })
+    .from(businesses)
+    .where(eq(businesses.id, numId))
+    .limit(1);
+
   return result.length > 0;
 }
