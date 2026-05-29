@@ -28,6 +28,7 @@ RUN pnpm install --prod --frozen-lockfile
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV HOST=0.0.0.0
 ENV PORT=3000
 
 # Copy package.json to have package info if needed
