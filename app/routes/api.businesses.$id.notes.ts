@@ -1,15 +1,15 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { checkBusinessExists } from "~/lib/server/database/businesses.server";
+import { checkBusinessExists } from "~/server/database/businesses.server";
 import {
   getBusinessNotes,
   getBusinessNote,
   createBusinessNote,
   updateBusinessNote,
   deleteBusinessNote,
-} from "~/lib/server/database/business-notes.server";
-import { sessionContext } from "~/lib/server/require-auth.server";
-import { verifySameOrigin } from "~/lib/server/csrf.server";
-import { validateMethod } from "~/lib/server/request.server";
+} from "~/server/database/business-notes.server";
+import { sessionContext } from "~/server/auth/require-auth.server";
+import { verifySameOrigin } from "~/server/csrf.server";
+import { validateMethod } from "~/server/request.server";
 
 const MAX_NOTE_LENGTH = 5000;
 

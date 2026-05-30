@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { StatusCard } from "./status-card";
-import type { BusinessRow } from "~/lib/types";
-import { formatZaloPhone } from "~/lib/format";
+import type { BusinessRow } from "~/shared/types";
+import { formatZaloPhone } from "~/shared/utils";
 
 interface BusinessSidebarProps {
   business: BusinessRow;

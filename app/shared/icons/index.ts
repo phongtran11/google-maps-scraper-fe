@@ -15,3 +15,4 @@ export { Settings } from "./settings";
 export { LogOut } from "./log-out";
 export { Sun } from "./sun";
 export { Moon } from "./moon";
+export { CheckIcon } from "./check";

@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
-import { getBusinesses } from "~/lib/server/database/businesses.server";
-import { getIntParam, getStringParam } from "~/lib/utils";
+import { getBusinesses } from "~/server/database/businesses.server";
+import { getIntParam, getStringParam } from "~/shared/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {

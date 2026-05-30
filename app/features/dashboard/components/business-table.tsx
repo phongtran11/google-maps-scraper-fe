@@ -1,23 +1,43 @@
 import { useSearchParams } from "react-router";
-import type { BusinessRow } from "~/lib/types";
-import { REGIONS } from "~/lib/constants";
+import type { BusinessDashboardRow, GroupedDistrict } from "~/shared/types";
 import { DataTable, Pagination } from "~/shared/components";
 import { columns } from "./business-table-config";
 
 export interface BusinessTableProps {
-  businesses: BusinessRow[];
+  businesses: BusinessDashboardRow[];
   totalCount: number;
   page: number;
   pageSize: number;
+  districtsWithWard: GroupedDistrict[];
 }
 
-export function BusinessTable({ businesses, totalCount, page, pageSize }: BusinessTableProps) {
+export function BusinessTable({
+  businesses,
+  totalCount,
+  page,
+  pageSize,
+  districtsWithWard,
+}: BusinessTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const regionCode = searchParams.get("region") || "";
-  const regionLabel = REGIONS[regionCode as keyof typeof REGIONS] || "";
+  const wardIds = searchParams.getAll("wardId");
 
-  const emptyMessage = regionLabel
-    ? `Không có doanh nghiệp nào tại ${regionLabel}.`
+  let wardLabel = "";
+  if (wardIds.length > 0) {
+    const labels: string[] = [];
+    for (const d of districtsWithWard) {
+      for (const w of d.wards) {
+        if (wardIds.includes(String(w.id))) {
+          labels.push(`${w.name} (${d.name})`);
+        }
+      }
+    }
+    if (labels.length > 0) {
+      wardLabel = labels.join(", ");
+    }
+  }
+
+  const emptyMessage = wardLabel
+    ? `Không có doanh nghiệp nào tại ${wardLabel}.`
     : "Chưa có doanh nghiệp nào được thu thập.";
 
   const totalPages = Math.ceil(totalCount / pageSize);

@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs } from "react-router";
-import { verifySameOrigin } from "~/lib/server/csrf.server";
-import { db } from "~/lib/server/database/db.server";
-import { businesses } from "~/lib/server/database/schema";
+import { verifySameOrigin } from "~/server/csrf.server";
+import { db } from "~/server/database/db.server";
+import { businesses } from "~/server/database/schema.server";
 import { eq } from "drizzle-orm";
-import { validateMethod } from "~/lib/server/request.server";
-import { sessionContext } from "~/lib/server/require-auth.server";
-import { NEXT_STATUS } from "~/lib/constants";
+import { validateMethod } from "~/server/request.server";
+import { sessionContext } from "~/server/auth/require-auth.server";
+import { NEXT_STATUS } from "~/shared/constants";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 

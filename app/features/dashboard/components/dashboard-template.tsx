@@ -1,13 +1,14 @@
-import type { BusinessRow } from "~/lib/types";
+import type { BusinessDashboardRow, GroupedDistrict } from "~/shared/types";
 import { FilterBar } from "./filter-bar";
 import { BusinessTable } from "./business-table";
 import { PageHeader } from "~/shared/components";
 
 export interface DashboardTemplateProps {
-  businesses: BusinessRow[];
+  businesses: BusinessDashboardRow[];
   totalCount: number;
   page: number;
   pageSize: number;
+  districtsWithWard: GroupedDistrict[];
 }
 
 export function DashboardTemplate({
@@ -15,18 +16,20 @@ export function DashboardTemplate({
   totalCount,
   page,
   pageSize,
+  districtsWithWard,
 }: DashboardTemplateProps) {
   return (
     <div className="space-y-8">
       <PageHeader title="Trang quản trị" />
 
-      <FilterBar key={JSON.stringify([page, pageSize])} />
+      <FilterBar districtsWithWard={districtsWithWard} />
 
       <BusinessTable
         businesses={businesses}
         totalCount={totalCount}
         page={page}
         pageSize={pageSize}
+        districtsWithWard={districtsWithWard}
       />
     </div>
   );

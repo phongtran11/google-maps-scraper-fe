@@ -1,7 +1,7 @@
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
-import { getBusinessById } from "~/lib/server/database/businesses.server";
-import { getBusinessNotes } from "~/lib/server/database/business-notes.server";
+import { getBusinessById } from "~/server/database/businesses.server";
+import { getBusinessNotes } from "~/server/database/business-notes.server";
 import { BusinessDetails } from "~/features/business-detail/components/business-details";
 import { ReviewImages } from "~/features/business-detail/components/review-images";
 import { NotesSection } from "~/features/business-detail/components/notes-section";

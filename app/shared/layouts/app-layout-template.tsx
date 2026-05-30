@@ -1,11 +1,11 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 import { Menu } from "~/shared/icons/menu";
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { AdminSidebar } from "./admin-sidebar";
-import type { BreadcrumbItem } from "~/lib/utils";
+import type { BreadcrumbItem } from "~/shared/types";
 import { Button } from "~/shared/components";
 
 export interface AppLayoutTemplateProps {

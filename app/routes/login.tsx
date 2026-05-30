@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { MetaFunction } from "react-router";
 import { useSearchParams } from "react-router";
-import { authClient } from "~/lib/auth-client";
 import { Spinner } from "~/shared/icons/spinner";
 import { Google } from "~/shared/icons/google";
+import { authClient } from "~/shared/utils";
 
 export const meta: MetaFunction = () => [
   { title: "Đăng Nhập - Bảng Điều Khiển" },

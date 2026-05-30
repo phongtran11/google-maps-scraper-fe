@@ -1,7 +1,7 @@
 import { memo, useState, useEffect, useRef, useId, Children, cloneElement } from "react";
 import type { ReactNode, ReactElement, Ref, MouseEvent, FocusEvent } from "react";
 import { createPortal } from "react-dom";
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 
 export interface TooltipProps {
   content: ReactNode;
@@ -162,7 +162,7 @@ const TooltipComponent = memo(function Tooltip({
               zIndex: 9999,
             }}
             className={cn(
-              "bg-popover text-popover-foreground border-border animate-in fade-in zoom-in-95 max-w-[280px] rounded-md border px-3 py-1.5 text-xs leading-relaxed font-normal break-words shadow-md duration-150 select-none",
+              "bg-popover text-popover-foreground border-border animate-in fade-in zoom-in-95 max-w-[280px] rounded-md border px-3 py-1.5 text-xs leading-relaxed font-normal wrap-break-word shadow-md duration-150 select-none",
               className,
             )}
             role="tooltip"

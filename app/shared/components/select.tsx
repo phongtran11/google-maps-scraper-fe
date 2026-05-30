@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId } from "react";
 import type { ReactNode } from "react";
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 import { ChevronDownIcon } from "~/shared/icons/chevron-down";
 
 interface SelectOption {

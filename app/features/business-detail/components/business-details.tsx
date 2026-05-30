@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 import { Field } from "~/shared/components";
-import type { BusinessRow } from "~/lib/types";
+import type { BusinessRow } from "~/shared/types";
 
 interface BusinessDetailsProps {
   business: BusinessRow;

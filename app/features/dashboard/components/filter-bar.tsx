@@ -1,16 +1,19 @@
 import { useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
-import { Input, Select, Button } from "~/shared/components";
+import { Input, GroupedSelectCheckbox, Button } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
-import { REGION_FILTER_OPTIONS } from "~/lib/constants";
+import type { GroupedDistrict } from "~/shared/types";
 
-export function FilterBar() {
+interface FilterBarProps {
+  districtsWithWard: GroupedDistrict[];
+}
+
+export function FilterBar({ districtsWithWard }: FilterBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [pending, startTransition] = useTransition();
 
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
-
-  const [region, setRegion] = useState(() => searchParams.get("region") || "");
+  const [wardIds, setWardIds] = useState<string[]>(() => searchParams.getAll("wardId"));
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -21,14 +24,24 @@ export function FilterBar() {
       if (search) next.set("search", search);
       else next.delete("search");
 
-      if (region) next.set("region", region);
-      else next.delete("region");
+      // Clear existing wardId params and append the newly selected ones
+      next.delete("wardId");
+      wardIds.forEach((id) => next.append("wardId", id));
 
       next.set("page", "1");
 
       setSearchParams(next);
     });
   };
+
+  const groups = districtsWithWard.map((d) => ({
+    key: String(d.id),
+    label: d.name,
+    options: d.wards.map((w) => ({
+      key: String(w.id),
+      label: w.name,
+    })),
+  }));
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
@@ -42,17 +55,18 @@ export function FilterBar() {
         className="max-w-xs min-w-[200px]"
       />
 
-      <Select
-        options={REGION_FILTER_OPTIONS}
-        value={region}
-        onChange={setRegion}
+      <GroupedSelectCheckbox
+        groups={groups}
+        value={wardIds}
+        onChange={setWardIds}
         selectSize="md"
-        className="min-w-[180px]"
+        className="min-w-[220px]"
+        placeholder="Tất cả khu vực"
         aria-label="Lọc theo khu vực"
       />
 
-      <Button loading={pending} type="submit">
-        Lọc
+      <Button size="sm" disabled={pending} type="submit">
+        Tìm kiếm
       </Button>
     </form>
   );

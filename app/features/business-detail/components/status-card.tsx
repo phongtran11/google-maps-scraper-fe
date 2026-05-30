@@ -1,8 +1,8 @@
 import { useFetcher } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
 import { Select } from "~/shared/components/select";
-import { STATUS_MAP, NEXT_STATUS } from "~/lib/constants";
-import { ROUTES } from "~/lib/routes";
+import { STATUS_MAP, NEXT_STATUS } from "~/shared/constants";
+import { ROUTES } from "~/shared/constants";
 
 interface StatusCardProps {
   businessId: number;

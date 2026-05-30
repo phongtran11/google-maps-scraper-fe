@@ -1,13 +1,12 @@
 import { Outlet, useLocation, useMatches, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import { useCallback } from "react";
-import { requireAuth, sessionContext } from "~/lib/server/require-auth.server";
-import { authClient } from "~/lib/auth-client";
+import { requireAuth, sessionContext } from "~/server/auth/require-auth.server";
 import { AppLayoutTemplate } from "~/shared/layouts";
-import { getBreadcrumbs } from "~/lib/utils";
-import type { RouteMatch } from "~/lib/utils";
+import { getBreadcrumbs, authClient } from "~/shared/utils";
+import type { RouteMatch } from "~/shared/types";
 import type { Route } from "./+types/app-layout";
-import { ROUTES } from "~/lib/routes";
+import { ROUTES } from "~/shared/constants";
 
 export const middleware: Route.MiddlewareFunction[] = [
   async ({ request, context }, next) => {

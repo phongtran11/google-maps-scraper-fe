@@ -1,4 +1,4 @@
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 
 export interface PageHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   title: React.ReactNode;

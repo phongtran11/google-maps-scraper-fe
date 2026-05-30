@@ -1,7 +1,7 @@
 import { useRef, useEffect, forwardRef, useId, createContext, useContext } from "react";
 import type { ComponentProps, ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 
 const dialogSizes = {
   sm: "max-w-sm",

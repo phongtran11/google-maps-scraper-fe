@@ -7,7 +7,7 @@ import { UserCheck } from "~/shared/icons/user-check";
 import { SidebarNavItem } from "./sidebar-nav-item";
 import { SidebarProfile } from "./sidebar-profile";
 import { Button } from "~/shared/components/button";
-import { ROUTES } from "~/lib/routes";
+import { ROUTES } from "~/shared/constants";
 
 interface AdminSidebarProps {
   currentPath: string;

@@ -1,9 +1,9 @@
 import { memo, useState, useEffect } from "react";
 import { useRouteLoaderData, useFetcher } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components/card";
-import { relativeTime } from "~/lib/format";
+import { relativeTime } from "~/shared/utils";
 import { useNotesManager } from "../hooks/useNotesManager";
-import type { NoteRow } from "~/lib/types";
+import type { NoteRow } from "~/shared/types";
 import { Button, Textarea } from "~/shared/components";
 
 interface NotesSectionProps {

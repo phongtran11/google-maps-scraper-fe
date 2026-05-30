@@ -1,13 +1,13 @@
 import { Link } from "react-router";
-import type { BusinessRow } from "~/lib/types";
-import { STATUS_MAP } from "~/lib/constants";
-import { formatZaloPhone } from "~/lib/format";
+import type { BusinessDashboardRow } from "~/shared/types";
+import { STATUS_MAP } from "~/shared/constants";
+import { formatZaloPhone } from "~/shared/utils";
 import { Badge, Button, Tooltip } from "~/shared/components";
 import type { DataTableColumn } from "~/shared/components/data-table";
 import { ExternalLinkIcon } from "~/shared/icons";
-import { ROUTES } from "~/lib/routes";
+import { ROUTES } from "~/shared/constants";
 
-export const columns: DataTableColumn<BusinessRow>[] = [
+export const columns: DataTableColumn<BusinessDashboardRow>[] = [
   {
     id: "business_name",
     header: "Tên Doanh Nghiệp",

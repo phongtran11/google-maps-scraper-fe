@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useMemo, forwardRef } from "react";
 import type { ComponentProps, ReactNode } from "react";
 import { Provider, Root, Title, Description, Close, Viewport, Action } from "@radix-ui/react-toast";
-import { cn } from "~/lib/utils";
+import { cn } from "~/shared/utils";
 import { Button } from "~/shared/components/button";
 import { X } from "~/shared/icons/x";
 
@@ -77,7 +77,7 @@ const ToastItem = forwardRef<HTMLLIElement, ToastItemProps>(
     <Root
       ref={ref}
       className={cn(
-        "group data-[state=closed]:animate-hide data-[state=open]:animate-slide-in data-[swipe=end]:animate-swipe-out pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-md border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)]",
+        "group data-[state=closed]:animate-hide data-[state=open]:animate-slide-in data-[swipe=end]:animate-swipe-out data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-md border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out]",
         toastColorVariants[variant],
         className,
       )}
