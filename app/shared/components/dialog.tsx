@@ -2,6 +2,7 @@ import { useRef, useEffect, forwardRef, useId, createContext, useContext } from 
 import type { ComponentProps, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "~/shared/utils";
+import { useEscapeKey } from "~/shared/hooks";
 
 const dialogSizes = {
   sm: "max-w-sm",
@@ -35,16 +36,14 @@ function Dialog({ open, onOpenChange, children }: DialogProps) {
   const titleId = useId();
   const descriptionId = useId();
 
+  useEscapeKey(() => onOpenChange(false), open);
+
   useEffect(() => {
     if (open) {
       previousActiveElement.current = document.activeElement;
       document.body.style.overflow = "hidden";
 
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          onOpenChange(false);
-        }
-
         if (e.key === "Tab" && dialogRef.current) {
           const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',

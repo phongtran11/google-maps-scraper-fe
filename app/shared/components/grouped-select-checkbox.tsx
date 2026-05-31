@@ -3,6 +3,7 @@ import { cn } from "~/shared/utils";
 import { ChevronDownIcon, X } from "~/shared/icons";
 import { Button } from "./button";
 import { Checkbox } from "./checkbox";
+import { useClickOutside, useEscapeKey } from "~/shared/hooks";
 
 interface SubOption {
   key: string;
@@ -68,29 +69,9 @@ function GroupedSelectCheckbox({
     }
   }, [open, value, groups]);
 
-  // Click outside listener to close the popover
-  useEffect(() => {
-    if (!open) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  useClickOutside(containerRef, () => setOpen(false), open);
 
-  // Keydown listener for Escape key to close the popover
-  useEffect(() => {
-    if (!open) return;
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+  useEscapeKey(() => setOpen(false), open);
 
   // Retrieve current active group option
   const activeGroup = groups.find((g) => g.key === activeGroupKey) || groups[0];
@@ -186,7 +167,7 @@ function GroupedSelectCheckbox({
         )}
         title={getTriggerLabel()}
       >
-        <span className="max-w-[280px] truncate text-left">{getTriggerLabel()}</span>
+        <span className="flex-1 min-w-0 truncate text-left">{getTriggerLabel()}</span>
         <ChevronDownIcon
           className={cn(
             "text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-150",

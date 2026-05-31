@@ -150,6 +150,32 @@ export const userInvites = pgTable("user_invites", {
   invited_at: timestamp("invited_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
 });
 
+export const approachLists = pgTable("approach_lists", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  created_by: text("created_by").notNull(),
+  created_at: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+});
+
+export const approachListItems = pgTable(
+  "approach_list_items",
+  {
+    id: serial("id").primaryKey(),
+    list_id: integer("list_id")
+      .notNull()
+      .references(() => approachLists.id, { onDelete: "cascade" }),
+    business_id: integer("business_id")
+      .notNull()
+      .references(() => businesses.id, { onDelete: "cascade" }),
+    added_at: timestamp("added_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+    note: text("note"),
+  },
+  (table) => {
+    return [unique("approach_list_items_list_business_unique").on(table.list_id, table.business_id)];
+  },
+);
+
 // ── Read-only View ────────────────────────────────────────────────────────────
 
 export const vBusinessesClassified = pgView("v_businesses_classified", {

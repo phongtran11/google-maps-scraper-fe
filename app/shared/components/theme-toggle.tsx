@@ -1,5 +1,5 @@
 import { Button } from "./button";
-import { useTheme } from "~/shared/hooks/useTheme";
+import { useTheme } from "~/shared/hooks";
 import { Sun, Moon } from "~/shared/icons";
 
 export function ThemeToggle() {

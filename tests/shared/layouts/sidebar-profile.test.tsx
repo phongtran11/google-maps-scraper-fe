@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { SidebarProfile } from "~/shared/layouts/sidebar-profile";
 
-vi.mock("~/shared/hooks/useTheme", () => ({
+vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 

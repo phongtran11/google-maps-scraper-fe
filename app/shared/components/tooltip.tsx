@@ -2,6 +2,7 @@ import { memo, useState, useEffect, useRef, useId, Children, cloneElement } from
 import type { ReactNode, ReactElement, Ref, MouseEvent, FocusEvent } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "~/shared/utils";
+import { useEscapeKey } from "~/shared/hooks";
 
 export interface TooltipProps {
   content: ReactNode;
@@ -69,7 +70,9 @@ const TooltipComponent = memo(function Tooltip({
     }
   };
 
-  // Re-position or hide on scroll / resize / keydown
+  useEscapeKey(() => setIsVisible(false), isVisible, { target: "window" });
+
+  // Re-position or hide on scroll / resize
   useEffect(() => {
     if (!isVisible) return;
 
@@ -77,21 +80,13 @@ const TooltipComponent = memo(function Tooltip({
       updateCoords();
     };
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setIsVisible(false);
-      }
-    };
-
     // Capture scrolls on any container to keep position correct
     window.addEventListener("scroll", handleScrollResize, true);
     window.addEventListener("resize", handleScrollResize, { passive: true });
-    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("scroll", handleScrollResize, true);
       window.removeEventListener("resize", handleScrollResize);
-      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isVisible]);
 

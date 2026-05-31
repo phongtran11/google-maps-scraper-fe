@@ -6,7 +6,7 @@ import { ThemeToggle } from "~/shared/components/theme-toggle";
 const mockToggleTheme = vi.fn();
 let mockTheme: "light" | "dark" = "light";
 
-vi.mock("~/shared/hooks/useTheme", () => ({
+vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({
     theme: mockTheme,
     toggleTheme: mockToggleTheme,

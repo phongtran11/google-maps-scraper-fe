@@ -44,7 +44,7 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
   }));
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <Input
         type="search"
         placeholder="Tìm tên doanh nghiệp…"
@@ -52,7 +52,8 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
         onChange={(e) => setSearch(e.target.value)}
         prefixIcon={<SearchIcon />}
         inputSize="md"
-        className="max-w-xs min-w-[200px]"
+        className="w-full sm:w-72 sm:max-w-xs"
+        disabled={pending}
       />
 
       <GroupedSelectCheckbox
@@ -60,12 +61,12 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
         value={wardIds}
         onChange={setWardIds}
         selectSize="md"
-        className="min-w-[220px]"
+        className="w-full sm:w-72"
         placeholder="Tất cả khu vực"
         aria-label="Lọc theo khu vực"
       />
 
-      <Button size="sm" disabled={pending} type="submit">
+      <Button disabled={pending} type="submit" className="w-full sm:w-auto">
         Tìm kiếm
       </Button>
     </form>

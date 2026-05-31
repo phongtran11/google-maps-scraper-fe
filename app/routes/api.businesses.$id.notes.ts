@@ -8,8 +8,8 @@ import {
   deleteBusinessNote,
 } from "~/server/database/business-notes.server";
 import { sessionContext } from "~/server/auth/require-auth.server";
-import { verifySameOrigin } from "~/server/csrf.server";
-import { validateMethod } from "~/server/request.server";
+import { verifySameOrigin } from "~/server/http/csrf.server";
+import { validateMethod } from "~/server/http/request.server";
 
 const MAX_NOTE_LENGTH = 5000;
 

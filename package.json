@@ -9,8 +9,6 @@
     "typecheck": "react-router typegen && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "generate-types": "export $(grep -v '^#' .env | xargs) && npx @neondatabase/neon-js gen-types --db-url \"$NEON_DATABASE_URL\" --output app/types/database.ts",
-    "invite": "npx tsx --env-file=.env scripts/invite.ts",
     "migrate": "npx tsx --env-file=.env scripts/migrate.ts",
     "db:studio": "npx drizzle-kit studio",
     "format": "prettier --write ."

@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router";
 import { AppLayoutTemplate } from "~/shared/layouts/app-layout-template";
 import type { BreadcrumbItem } from "~/shared/types";
 
-vi.mock("~/shared/hooks/useTheme", () => ({
+vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 

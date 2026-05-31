@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { MetaFunction, ActionFunctionArgs } from "react-router";
 import { Form, useActionData, useNavigation } from "react-router";
-import { verifySameOrigin } from "~/server/csrf.server";
+import { verifySameOrigin } from "~/server/http/csrf.server";
 import { createInvite, checkInviteExists } from "~/server/database/invites.server";
 import {
   Card,

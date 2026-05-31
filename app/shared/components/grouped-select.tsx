@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { cn } from "~/shared/utils";
 import { ChevronDownIcon } from "~/shared/icons/chevron-down";
+import { useClickOutside, useListboxKeyboardNavigation } from "~/shared/hooks";
 
 interface SubOption {
   key: string;
@@ -102,62 +103,16 @@ export function GroupedSelect({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        close();
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
+  useClickOutside(containerRef, close, open);
 
-  useEffect(() => {
-    if (!open) return;
-    function handleKey(e: KeyboardEvent) {
-      switch (e.key) {
-        case "ArrowDown": {
-          e.preventDefault();
-          let nextIndex = focusIndex + 1;
-          while (nextIndex < flatOptions.length && flatOptions[nextIndex].disabled) {
-            nextIndex++;
-          }
-          if (nextIndex < flatOptions.length) {
-            setFocusIndex(nextIndex);
-          }
-          break;
-        }
-        case "ArrowUp": {
-          e.preventDefault();
-          let prevIndex = focusIndex - 1;
-          while (prevIndex >= 0 && flatOptions[prevIndex].disabled) {
-            prevIndex--;
-          }
-          if (prevIndex >= 0) {
-            setFocusIndex(prevIndex);
-          }
-          break;
-        }
-        case "Enter": {
-          e.preventDefault();
-          if (focusIndex >= 0 && focusIndex < flatOptions.length) {
-            const opt = flatOptions[focusIndex];
-            if (!opt.disabled) {
-              select(opt.key);
-            }
-          }
-          break;
-        }
-        case "Escape":
-          e.preventDefault();
-          close();
-          break;
-      }
-    }
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [open, focusIndex, flatOptions]);
+  useListboxKeyboardNavigation({
+    enabled: open,
+    options: flatOptions,
+    focusIndex,
+    onFocusIndexChange: setFocusIndex,
+    onSelect: (opt) => select(opt.key),
+    onClose: close,
+  });
 
   // Handle scrolling of focused element into view
   useEffect(() => {

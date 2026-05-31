@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { AdminSidebar } from "~/shared/layouts/admin-sidebar";
 
-vi.mock("~/shared/hooks/useTheme", () => ({
+vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 
