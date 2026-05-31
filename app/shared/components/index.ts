@@ -1,26 +1,16 @@
-export { Badge } from "./badge";
-export { Button, buttonVariants } from "./button";
-export type { ButtonProps } from "./button";
-export { Field } from "./field";
-export { Input } from "./input";
-export { Checkbox } from "./checkbox";
-export type { CheckboxProps } from "./checkbox";
-export { Textarea } from "./textarea";
-export type { TextareaProps } from "./textarea";
-export { RatingBadge } from "./rating-badge";
-export { Select } from "./select";
-export { GroupedSelect } from "./grouped-select";
-export type { GroupedSelectProps, GroupOption, SubOption } from "./grouped-select";
-export { GroupedSelectCheckbox } from "./grouped-select-checkbox";
-export type { GroupedSelectCheckboxProps } from "./grouped-select-checkbox";
-export { ThemeToggle } from "./theme-toggle";
-export { Alert } from "./alert";
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "./card";
-export { Dialog } from "./dialog";
-export { ToastProvider, useToast } from "./toast";
-export type { Toast } from "./toast";
-export { Pagination } from "./pagination";
-export type { PaginationProps } from "./pagination";
+// Atoms
+export { Alert } from "./atoms/alert";
+export { Badge } from "./atoms/badge";
+export { Button, buttonVariants } from "./atoms/button";
+export type { ButtonProps } from "./atoms/button";
+export { Field } from "./atoms/field";
+export { Input } from "./atoms/input";
+export { Checkbox } from "./atoms/checkbox";
+export type { CheckboxProps } from "./atoms/checkbox";
+export { Textarea } from "./atoms/textarea";
+export type { TextareaProps } from "./atoms/textarea";
+export { RatingBadge } from "./atoms/rating-badge";
+export { Select } from "./atoms/select";
 export {
   Table,
   TableHeader,
@@ -31,11 +21,26 @@ export {
   TableCell,
   TableCaption,
   tableVariants,
-} from "./table";
-export type { TableProps } from "./table";
-export { DataTable, DataTableSkeleton, DataTableEmpty } from "./data-table";
-export type { DataTableProps, DataTableColumn } from "./data-table";
-export { Tooltip } from "./tooltip";
-export type { TooltipProps } from "./tooltip";
-export { PageHeader } from "./page-header";
-export type { PageHeaderProps } from "./page-header";
+} from "./atoms/table";
+export type { TableProps } from "./atoms/table";
+export { Tooltip } from "./atoms/tooltip";
+export type { TooltipProps } from "./atoms/tooltip";
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "./atoms/card";
+
+// Molecules
+export { Dialog } from "./molecules/dialog";
+export { GroupedSelect } from "./molecules/grouped-select";
+export type { GroupedSelectProps, GroupOption, SubOption } from "./molecules/grouped-select";
+export { GroupedSelectCheckbox } from "./molecules/grouped-select-checkbox";
+export type { GroupedSelectCheckboxProps } from "./molecules/grouped-select-checkbox";
+export { ThemeToggle } from "./molecules/theme-toggle";
+export { ToastProvider, useToast } from "./molecules/toast";
+export type { Toast } from "./molecules/toast";
+export { PageHeader } from "./molecules/page-header";
+export type { PageHeaderProps } from "./molecules/page-header";
+
+// Organisms
+export { DataTable, DataTableSkeleton, DataTableEmpty } from "./organisms/data-table";
+export type { DataTableProps, DataTableColumn } from "./organisms/data-table";
+export { Pagination } from "./molecules/pagination"; // note: pagination is a molecule in this file but exported here. Let's make sure it matches!
+export type { PaginationProps } from "./molecules/pagination";

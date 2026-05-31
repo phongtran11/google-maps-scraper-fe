@@ -91,6 +91,24 @@ export const wards = pgTable(
   },
 );
 
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  businessName: text("business_name"),
+  phone: text("phone"),
+  website: text("website"),
+  address: text("address"),
+  mapsUrl: text("maps_url").notNull().unique(),
+  reviewImageCount: integer("review_image_count").default(0),
+  reviewImageUrls: text("review_image_urls")
+    .array()
+    .default(sql`'{}'::TEXT[]`),
+  status: text("status").default("new").notNull(),
+  wardId: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "date" }),
+});
+
 export const businesses = pgTable("businesses", {
   id: serial("id").primaryKey(),
   search_keyword: text("search_keyword").notNull(),
@@ -172,7 +190,9 @@ export const approachListItems = pgTable(
     note: text("note"),
   },
   (table) => {
-    return [unique("approach_list_items_list_business_unique").on(table.list_id, table.business_id)];
+    return [
+      unique("approach_list_items_list_business_unique").on(table.list_id, table.business_id),
+    ];
   },
 );
 

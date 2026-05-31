@@ -1,0 +1,26 @@
+{
+  "name": "Frontend-Harness-Workspace",
+  "agent_settings": {
+    "primary_mode": "orchestrator",
+    "allow_parallel_subagents": true
+  },
+  "subagents": {
+    "ui": {
+      "description": "Chuyên trách Presentation Layer. Chỉ dựng cấu trúc HTML/JSX và Style Tailwind CSS. Cấm viết logic API.",
+      "permissions": { "file_write": true, "bash_exec": false },
+      "preferred_model": "gemini-2.0-flash"
+    },
+    "logic": {
+      "description": "Chuyên trách Business Logic. Viết Custom Hooks, tích hợp API client (React Query), quản lý State (Zustand) và Validate (Zod).",
+      "permissions": { "file_write": true, "bash_exec": false }
+    },
+    "perf": {
+      "description": "Chuyên gia Audit hiệu năng và tối ưu Core Web Vitals, SEO, cấu trúc render component.",
+      "permissions": { "file_write": true, "bash_exec": false }
+    },
+    "tester": {
+      "description": "Chuyên viên viết Automation Test (Vitest/Jest). Tập trung tìm lỗi ở các kịch bản biên (Edge cases).",
+      "permissions": { "file_write": true, "bash_exec": true }
+    }
+  }
+}

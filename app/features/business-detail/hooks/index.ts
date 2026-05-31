@@ -1,1 +1,1 @@
-export { useNotesManager } from "./useNotesManager";
+export { useNotesManager } from "./use-notes-manager";

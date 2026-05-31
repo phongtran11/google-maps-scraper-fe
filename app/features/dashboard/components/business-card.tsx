@@ -1,8 +1,7 @@
 import { Link } from "react-router";
 import type { BusinessRow } from "~/shared/types";
 import { STATUS_MAP } from "~/shared/constants";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "~/shared/components/card";
-import { Badge } from "~/shared/components/badge";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Badge } from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 import { ROUTES } from "~/shared/constants";
 

@@ -3,7 +3,7 @@ import type { BusinessDashboardRow } from "~/shared/types";
 import { STATUS_MAP } from "~/shared/constants";
 import { formatZaloPhone } from "~/shared/utils";
 import { Badge, Button, Tooltip } from "~/shared/components";
-import type { DataTableColumn } from "~/shared/components/data-table";
+import type { DataTableColumn } from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons";
 import { ROUTES } from "~/shared/constants";
 
