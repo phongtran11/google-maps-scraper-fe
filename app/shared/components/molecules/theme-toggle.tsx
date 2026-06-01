@@ -1,6 +1,7 @@
-import { Button } from "../atoms/button";
 import { useTheme } from "~/shared/hooks";
-import { Sun, Moon } from "~/shared/icons";
+import { Moon, Sun } from "~/shared/icons";
+
+import { Button } from "../atoms/button";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();

@@ -55,5 +55,4 @@ pool.connect = async function (this: any, ...args: any[]) {
 export const db = drizzle(pool, {
   schema,
   logger: false,
-  casing: "camelCase",
 });

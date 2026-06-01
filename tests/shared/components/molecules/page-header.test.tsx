@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
 import { PageHeader } from "~/shared/components/molecules/page-header";
 
 describe("PageHeader", () => {
@@ -21,12 +22,7 @@ describe("PageHeader", () => {
   });
 
   it("renders actions slot", () => {
-    render(
-      <PageHeader
-        title="Tiêu đề"
-        actions={<button>Thêm mới</button>}
-      />,
-    );
+    render(<PageHeader title="Tiêu đề" actions={<button>Thêm mới</button>} />);
     expect(screen.getByRole("button", { name: "Thêm mới" })).toBeInTheDocument();
   });
 
@@ -36,9 +32,7 @@ describe("PageHeader", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(
-      <PageHeader title="Tiêu đề" className="custom-header" />,
-    );
+    const { container } = render(<PageHeader title="Tiêu đề" className="custom-header" />);
     expect(container.firstChild).toHaveClass("custom-header");
   });
 

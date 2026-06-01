@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { getBreadcrumbs } from "~/shared/utils/routing";
+import { describe, expect, it } from "vitest";
+
 import type { RouteMatch } from "~/shared/types";
+import { getBreadcrumbs } from "~/shared/utils/routing";
 
 describe("getBreadcrumbs", () => {
   it("returns single dashboard crumb for root path", () => {
@@ -18,10 +19,7 @@ describe("getBreadcrumbs", () => {
       },
     ];
     const result = getBreadcrumbs("/businesses/123", matches);
-    expect(result).toEqual([
-      { label: "Trang Quản Trị", to: "/" },
-      { label: "Cafe ABC" },
-    ]);
+    expect(result).toEqual([{ label: "Trang Quản Trị", to: "/" }, { label: "Cafe ABC" }]);
   });
 
   it("returns fallback label when business name is missing", () => {
@@ -74,9 +72,6 @@ describe("getBreadcrumbs", () => {
 
   it('returns generic "Chi tiết" for unknown non-root paths', () => {
     const result = getBreadcrumbs("/some/other/path", []);
-    expect(result).toEqual([
-      { label: "Trang Quản Trị", to: "/" },
-      { label: "Chi tiết" },
-    ]);
+    expect(result).toEqual([{ label: "Trang Quản Trị", to: "/" }, { label: "Chi tiết" }]);
   });
 });

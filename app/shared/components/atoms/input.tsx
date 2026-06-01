@@ -1,5 +1,6 @@
-import { forwardRef, useId } from "react";
 import type { ComponentProps, ReactNode } from "react";
+import { forwardRef, useId } from "react";
+
 import { cn } from "~/shared/utils";
 
 const inputVariants = {

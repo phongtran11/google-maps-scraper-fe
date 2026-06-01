@@ -1,12 +1,14 @@
-import { useState } from "react";
 import type { ReactNode } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { cn } from "~/shared/utils";
-import { Menu } from "~/shared/icons/menu";
-import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
-import { AdminSidebar } from "../organisms/admin-sidebar";
-import type { BreadcrumbItem } from "~/shared/types";
+
 import { Button } from "~/shared/components";
+import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
+import { Menu } from "~/shared/icons/menu";
+import type { BreadcrumbItem } from "~/shared/types";
+import { cn } from "~/shared/utils";
+
+import { AdminSidebar } from "../organisms/admin-sidebar";
 
 export interface AppLayoutTemplateProps {
   currentUser: {

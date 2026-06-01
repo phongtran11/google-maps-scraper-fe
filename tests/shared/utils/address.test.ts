@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { groupDistrictsWithWards } from "~/shared/utils/address";
 
 describe("groupDistrictsWithWards", () => {
@@ -34,9 +35,7 @@ describe("groupDistrictsWithWards", () => {
       {
         id: 2,
         name: "Thành phố Bà Rịa",
-        wards: [
-          { id: 20, name: "Phường Phước Trung" },
-        ],
+        wards: [{ id: 20, name: "Phường Phước Trung" }],
       },
     ];
 
@@ -47,7 +46,7 @@ describe("groupDistrictsWithWards", () => {
     const input = [
       {
         districts: { id: 3, name: "Huyện Côn Đảo" },
-        wards: null as any,
+        wards: null,
       },
     ];
 

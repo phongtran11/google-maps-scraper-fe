@@ -1,8 +1,11 @@
-import { db } from "./db.server";
-import { businesses } from "./schema.server";
-import { STATUS_MAP, REGIONS } from "~/shared/constants";
-import { eq, ilike, and, desc, sql, inArray } from "drizzle-orm";
-import type { BusinessDashboardRow, BusinessFilter } from "~/shared/types";
+import { and, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
+
+import { db } from "~/server/database/db.server";
+import { businesses,businessNotes } from "~/server/database/schema.server";
+import { parseId } from "~/shared/utils";
+
+import { REGIONS, STATUS_MAP } from "./constants";
+import type { BusinessFilter } from "./types";
 
 export function buildConditions(filter: BusinessFilter) {
   const conditions = [];
@@ -18,9 +21,7 @@ export function buildConditions(filter: BusinessFilter) {
   }
   if (filter.wardId) {
     if (Array.isArray(filter.wardId)) {
-      const numWardIds = filter.wardId
-        .map((id) => parseInt(id, 10))
-        .filter((id) => !isNaN(id));
+      const numWardIds = filter.wardId.map((id) => parseInt(id, 10)).filter((id) => !isNaN(id));
       if (numWardIds.length > 0) {
         conditions.push(inArray(businesses.ward_id, numWardIds));
       }
@@ -42,7 +43,7 @@ export async function getBusinesses({
   search = "",
   status = "",
   wardId = "",
-}: BusinessFilter): Promise<BusinessDashboardRow[]> {
+}: BusinessFilter) {
   const conditions = buildConditions({ region, search, status, wardId });
 
   const query = db
@@ -66,23 +67,25 @@ export async function getBusinesses({
   }
 
   const result = await query;
-  return result as unknown as BusinessDashboardRow[];
+  return result;
 }
+
+export type GetBusinessesResult = Awaited<ReturnType<typeof getBusinesses>>[number];
 
 export async function getBusinessesCount({
   region = "",
   search = "",
   status = "",
   wardId = "",
-}: Pick<BusinessFilter, "region" | "search" | "status" | "wardId"> = {}): Promise<number> {
+}: BusinessFilter): Promise<number> {
   const hasWardIdFilter = Array.isArray(wardId) ? wardId.length > 0 : !!wardId;
   const hasFilters = !!(region || search || status) || hasWardIdFilter;
 
   if (!hasFilters) {
     const result = await db.execute<{ count: string }>(
-      sql`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
+      sql<string>`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
     );
-    return Number(result.rows[0]?.count ?? 0);
+    return Number(result.rows[0]?.count) || 0;
   }
 
   const conditions = buildConditions({ region, search, status, wardId });
@@ -91,12 +94,12 @@ export async function getBusinessesCount({
     .from(businesses)
     .where(conditions.length > 0 ? and(...conditions) : undefined);
 
-  return Number(result[0]?.count ?? 0);
+  return result[0]?.count ?? 0;
 }
 
 export async function getBusinessById(id: string | number) {
-  const numId = typeof id === "string" ? parseInt(id, 10) : id;
-  if (isNaN(numId)) return null;
+  const numId = parseId(id);
+  if (numId === null) return null;
 
   const result = await db.select().from(businesses).where(eq(businesses.id, numId)).limit(1);
 
@@ -104,8 +107,8 @@ export async function getBusinessById(id: string | number) {
 }
 
 export async function checkBusinessExists(id: string | number): Promise<boolean> {
-  const numId = typeof id === "string" ? parseInt(id, 10) : id;
-  if (isNaN(numId)) return false;
+  const numId = parseId(id);
+  if (numId === null) return false;
 
   const result = await db
     .select({ id: businesses.id })
@@ -114,4 +117,36 @@ export async function checkBusinessExists(id: string | number): Promise<boolean>
     .limit(1);
 
   return result.length > 0;
+}
+
+export async function getBusinessNotes(businessId: string | number, limit = 50, offset = 0) {
+  const id = parseId(businessId);
+  if (id === null) throw new Error("Invalid ID");
+
+  const result = await db
+    .select({
+      id: businessNotes.id,
+      content: businessNotes.content,
+      created_by: businessNotes.created_by,
+      created_at: businessNotes.created_at,
+    })
+    .from(businessNotes)
+    .where(and(eq(businessNotes.business_id, id), isNull(businessNotes.deleted_at)))
+    .orderBy(desc(businessNotes.created_at))
+    .limit(limit)
+    .offset(offset);
+
+  return result;
+}
+
+export async function getBusinessNote(noteId: string | number) {
+  const id = parseId(noteId);
+  if (id === null) throw new Error("Invalid ID");
+  const result = await db
+    .select()
+    .from(businessNotes)
+    .where(and(eq(businessNotes.id, id), isNull(businessNotes.deleted_at)))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
 }

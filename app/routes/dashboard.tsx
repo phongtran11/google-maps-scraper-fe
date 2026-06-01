@@ -1,8 +1,10 @@
-import type { MetaFunction, LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import { DashboardTemplate } from "~/features/dashboard/components/dashboard-template";
+
+import { BusinessTable, FilterBar } from "~/features/business";
+import { getBusinesses, getBusinessesCount } from "~/features/business/queries.server";
 import { getDistrictsWithWard } from "~/server/database/districts.server";
-import { getBusinesses, getBusinessesCount } from "~/server/database/businesses.server";
+import { PageHeader } from "~/shared/components";
 import { getIntParam, getStringParam, groupDistrictsWithWards } from "~/shared/utils";
 
 export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];
@@ -31,12 +33,18 @@ export default function Dashboard() {
   const loaderData = useLoaderData<typeof loader>();
 
   return (
-    <DashboardTemplate
-      businesses={loaderData.businesses}
-      totalCount={loaderData.totalCount}
-      page={loaderData.page}
-      pageSize={loaderData.limit}
-      districtsWithWard={loaderData.districtsWithWard}
-    />
+    <div className="space-y-8">
+      <PageHeader title="Trang quản trị" />
+
+      <FilterBar districtsWithWard={loaderData.districtsWithWard} />
+
+      <BusinessTable
+        businesses={loaderData.businesses}
+        totalCount={loaderData.totalCount}
+        page={loaderData.page}
+        pageSize={loaderData.limit}
+        districtsWithWard={loaderData.districtsWithWard}
+      />
+    </div>
   );
 }

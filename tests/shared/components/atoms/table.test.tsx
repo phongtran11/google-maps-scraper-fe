@@ -1,18 +1,19 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import type { DataTableColumn } from "~/shared/components/organisms/data-table";
-import { DataTable } from "~/shared/components/organisms/data-table";
+import { describe, expect, it } from "vitest";
+
 import {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 } from "~/shared/components/atoms/table";
+import type { DataTableColumn } from "~/shared/components/organisms/data-table";
+import { DataTable } from "~/shared/components/organisms/data-table";
 
 describe("Table primitives", () => {
   it("renders Table with default variant", () => {

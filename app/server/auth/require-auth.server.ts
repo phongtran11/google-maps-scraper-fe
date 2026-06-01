@@ -1,8 +1,9 @@
-import { redirect, createContext } from "react-router";
+import { eq } from "drizzle-orm";
+import { createContext, redirect } from "react-router";
+
 import { auth } from "~/server/auth/auth.server";
 import { db } from "~/server/database/db.server";
 import { userInvites } from "~/server/database/schema.server";
-import { eq } from "drizzle-orm";
 import { ROUTES } from "~/shared/constants";
 
 export type SessionType = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;

@@ -1,5 +1,6 @@
 import { memo } from "react";
-import { ThemeToggle, Button } from "~/shared/components";
+
+import { Button, ThemeToggle } from "~/shared/components";
 import { LogOut } from "~/shared/icons/log-out";
 
 interface SidebarProfileProps {

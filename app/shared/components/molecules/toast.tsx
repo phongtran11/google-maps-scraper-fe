@@ -1,9 +1,11 @@
-import { createContext, useContext, useState, useCallback, useMemo, forwardRef } from "react";
+import { Action, Close, Description, Provider, Root, Title, Viewport } from "@radix-ui/react-toast";
 import type { ComponentProps, ReactNode } from "react";
-import { Provider, Root, Title, Description, Close, Viewport, Action } from "@radix-ui/react-toast";
-import { cn } from "~/shared/utils";
-import { Button } from "../atoms/button";
+import { createContext, forwardRef, useCallback, useContext, useMemo, useState } from "react";
+
 import { X } from "~/shared/icons/x";
+import { cn } from "~/shared/utils";
+
+import { Button } from "../atoms/button";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -165,4 +167,4 @@ function ToastProvider({ children, position = "bottom-right" }: ToastProviderPro
 }
 
 export { ToastProvider, useToast };
-export type { Toast, ToastVariant, ToastPosition, ToastProviderProps };
+export type { Toast, ToastPosition, ToastProviderProps, ToastVariant };

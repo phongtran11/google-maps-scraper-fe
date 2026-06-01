@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+
 import { Checkbox } from "~/shared/components/atoms/checkbox";
 
 describe("Checkbox", () => {
@@ -40,7 +41,7 @@ describe("Checkbox", () => {
 
   it("displays dash line and behaves as indeterminate when indeterminate is true", () => {
     const { container } = render(<Checkbox indeterminate label="Indeterminate" readOnly />);
-    
+
     // An indeterminate checkbox should show a dash div, not a check icon SVG
     const svg = container.querySelector("svg.text-primary");
     expect(svg).not.toBeInTheDocument();

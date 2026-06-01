@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { getIntParam } from "~/shared/utils/number";
+import { describe, expect, it } from "vitest";
+
+import { getIntParam, parseId } from "~/shared/utils/number";
 
 describe("getIntParam", () => {
   it("returns default value when param is missing", () => {
@@ -49,5 +50,23 @@ describe("getIntParam", () => {
   it("handles float values by truncating to integer", () => {
     const url = new URL("http://example.com?page=3.7");
     expect(getIntParam(url, "page", 1)).toBe(3);
+  });
+});
+
+describe("parseId", () => {
+  it("parses valid numeric string", () => {
+    expect(parseId("123")).toBe(123);
+  });
+
+  it("returns number when input is already a number", () => {
+    expect(parseId(456)).toBe(456);
+  });
+
+  it("returns null for invalid string", () => {
+    expect(parseId("abc")).toBeNull();
+  });
+
+  it("returns null for empty string", () => {
+    expect(parseId("")).toBeNull();
   });
 });

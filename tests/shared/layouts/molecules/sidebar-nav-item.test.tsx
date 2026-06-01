@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
+import { describe, expect, it, vi } from "vitest";
+
 import { SidebarNavItem } from "~/shared/layouts/molecules/sidebar-nav-item";
 
 describe("SidebarNavItem", () => {

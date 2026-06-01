@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
 import { useEscapeKey } from "~/shared/hooks";
 
 describe("useEscapeKey", () => {

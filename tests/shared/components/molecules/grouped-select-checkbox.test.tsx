@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+
 import { GroupedSelectCheckbox } from "~/shared/components/molecules/grouped-select-checkbox";
 
 const groups = [
@@ -25,7 +26,14 @@ const groups = [
 
 describe("GroupedSelectCheckbox", () => {
   it("renders with placeholder when no value is selected", () => {
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} placeholder="Tất cả khu vực" />);
+    render(
+      <GroupedSelectCheckbox
+        groups={groups}
+        value={[]}
+        onChange={vi.fn()}
+        placeholder="Tất cả khu vực"
+      />,
+    );
     expect(screen.getByText("Tất cả khu vực")).toBeInTheDocument();
   });
 
@@ -42,7 +50,7 @@ describe("GroupedSelectCheckbox", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Huyện Châu Đức")).toBeInTheDocument();
     expect(screen.getByText("Thành phố Vũng Tàu")).toBeInTheDocument();
-    
+
     // Default active is Huyện Châu Đức (first group)
     expect(screen.getByText("Xã Xuân Sơn")).toBeInTheDocument();
     expect(screen.getByText("Xã Láng Lớn")).toBeInTheDocument();
@@ -59,7 +67,7 @@ describe("GroupedSelectCheckbox", () => {
     await user.click(screen.getByText("Thành phố Vũng Tàu"));
     expect(screen.getByText("Phường 1")).toBeInTheDocument();
     expect(screen.getByText("Phường 2")).toBeInTheDocument();
-    
+
     // Châu Đức options should not be visible anymore
     expect(screen.queryByText("Xã Xuân Sơn")).not.toBeInTheDocument();
   });
@@ -148,7 +156,7 @@ describe("GroupedSelectCheckbox", () => {
       <div>
         <div data-testid="outside">Bên ngoài</div>
         <GroupedSelectCheckbox groups={groups} value={[]} onChange={onChange} />
-      </div>
+      </div>,
     );
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Xuân Sơn"));

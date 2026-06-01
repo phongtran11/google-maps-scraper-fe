@@ -1,5 +1,6 @@
-import { forwardRef } from "react";
 import type { ComponentProps } from "react";
+import { forwardRef } from "react";
+
 import { cn } from "~/shared/utils";
 
 const cardVariants = {
@@ -62,5 +63,5 @@ const CardFooter = forwardRef<HTMLDivElement, ComponentProps<"div">>(
 );
 CardFooter.displayName = "CardFooter";
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, cardVariants };
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, cardVariants };
 export type { CardProps };

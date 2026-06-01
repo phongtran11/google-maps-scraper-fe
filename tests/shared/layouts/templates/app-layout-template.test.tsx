@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
+import { describe, expect, it, vi } from "vitest";
+
 import { AppLayoutTemplate } from "~/shared/layouts/templates/app-layout-template";
 import type { BreadcrumbItem } from "~/shared/types";
 
@@ -98,10 +99,7 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           currentUser={currentUser}
-          breadcrumbs={[
-            { label: "Trang Quản Trị", to: "/" },
-            { label: "Chi tiết" },
-          ]}
+          breadcrumbs={[{ label: "Trang Quản Trị", to: "/" }, { label: "Chi tiết" }]}
           currentPath="/businesses/123"
           isRoot={false}
           onSignOut={onSignOut}

@@ -1,5 +1,6 @@
-import { forwardRef } from "react";
 import type { ComponentProps } from "react";
+import { forwardRef } from "react";
+
 import { cn } from "~/shared/utils";
 
 const tableVariants = {
@@ -124,13 +125,13 @@ TableCaption.displayName = "TableCaption";
 
 export {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
   tableVariants,
 };
 export type { TableProps };

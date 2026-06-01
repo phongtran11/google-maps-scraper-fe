@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "./db.server";
 import { wards } from "./schema.server";
-import { eq } from "drizzle-orm";
 
 export async function getWards() {
   return db.select().from(wards).orderBy(wards.name);

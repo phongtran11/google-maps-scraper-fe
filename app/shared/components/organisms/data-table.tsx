@@ -1,11 +1,12 @@
 import { cn } from "~/shared/utils";
+
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   tableVariants,
 } from "../atoms/table";
 
@@ -55,7 +56,7 @@ interface DataTableProps<T> {
   wrapperClassName?: string;
 }
 
-function renderCellValue<T>(value: unknown): React.ReactNode {
+function renderCellValue(value: unknown): React.ReactNode {
   if (value === null || value === undefined) {
     return "-";
   }
@@ -202,5 +203,5 @@ function DataTable<T>({
 }
 DataTable.displayName = "DataTable";
 
-export { DataTable, DataTableSkeleton, DataTableEmpty };
-export type { DataTableProps, DataTableColumn };
+export { DataTable, DataTableEmpty, DataTableSkeleton };
+export type { DataTableColumn, DataTableProps };

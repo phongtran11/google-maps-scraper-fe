@@ -1,8 +1,9 @@
-import { useRef, useEffect, forwardRef, useId, createContext, useContext } from "react";
 import type { ComponentProps, ReactNode } from "react";
+import { createContext, forwardRef, useContext, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
-import { cn } from "~/shared/utils";
+
 import { useEscapeKey } from "~/shared/hooks";
+import { cn } from "~/shared/utils";
 
 const dialogSizes = {
   sm: "max-w-sm",
@@ -175,11 +176,11 @@ DialogFooter.displayName = "DialogFooter";
 
 export {
   Dialog,
+  DialogBody,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogBody,
-  DialogFooter,
 };
-export type { DialogProps, DialogContentProps, DialogSize };
+export type { DialogContentProps, DialogProps, DialogSize };

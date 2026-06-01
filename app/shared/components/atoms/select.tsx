@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useId } from "react";
 import type { ReactNode } from "react";
-import { cn } from "~/shared/utils";
-import { ChevronDownIcon } from "~/shared/icons/chevron-down";
+import { useEffect, useId, useRef, useState } from "react";
+
 import { useClickOutside, useListboxKeyboardNavigation } from "~/shared/hooks";
+import { ChevronDownIcon } from "~/shared/icons/chevron-down";
+import { cn } from "~/shared/utils";
 
 interface SelectOption {
   key: string;
@@ -57,18 +58,28 @@ function Select({
     close();
   };
 
-  // Initialize focusIndex when the dropdown is opened
-  useEffect(() => {
+  const getInitialFocusIndex = () => {
+    if (options.length === 0) return 0;
+    const activeIndex = options.findIndex((o) => o.key === value);
+    const initialIndex =
+      activeIndex !== -1 && !options[activeIndex].disabled
+        ? activeIndex
+        : options.findIndex((o) => !o.disabled);
+    return initialIndex >= 0 ? initialIndex : 0;
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+    setFocusIndex(getInitialFocusIndex());
+  };
+
+  const handleToggle = () => {
     if (open) {
-      const activeIndex = options.findIndex((o) => o.key === value);
-      const initialIndex =
-        activeIndex !== -1 && !options[activeIndex].disabled
-          ? activeIndex
-          : options.findIndex((o) => !o.disabled);
-      setFocusIndex(initialIndex >= 0 ? initialIndex : 0);
+      close();
+    } else {
+      handleOpen();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  };
 
   useClickOutside(containerRef, close, open);
 
@@ -97,12 +108,12 @@ function Select({
         disabled={disabled}
         aria-expanded={open}
         aria-haspopup="listbox"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
             if (!open) {
-              setOpen(true);
+              handleOpen();
             }
           }
         }}
@@ -172,4 +183,4 @@ function Select({
 Select.displayName = "Select";
 
 export { Select, selectVariants };
-export type { SelectProps, SelectOption };
+export type { SelectOption, SelectProps };

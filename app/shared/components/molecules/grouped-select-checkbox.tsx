@@ -1,9 +1,11 @@
-import { useState, useRef, useEffect, useId } from "react";
-import { cn } from "~/shared/utils";
+import { useId, useRef, useState } from "react";
+
+import { useClickOutside, useEscapeKey } from "~/shared/hooks";
 import { ChevronDownIcon, X } from "~/shared/icons";
+import { cn } from "~/shared/utils";
+
 import { Button } from "../atoms/button";
 import { Checkbox } from "../atoms/checkbox";
-import { useClickOutside, useEscapeKey } from "~/shared/hooks";
 
 interface SubOption {
   key: string;
@@ -52,29 +54,30 @@ function GroupedSelectCheckbox({
   const containerRef = useRef<HTMLDivElement>(null);
   const generatedId = useId();
 
-  // Set first group as active by default if not set
-  useEffect(() => {
-    if (groups.length > 0 && !activeGroupKey) {
+  const currentActiveGroupKey = activeGroupKey || groups[0]?.key || "";
+
+  const handleOpen = () => {
+    setDraftSelected(value);
+    if (groups.length > 0) {
       setActiveGroupKey(groups[0].key);
     }
-  }, [groups, activeGroupKey]);
+    setOpen(true);
+  };
 
-  // Sync draft state with real value when popover is opened
-  useEffect(() => {
+  const handleToggle = () => {
     if (open) {
-      setDraftSelected(value);
-      if (groups.length > 0) {
-        setActiveGroupKey(groups[0].key);
-      }
+      setOpen(false);
+    } else {
+      handleOpen();
     }
-  }, [open, value, groups]);
+  };
 
   useClickOutside(containerRef, () => setOpen(false), open);
 
   useEscapeKey(() => setOpen(false), open);
 
   // Retrieve current active group option
-  const activeGroup = groups.find((g) => g.key === activeGroupKey) || groups[0];
+  const activeGroup = groups.find((g) => g.key === currentActiveGroupKey);
 
   // Map selected keys to labels for trigger button text
   const getTriggerLabel = () => {
@@ -157,7 +160,7 @@ function GroupedSelectCheckbox({
         disabled={disabled}
         aria-expanded={open}
         aria-haspopup="dialog"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={handleToggle}
         className={cn(
           "border-input bg-background text-foreground flex w-full items-center justify-between gap-2 border",
           "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
@@ -167,7 +170,7 @@ function GroupedSelectCheckbox({
         )}
         title={getTriggerLabel()}
       >
-        <span className="flex-1 min-w-0 truncate text-left">{getTriggerLabel()}</span>
+        <span className="min-w-0 flex-1 truncate text-left">{getTriggerLabel()}</span>
         <ChevronDownIcon
           className={cn(
             "text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-150",
@@ -219,7 +222,7 @@ function GroupedSelectCheckbox({
               <div className="border-border bg-muted/20 h-full w-5/12 overflow-y-auto border-r p-1">
                 <ul role="tablist" aria-label="Group list" className="space-y-0.5">
                   {groups.map((group) => {
-                    const isActive = group.key === activeGroupKey;
+                    const isActive = group.key === currentActiveGroupKey;
                     const selectedCount = getSelectedCountInGroup(group.key);
                     return (
                       <li key={group.key}>

@@ -1,2 +1,2 @@
-export { DataTable, DataTableSkeleton, DataTableEmpty } from "./data-table";
-export type { DataTableProps, DataTableColumn } from "./data-table";
+export type { DataTableColumn, DataTableProps } from "./data-table";
+export { DataTable, DataTableEmpty, DataTableSkeleton } from "./data-table";

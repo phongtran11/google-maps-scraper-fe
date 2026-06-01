@@ -1,9 +1,11 @@
 import { Link } from "react-router";
-import type { BusinessRow } from "~/shared/types";
-import { STATUS_MAP } from "~/shared/constants";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, Badge } from "~/shared/components";
-import { ExternalLinkIcon } from "~/shared/icons/external-link";
+
+import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
+import { ExternalLinkIcon } from "~/shared/icons/external-link";
+
+import { STATUS_MAP } from "../../constants";
+import type { BusinessRow } from "../../types";
 
 interface BusinessCardProps {
   business: BusinessRow;

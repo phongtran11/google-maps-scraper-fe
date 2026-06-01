@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { cn } from "~/shared/utils/cn";
 
 describe("cn", () => {
@@ -7,7 +8,7 @@ describe("cn", () => {
   });
 
   it("handles conditional classes via clsx", () => {
-    expect(cn("base", false && "hidden", "end")).toBe("base end");
+    expect(cn("base", false, "end")).toBe("base end");
   });
 
   it("handles undefined and null inputs", () => {

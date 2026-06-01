@@ -156,6 +156,7 @@ const result = await sql.query(
 
 ```ts
 import type { Tables } from "~/types/database";
+
 type Business = Tables<"businesses">;
 ```
 

@@ -1,16 +1,17 @@
 import { useEffect, useRef } from "react";
-import type { MetaFunction, ActionFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, MetaFunction } from "react-router";
 import { Form, useActionData, useNavigation } from "react-router";
+
+import { checkInviteExists, createInvite } from "~/server/database/invites.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
-import { createInvite, checkInviteExists } from "~/server/database/invites.server";
 import {
+  Button,
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
   Input,
-  Button,
   useToast,
 } from "~/shared/components";
 import { Spinner } from "~/shared/icons/spinner";

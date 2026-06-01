@@ -1,12 +1,15 @@
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { checkBusinessExists } from "~/server/database/businesses.server";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+
 import {
-  getBusinessNotes,
-  getBusinessNote,
   createBusinessNote,
-  updateBusinessNote,
   deleteBusinessNote,
-} from "~/server/database/business-notes.server";
+  updateBusinessNote,
+} from "~/features/business/mutations.server";
+import {
+  checkBusinessExists,
+  getBusinessNote,
+  getBusinessNotes,
+} from "~/features/business/queries.server";
 import { sessionContext } from "~/server/auth/require-auth.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import { validateMethod } from "~/server/http/request.server";

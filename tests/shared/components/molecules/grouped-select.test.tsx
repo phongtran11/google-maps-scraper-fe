@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+
 import { GroupedSelect } from "~/shared/components/molecules/grouped-select";
 
 const groups = [
@@ -36,7 +37,7 @@ describe("GroupedSelect", () => {
     const user = userEvent.setup();
     render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
     await user.click(screen.getByRole("button"));
-    
+
     expect(screen.getByRole("listbox")).toBeInTheDocument();
     expect(screen.getByText("Huyện Châu Đức")).toBeInTheDocument();
     expect(screen.getByText("Thành phố Vũng Tàu")).toBeInTheDocument();
@@ -52,7 +53,7 @@ describe("GroupedSelect", () => {
         value=""
         onChange={vi.fn()}
         defaultOption={{ key: "", label: "Tất cả khu vực" }}
-      />
+      />,
     );
     expect(screen.getByText("Tất cả khu vực")).toBeInTheDocument();
 
@@ -67,7 +68,7 @@ describe("GroupedSelect", () => {
     render(<GroupedSelect groups={groups} value="" onChange={onChange} />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Xuân Sơn"));
-    
+
     expect(onChange).toHaveBeenCalledWith("ward1");
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
@@ -80,7 +81,7 @@ describe("GroupedSelect", () => {
     render(<GroupedSelect groups={groups} value="" onChange={onChange} />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Đá Bạc"));
-    
+
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -90,11 +91,11 @@ describe("GroupedSelect", () => {
       <div>
         <span data-testid="outside">Bên ngoài</span>
         <GroupedSelect groups={groups} value="" onChange={vi.fn()} />
-      </div>
+      </div>,
     );
     await user.click(screen.getByRole("button"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
-    
+
     await user.click(screen.getByTestId("outside"));
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
@@ -110,7 +111,7 @@ describe("GroupedSelect", () => {
         value=""
         onChange={onChange}
         defaultOption={{ key: "", label: "Tất cả khu vực" }}
-      />
+      />,
     );
     await user.click(screen.getByRole("button"));
 
@@ -118,7 +119,7 @@ describe("GroupedSelect", () => {
     await user.keyboard("{ArrowDown}"); // moves to ward1 (Xã Xuân Sơn)
     await user.keyboard("{ArrowDown}"); // moves to ward2 (Xã Láng Lớn)
     await user.keyboard("{ArrowDown}"); // tries ward3 (disabled), skips to ward4 (Phường 1)
-    await user.keyboard("{ArrowUp}");   // moves back to ward2 (Xã Láng Lớn)
+    await user.keyboard("{ArrowUp}"); // moves back to ward2 (Xã Láng Lớn)
     await user.keyboard("{Enter}");
 
     expect(onChange).toHaveBeenCalledWith("ward2");
@@ -129,7 +130,7 @@ describe("GroupedSelect", () => {
     render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
     await user.click(screen.getByRole("button"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
-    
+
     await user.keyboard("{Escape}");
     await waitFor(() => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
@@ -145,7 +146,7 @@ describe("GroupedSelect", () => {
     const user = userEvent.setup();
     render(<GroupedSelect groups={groups} value="ward1" onChange={vi.fn()} />);
     await user.click(screen.getByRole("button"));
-    
+
     const options = screen.getAllByRole("option");
     const selected = options.find((opt) => opt.textContent === "Xã Xuân Sơn");
     expect(selected).toHaveAttribute("aria-selected", "true");
@@ -155,7 +156,7 @@ describe("GroupedSelect", () => {
     const user = userEvent.setup();
     render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
     await user.click(screen.getByRole("button"));
-    
+
     const option = screen.getByText("Xã Đá Bạc").closest('[role="option"]');
     expect(option).toHaveAttribute("aria-disabled", "true");
   });

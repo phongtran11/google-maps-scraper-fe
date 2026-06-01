@@ -1,5 +1,6 @@
-import { NavLink } from "react-router";
 import type { ReactNode } from "react";
+import { NavLink } from "react-router";
+
 import { cn } from "~/shared/utils";
 
 interface SidebarNavItemProps {

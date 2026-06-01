@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { MetaFunction } from "react-router";
 import { useSearchParams } from "react-router";
-import { Spinner } from "~/shared/icons/spinner";
+
 import { Google } from "~/shared/icons/google";
+import { Spinner } from "~/shared/icons/spinner";
 import { authClient } from "~/shared/utils";
 
 export const meta: MetaFunction = () => [

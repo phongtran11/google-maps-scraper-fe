@@ -1,5 +1,6 @@
-import { forwardRef } from "react";
 import type { ComponentProps } from "react";
+import { forwardRef } from "react";
+
 import { cn } from "~/shared/utils";
 
 const badgeVariants = {

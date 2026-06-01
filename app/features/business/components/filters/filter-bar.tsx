@@ -1,6 +1,7 @@
 import { useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
-import { Input, GroupedSelectCheckbox, Button } from "~/shared/components";
+
+import { Button, GroupedSelectCheckbox, Input } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
 import type { GroupedDistrict } from "~/shared/types";
 

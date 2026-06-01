@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
+import { describe, expect, it, vi } from "vitest";
+
 import { Pagination } from "~/shared/components/molecules/pagination";
 
 function renderPagination(props: Partial<Parameters<typeof Pagination>[0]> = {}) {

@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "./db.server";
 import { userInvites } from "./schema.server";
-import { eq } from "drizzle-orm";
 
 export async function checkInviteExists(email: string): Promise<boolean> {
   const result = await db

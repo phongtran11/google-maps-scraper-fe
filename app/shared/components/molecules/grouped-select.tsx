@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, useId } from "react";
-import { cn } from "~/shared/utils";
-import { ChevronDownIcon } from "~/shared/icons/chevron-down";
+import { useEffect, useId, useRef, useState } from "react";
+
 import { useClickOutside, useListboxKeyboardNavigation } from "~/shared/hooks";
+import { ChevronDownIcon } from "~/shared/icons/chevron-down";
+import { cn } from "~/shared/utils";
 
 interface SubOption {
   key: string;
@@ -90,18 +91,28 @@ export function GroupedSelect({
     close();
   };
 
-  // Initialize focusIndex when the dropdown is opened
-  useEffect(() => {
-    if (open && flatOptions.length > 0) {
-      const activeIndex = flatOptions.findIndex((o) => o.key === value);
-      const initialIndex =
-        activeIndex !== -1 && !flatOptions[activeIndex].disabled
-          ? activeIndex
-          : flatOptions.findIndex((o) => !o.disabled);
-      setFocusIndex(initialIndex >= 0 ? initialIndex : 0);
+  const getInitialFocusIndex = () => {
+    if (flatOptions.length === 0) return 0;
+    const activeIndex = flatOptions.findIndex((o) => o.key === value);
+    const initialIndex =
+      activeIndex !== -1 && !flatOptions[activeIndex].disabled
+        ? activeIndex
+        : flatOptions.findIndex((o) => !o.disabled);
+    return initialIndex >= 0 ? initialIndex : 0;
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+    setFocusIndex(getInitialFocusIndex());
+  };
+
+  const handleToggle = () => {
+    if (open) {
+      close();
+    } else {
+      handleOpen();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  };
 
   useClickOutside(containerRef, close, open);
 
@@ -134,6 +145,7 @@ export function GroupedSelect({
 
     for (const group of groups) {
       domIndex++; // Skip group header
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const _ of group.options) {
         if (flatCounter === focusIndex) {
           const item = listRef.current.children[domIndex];
@@ -157,12 +169,12 @@ export function GroupedSelect({
         disabled={disabled}
         aria-expanded={open}
         aria-haspopup="listbox"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
             e.preventDefault();
             if (!open) {
-              setOpen(true);
+              handleOpen();
             }
           }
         }}
@@ -194,28 +206,29 @@ export function GroupedSelect({
             "transition-all duration-150",
           )}
         >
-          {defaultOption && (() => {
-            const index = currentFlatIndex;
-            currentFlatIndex++;
-            return (
-              <li
-                key={defaultOption.key}
-                id={`${generatedId}-option-default`}
-                role="option"
-                aria-selected={defaultOption.key === value}
-                onClick={() => select(defaultOption.key)}
-                onMouseEnter={() => setFocusIndex(index)}
-                className={cn(
-                  "relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  focusIndex === index && "bg-accent text-accent-foreground",
-                  defaultOption.key === value && "font-medium",
-                )}
-              >
-                {defaultOption.label}
-              </li>
-            );
-          })()}
+          {defaultOption &&
+            (() => {
+              const index = currentFlatIndex;
+              currentFlatIndex++;
+              return (
+                <li
+                  key={defaultOption.key}
+                  id={`${generatedId}-option-default`}
+                  role="option"
+                  aria-selected={defaultOption.key === value}
+                  onClick={() => select(defaultOption.key)}
+                  onMouseEnter={() => setFocusIndex(index)}
+                  className={cn(
+                    "relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
+                    "hover:bg-accent hover:text-accent-foreground",
+                    focusIndex === index && "bg-accent text-accent-foreground",
+                    defaultOption.key === value && "font-medium",
+                  )}
+                >
+                  {defaultOption.label}
+                </li>
+              );
+            })()}
 
           {groups.map((group, groupIdx) => {
             const headerElement = (
@@ -248,7 +261,7 @@ export function GroupedSelect({
                     }
                   }}
                   className={cn(
-                    "relative flex cursor-pointer items-center rounded-sm pl-6 pr-2 py-1.5 text-sm outline-none select-none",
+                    "relative flex cursor-pointer items-center rounded-sm py-1.5 pr-2 pl-6 text-sm outline-none select-none",
                     opt.disabled
                       ? "text-muted-foreground cursor-not-allowed opacity-40"
                       : "hover:bg-accent hover:text-accent-foreground",

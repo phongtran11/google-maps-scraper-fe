@@ -1,11 +1,11 @@
 import type { ActionFunctionArgs } from "react-router";
-import { verifySameOrigin } from "~/server/http/csrf.server";
-import { db } from "~/server/database/db.server";
-import { businesses } from "~/server/database/schema.server";
-import { eq } from "drizzle-orm";
-import { validateMethod } from "~/server/http/request.server";
+
+import { NEXT_STATUS } from "~/features/business";
+import { updateBusinessStatus } from "~/features/business/mutations.server";
+import { getBusinessById } from "~/features/business/queries.server";
 import { sessionContext } from "~/server/auth/require-auth.server";
-import { NEXT_STATUS } from "~/shared/constants";
+import { verifySameOrigin } from "~/server/http/csrf.server";
+import { validateMethod } from "~/server/http/request.server";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 
@@ -40,20 +40,15 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    const currentResult = await db
-      .select({ status: businesses.status })
-      .from(businesses)
-      .where(eq(businesses.id, numId))
-      .limit(1);
-
-    if (currentResult.length === 0) {
+    const business = await getBusinessById(numId);
+    if (!business) {
       return Response.json(
         { message: "Không tìm thấy doanh nghiệp", error: "business_not_found" },
         { status: 404, headers: { "Cache-Control": "no-store" } },
       );
     }
 
-    const currentStatus = currentResult[0].status;
+    const currentStatus = business.status ?? "new";
     const allowedTransitions = NEXT_STATUS[currentStatus] ?? [];
 
     if (currentStatus !== status && !allowedTransitions.includes(status)) {
@@ -66,14 +61,10 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       );
     }
 
-    const result = await db
-      .update(businesses)
-      .set({ status })
-      .where(eq(businesses.id, numId))
-      .returning({ status: businesses.status });
+    const result = await updateBusinessStatus(numId, status);
 
     return Response.json(
-      { message: "Status updated successfully", data: result[0] },
+      { message: "Status updated successfully", data: result },
       { status: 200, headers: { "Cache-Control": "no-store" } },
     );
   } catch (err) {

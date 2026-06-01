@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { getStringParam } from "~/shared/utils/string";
 
 describe("getStringParam", () => {
@@ -7,7 +8,7 @@ describe("getStringParam", () => {
     expect(getStringParam(url, "search", "default")).toBe("default");
   });
 
-  it('returns empty string as default when no default provided', () => {
+  it("returns empty string as default when no default provided", () => {
     const url = new URL("http://example.com");
     expect(getStringParam(url, "search")).toBe("");
   });

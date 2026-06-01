@@ -1,10 +1,13 @@
 import { useSearchParams } from "react-router";
-import type { BusinessDashboardRow, GroupedDistrict } from "~/shared/types";
+
 import { DataTable, Pagination } from "~/shared/components";
+import type { GroupedDistrict } from "~/shared/types";
+
+import type { GetBusinessesResult } from "../../types";
 import { columns } from "./business-table-config";
 
 export interface BusinessTableProps {
-  businesses: BusinessDashboardRow[];
+  businesses: GetBusinessesResult[];
   totalCount: number;
   page: number;
   pageSize: number;

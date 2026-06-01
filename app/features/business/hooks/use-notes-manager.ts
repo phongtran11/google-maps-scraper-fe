@@ -1,6 +1,8 @@
 import { useFetcher } from "react-router";
-import type { NoteRow } from "~/shared/types";
+
 import { ROUTES } from "~/shared/constants";
+
+import type { NoteRow } from "../types";
 
 interface UseNotesManagerOptions {
   businessId: number;

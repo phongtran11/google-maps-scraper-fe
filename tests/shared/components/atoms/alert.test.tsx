@@ -1,6 +1,7 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Alert, AlertTitle, AlertDescription, AlertAction } from "~/shared/components/atoms/alert";
+import { describe, expect, it } from "vitest";
+
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "~/shared/components/atoms/alert";
 
 describe("Alert", () => {
   it("renders with default variant", () => {

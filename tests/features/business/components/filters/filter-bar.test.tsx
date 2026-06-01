@@ -1,8 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useSearchParams } from "react-router";
-import { FilterBar } from "~/features/dashboard/components/filter-bar";
+import { describe, expect, it } from "vitest";
+
+import { FilterBar } from "~/features/business";
 import type { GroupedDistrict } from "~/shared/types";
 
 const mockDistrictsWithWard: GroupedDistrict[] = [
@@ -25,7 +26,11 @@ const mockDistrictsWithWard: GroupedDistrict[] = [
 ];
 
 // Helper component to inspect search params in tests
-function SearchParamsInspector({ onParamsChange }: { onParamsChange: (params: URLSearchParams) => void }) {
+function SearchParamsInspector({
+  onParamsChange,
+}: {
+  onParamsChange: (params: URLSearchParams) => void;
+}) {
   const [params] = useSearchParams();
   onParamsChange(params);
   return null;
@@ -36,7 +41,7 @@ describe("FilterBar", () => {
     render(
       <MemoryRouter>
         <FilterBar districtsWithWard={mockDistrictsWithWard} />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByPlaceholderText("Tìm tên doanh nghiệp…")).toBeInTheDocument();
@@ -50,9 +55,13 @@ describe("FilterBar", () => {
 
     render(
       <MemoryRouter initialEntries={["/"]}>
-        <SearchParamsInspector onParamsChange={(params) => { currentParams = params; }} />
+        <SearchParamsInspector
+          onParamsChange={(params) => {
+            currentParams = params;
+          }}
+        />
         <FilterBar districtsWithWard={mockDistrictsWithWard} />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const input = screen.getByPlaceholderText("Tìm tên doanh nghiệp…");
@@ -71,9 +80,13 @@ describe("FilterBar", () => {
 
     render(
       <MemoryRouter initialEntries={["/"]}>
-        <SearchParamsInspector onParamsChange={(params) => { currentParams = params; }} />
+        <SearchParamsInspector
+          onParamsChange={(params) => {
+            currentParams = params;
+          }}
+        />
         <FilterBar districtsWithWard={mockDistrictsWithWard} />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Open select dropdown
@@ -105,9 +118,13 @@ describe("FilterBar", () => {
 
     render(
       <MemoryRouter initialEntries={["/?search=Spa&wardId=101&wardId=201"]}>
-        <SearchParamsInspector onParamsChange={(params) => { currentParams = params; }} />
+        <SearchParamsInspector
+          onParamsChange={(params) => {
+            currentParams = params;
+          }}
+        />
         <FilterBar districtsWithWard={mockDistrictsWithWard} />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Clear search input

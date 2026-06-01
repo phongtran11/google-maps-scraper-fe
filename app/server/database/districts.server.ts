@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
+
 import { db } from "./db.server";
 import { districts, wards } from "./schema.server";
-import { eq } from "drizzle-orm";
 
 export async function getDistricts() {
   return db.select().from(districts).orderBy(districts.name);

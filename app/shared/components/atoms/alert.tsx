@@ -1,5 +1,6 @@
-import { forwardRef } from "react";
 import type { ComponentProps } from "react";
+import { forwardRef } from "react";
+
 import { cn } from "~/shared/utils";
 
 const alertVariants = {
@@ -55,5 +56,5 @@ const AlertAction = forwardRef<HTMLDivElement, ComponentProps<"div">>(
 );
 AlertAction.displayName = "AlertAction";
 
-export { Alert, AlertTitle, AlertDescription, AlertAction, alertVariants };
+export { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants };
 export type { AlertProps };

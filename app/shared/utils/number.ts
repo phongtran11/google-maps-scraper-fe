@@ -47,3 +47,13 @@ export function getPageNumbers(currentPage: number, totalPages: number): (number
 
   return pages;
 }
+
+/**
+ * Safely parses an ID (string or number) into a valid number.
+ * Returns null if the result is NaN.
+ */
+export function parseId(id: string | number): number | null {
+  const num = typeof id === "string" ? Number.parseInt(id, 10) : id;
+  if (Number.isNaN(num)) return null;
+  return num;
+}

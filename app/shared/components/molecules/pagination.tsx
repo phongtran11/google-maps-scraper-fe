@@ -1,7 +1,9 @@
 import { Link } from "react-router";
-import { getPageNumbers } from "~/shared/utils";
+
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { ChevronRightIcon } from "~/shared/icons/chevron-right";
+import { getPageNumbers } from "~/shared/utils";
+
 import { Select } from "../atoms/select";
 
 export interface PaginationProps {

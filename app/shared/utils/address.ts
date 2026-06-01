@@ -1,10 +1,10 @@
-import type { GroupedDistrict, DistrictRow, WardRow } from "~/shared/types";
+import type { DistrictRow, GroupedDistrict, WardRow } from "~/shared/types";
 
 export function groupDistrictsWithWards(
   rows: {
     districts: DistrictRow;
     wards: WardRow | null;
-  }[]
+  }[],
 ): GroupedDistrict[] {
   const districtMap = new Map<number, GroupedDistrict>();
 

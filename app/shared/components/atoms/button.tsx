@@ -1,7 +1,8 @@
-import { forwardRef } from "react";
 import type { ComponentProps } from "react";
-import { cn } from "~/shared/utils";
+import { forwardRef } from "react";
+
 import { Spinner } from "~/shared/icons/spinner";
+import { cn } from "~/shared/utils";
 
 const buttonVariants = {
   variant: {

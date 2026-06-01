@@ -1,11 +1,8 @@
-import type { MetaFunction, LoaderFunctionArgs } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
-import { getBusinessById } from "~/server/database/businesses.server";
-import { getBusinessNotes } from "~/server/database/business-notes.server";
-import { BusinessDetails } from "~/features/business-detail/components/business-details";
-import { ReviewImages } from "~/features/business-detail/components/review-images";
-import { NotesSection } from "~/features/business-detail/components/notes-section";
-import { BusinessSidebar } from "~/features/business-detail/components/business-sidebar";
+
+import { BusinessDetails, BusinessSidebar, NotesSection, ReviewImages } from "~/features/business";
+import { getBusinessById, getBusinessNotes } from "~/features/business/queries.server";
 import { PageHeader } from "~/shared/components";
 
 export async function loader({ params }: LoaderFunctionArgs) {

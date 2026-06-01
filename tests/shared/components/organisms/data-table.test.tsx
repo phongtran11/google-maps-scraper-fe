@@ -1,7 +1,8 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { DataTable } from "~/shared/components/organisms/data-table";
+import { describe, expect, it } from "vitest";
+
 import type { DataTableColumn } from "~/shared/components/organisms/data-table";
+import { DataTable } from "~/shared/components/organisms/data-table";
 
 interface TestItem {
   id: number;
@@ -22,38 +23,20 @@ const baseColumns: DataTableColumn<TestItem>[] = [
 
 describe("DataTable", () => {
   it("renders column headers", () => {
-    render(
-      <DataTable
-        data={testData}
-        columns={baseColumns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={testData} columns={baseColumns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("Tên")).toBeInTheDocument();
     expect(screen.getByText("Email")).toBeInTheDocument();
   });
 
   it("renders data rows with accessor", () => {
-    render(
-      <DataTable
-        data={testData}
-        columns={baseColumns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={testData} columns={baseColumns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("Nguyễn Văn A")).toBeInTheDocument();
     expect(screen.getByText("Trần Thị B")).toBeInTheDocument();
     expect(screen.getByText("a@test.com")).toBeInTheDocument();
   });
 
   it('renders "-" for null values', () => {
-    render(
-      <DataTable
-        data={testData}
-        columns={baseColumns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={testData} columns={baseColumns} keyExtractor={(item) => item.id} />);
     const cells = screen.getAllByText("-");
     expect(cells.length).toBe(1);
   });
@@ -62,13 +45,7 @@ describe("DataTable", () => {
     const columns: DataTableColumn<TestItem>[] = [
       { id: "name", header: "Tên", accessorFn: (item) => item.name.toUpperCase() },
     ];
-    render(
-      <DataTable
-        data={testData}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={testData} columns={columns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("NGUYỄN VĂN A")).toBeInTheDocument();
   });
 
@@ -80,13 +57,7 @@ describe("DataTable", () => {
         cell: (item, index) => `${index + 1}. ${item.name}`,
       },
     ];
-    render(
-      <DataTable
-        data={testData}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={testData} columns={columns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("1. Nguyễn Văn A")).toBeInTheDocument();
     expect(screen.getByText("2. Trần Thị B")).toBeInTheDocument();
   });
@@ -95,13 +66,7 @@ describe("DataTable", () => {
     const columns: DataTableColumn<TestItem>[] = [
       { id: "createdAt", header: "Ngày tạo", accessor: "createdAt" },
     ];
-    render(
-      <DataTable
-        data={[testData[0]]}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={[testData[0]]} columns={columns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("15/1/2024")).toBeInTheDocument();
   });
 
@@ -120,13 +85,7 @@ describe("DataTable", () => {
   });
 
   it("renders default empty message", () => {
-    render(
-      <DataTable
-        data={[]}
-        columns={baseColumns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={[]} columns={baseColumns} keyExtractor={(item) => item.id} />);
     expect(screen.getByText("Không có dữ liệu")).toBeInTheDocument();
   });
 
@@ -158,13 +117,7 @@ describe("DataTable", () => {
     const columns: DataTableColumn<TestItem>[] = [
       { id: "name", header: "Tên", accessor: "name", align: "center" },
     ];
-    render(
-      <DataTable
-        data={[testData[0]]}
-        columns={columns}
-        keyExtractor={(item) => item.id}
-      />,
-    );
+    render(<DataTable data={[testData[0]]} columns={columns} keyExtractor={(item) => item.id} />);
     const header = screen.getByText("Tên");
     expect(header.className).toContain("text-center");
   });
