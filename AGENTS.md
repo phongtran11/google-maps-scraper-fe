@@ -51,33 +51,6 @@ app/
 tests/                               # Mirror source structure (features/, shared/)
 ```
 
-## Multi-Agent Workflow
-
-### 1. Delegation Rules
-
-When receiving a request from the user, the main Agent (`Build` or `Plan`) must not write all code end-to-end in a generic way. Decompose the task and delegate to subagents according to these boundaries:
-
-- **UI & Style:** Layout, components, CSS/Tailwind, responsive design → `@ui`.
-- **Logic & Data (State/API):** Custom Hooks, API calls, state management, loader/action handling, form validation → `@logic`.
-- **Performance/SEO:** Page optimization, re-render fixes, SEO improvements → `@perf`.
-- **Testing:** When a feature or logic module is complete, or when tests are requested → `@tester`.
-
-### 2. Feature Development Workflow
-
-To prevent code conflicts and maintain clean structure, Agents must follow this 3-step workflow when developing a new feature:
-
-1. **Step 1 (Analysis):** Agent `Plan` receives the overall request, analyzes the architecture of files to create/modify, and maps the data flow.
-2. **Step 2 (UI Implementation):** Activate `@ui` to build the skeleton, layout, and pure display components with mock data.
-3. **Step 3 (Logic Integration):** Activate `@logic` to extract mock data, replace with Custom Hooks, connect to real loaders/actions, and handle Loading/Error states.
-
-### 3. Project Code Standards
-
-All Agents and Subagents must strictly follow these technical standards when generating or editing code:
-
-- **Architecture:** Strictly separate Presentation from Business Logic. Never write API calls directly inside UI components.
-- **Error handling:** Never assume loaders/actions always return correct results. Always catch errors and display fallback UI (prevent app crashes).
-- **Absolutely forbidden:** Never install new npm dependencies without explicit user confirmation.
-
 ### 🏷 Naming Conventions
 
 1. **UI Components:** kebab-case (e.g. `business-card.tsx`, `filter-bar.tsx`)

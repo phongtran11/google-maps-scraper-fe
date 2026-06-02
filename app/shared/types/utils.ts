@@ -17,4 +17,5 @@ export type GroupedDistrict = {
   wards: { id: number; name: string }[];
 };
 
-export type AwaitedReturn<T extends (...args: unknown[]) => unknown> = Awaited<ReturnType<T>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AwaitedReturn<T extends (...args: any[]) => any> = Awaited<ReturnType<T>>;

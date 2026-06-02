@@ -1,58 +1,95 @@
-import { Pool, type PoolClient } from "@neondatabase/serverless";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
+import { AsyncLocalStorage } from "node:async_hooks";
+
+import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 
 import * as schema from "./schema.server";
 
-function wrapQuery(originalQuery: Function) {
-  return async function (this: any, ...args: any[]) {
-    const start = performance.now();
-    const queryText = typeof args[0] === "string" ? args[0] : args[0]?.text;
-    const params = typeof args[0] === "string" ? args[1] : args[0]?.values;
+const WRAPPED_SYMBOL = Symbol.for("query_wrapped");
+const queryStorage = new AsyncLocalStorage<{ inPoolQuery?: boolean }>();
 
-    try {
-      const result = await originalQuery.apply(this, args);
-      const duration = performance.now() - start;
-      const timestamp = new Date().toISOString();
-      console.log(
-        `\x1b[36m[DB]\x1b[0m \x1b[90m${timestamp}\x1b[0m \x1b[32m${queryText}\x1b[0m \x1b[35m(${duration.toFixed(2)}ms)\x1b[0m`,
-      );
-      if (params && params.length > 0) {
-        console.log(`  \x1b[90m↳ Params: ${JSON.stringify(params)}\x1b[0m`);
-      }
-      return result;
-    } catch (error: any) {
-      const duration = performance.now() - start;
-      const timestamp = new Date().toISOString();
-      console.error(
-        `\x1b[31m[DB ERROR]\x1b[0m \x1b[90m${timestamp}\x1b[0m \x1b[31m${error.message}\x1b[0m \x1b[32m${queryText}\x1b[0m \x1b[35m(${duration.toFixed(2)}ms)\x1b[0m`,
-      );
-      throw error;
-    }
+class DB {
+  public pool: Pool;
+
+  private logColor = {
+    TAG: "\x1b[36m[DB]\x1b[0m",
+    TIMESTAMP: "\x1b[90m",
+    QUERY: "\x1b[32m",
+    MS: "\x1b[35m",
+    PARAMS: "\x1b[90m",
+    ERROR: "\x1b[31m",
+    RESET: "\x1b[0m",
   };
+
+  constructor() {
+    this.pool = new Pool({
+      connectionString: process.env.NEON_DATABASE_URL,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
+
+    const originalConnect = this.pool.connect.bind(this.pool);
+
+    this.pool.connect = (async (...args: any[]) => {
+      const client = await (originalConnect as any)(...args);
+      if (client && !(client as any)[WRAPPED_SYMBOL]) {
+        (client as any)[WRAPPED_SYMBOL] = true;
+        client.query = this.wrapQuery(client.query.bind(client), false);
+      }
+      return client;
+    }) as any;
+
+    this.pool.query = this.wrapQuery(this.pool.query.bind(this.pool), true);
+  }
+
+  private wrapQuery(originalQuery: Function, isPool: boolean) {
+    return async (...args: any[]) => {
+      const store = queryStorage.getStore();
+      if (!isPool && store?.inPoolQuery) {
+        return originalQuery(...args);
+      }
+
+      const start = performance.now();
+      const queryText = typeof args[0] === "string" ? args[0] : args[0]?.text;
+      const params = args[1];
+      const executeQuery = () => originalQuery(...args);
+
+      try {
+        const result = isPool
+          ? await queryStorage.run({ inPoolQuery: true }, executeQuery)
+          : await executeQuery();
+        const duration = performance.now() - start;
+        const timestamp = new Date().toISOString();
+        console.log(
+          `${this.logColor.TAG} ${this.logColor.TIMESTAMP}${timestamp}${this.logColor.RESET} ${this.logColor.QUERY}${queryText}${this.logColor.RESET} ${this.logColor.MS}(${duration.toFixed(2)}ms)${this.logColor.RESET}`,
+        );
+        if (params && params.length > 0) {
+          console.log(
+            `  ${this.logColor.PARAMS}↳ Params: ${JSON.stringify(params)}${this.logColor.RESET}`,
+          );
+        }
+        return result;
+      } catch (error: any) {
+        const duration = performance.now() - start;
+        const timestamp = new Date().toISOString();
+        console.error(
+          `${this.logColor.TAG} ${this.logColor.TIMESTAMP}${timestamp}${this.logColor.RESET} ${this.logColor.ERROR}${error.message}${this.logColor.RESET} ${this.logColor.QUERY}${queryText}${this.logColor.RESET} ${this.logColor.MS}(${duration.toFixed(2)}ms)${this.logColor.RESET}`,
+        );
+        throw error;
+      }
+    };
+  }
+
+  init() {
+    return drizzle(this.pool, {
+      schema,
+    });
+  }
 }
 
-export const pool = new Pool({
-  connectionString: process.env.NEON_DATABASE_URL,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-});
-
-pool.query = wrapQuery(pool.query.bind(pool)) as any;
-
-const originalConnect = pool.connect.bind(pool);
-const WRAPPED_SYMBOL = Symbol.for("query_wrapped");
-
-pool.connect = async function (this: any, ...args: any[]) {
-  const client = (await (originalConnect as any).apply(this, args)) as PoolClient;
-  if (client && !(client as any)[WRAPPED_SYMBOL]) {
-    (client as any)[WRAPPED_SYMBOL] = true;
-    client.query = wrapQuery(client.query.bind(client)) as any;
-  }
-  return client;
-} as any;
-
-export const db = drizzle(pool, {
-  schema,
-  logger: false,
-});
+const dbInstance = new DB();
+export const db = dbInstance.init();
+export const pool = dbInstance.pool;

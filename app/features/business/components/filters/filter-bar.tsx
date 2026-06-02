@@ -22,10 +22,11 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
     startTransition(() => {
       const next = new URLSearchParams(searchParams);
 
+      // handle search
       if (search) next.set("search", search);
       else next.delete("search");
 
-      // Clear existing wardId params and append the newly selected ones
+      // handle wardIds
       next.delete("wardId");
       wardIds.forEach((id) => next.append("wardId", id));
 
@@ -65,6 +66,7 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
         className="w-full sm:w-72"
         placeholder="Tất cả khu vực"
         aria-label="Lọc theo khu vực"
+        disabled={pending}
       />
 
       <Button disabled={pending} type="submit" className="w-full sm:w-auto">

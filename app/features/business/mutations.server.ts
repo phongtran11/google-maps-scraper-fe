@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "~/server/database/db.server";
-import { businesses,businessNotes } from "~/server/database/schema.server";
+import { businessNotes, businesses } from "~/server/database/schema.server";
 import { parseId } from "~/shared/utils";
 
 export async function createBusinessNote(

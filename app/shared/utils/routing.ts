@@ -1,6 +1,13 @@
 import { ROUTES } from "~/shared/constants";
 import type { BreadcrumbItem, RouteMatch } from "~/shared/types";
 
+/**
+ * Generates an array of breadcrumb items based on the active path and route matches.
+ *
+ * @param pathname - The current URL path.
+ * @param matches - React Router route match objects containing route data.
+ * @returns An array of BreadcrumbItem elements representing the hierarchy.
+ */
 export function getBreadcrumbs(pathname: string, matches: RouteMatch[]): BreadcrumbItem[] {
   const isRoot = pathname === ROUTES.dashboard.path;
   const breadcrumbs: BreadcrumbItem[] = [];

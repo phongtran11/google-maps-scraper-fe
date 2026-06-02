@@ -46,8 +46,8 @@ export default function BusinessDetail() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <BusinessDetails business={b} />
-          {b.review_image_urls && b.review_image_urls.length > 0 && (
-            <ReviewImages urls={b.review_image_urls} />
+          {b.reviewImageUrls && b.reviewImageUrls.length > 0 && (
+            <ReviewImages urls={b.reviewImageUrls} />
           )}
           <NotesSection businessId={b.id} initialNotes={loaderData.notes} />
         </div>

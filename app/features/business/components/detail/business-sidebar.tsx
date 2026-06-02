@@ -37,7 +37,7 @@ export function BusinessSidebar({ business: b }: BusinessSidebarProps) {
     <div className="space-y-6">
       <StatusCard businessId={b.id} status={b.status ?? "new"} />
 
-      <LinkCard title="Bản Đồ" href={b.maps_url} label="Xem trên Google Maps" />
+      <LinkCard title="Bản Đồ" href={b.mapsUrl} label="Xem trên Google Maps" />
 
       {zaloPhone && (
         <LinkCard title="Zalo" href={`https://zalo.me/${zaloPhone}`} label="Gửi tin nhắn Zalo" />

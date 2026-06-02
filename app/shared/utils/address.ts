@@ -1,5 +1,11 @@
 import type { DistrictRow, GroupedDistrict, WardRow } from "~/shared/types";
 
+/**
+ * Groups flat district and ward rows into a nested structure.
+ *
+ * @param rows - The database result rows containing district and ward information.
+ * @returns An array of GroupedDistrict objects with their associated wards.
+ */
 export function groupDistrictsWithWards(
   rows: {
     districts: DistrictRow;

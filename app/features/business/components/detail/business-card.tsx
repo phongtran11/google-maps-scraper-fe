@@ -51,13 +51,13 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              window.open(b.maps_url, "_blank", "noopener,noreferrer");
+              window.open(b.mapsUrl, "_blank", "noopener,noreferrer");
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.stopPropagation();
                 e.preventDefault();
-                window.open(b.maps_url, "_blank", "noopener,noreferrer");
+                window.open(b.mapsUrl, "_blank", "noopener,noreferrer");
               }
             }}
             className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"

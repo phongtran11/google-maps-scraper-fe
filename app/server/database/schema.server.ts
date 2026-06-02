@@ -102,18 +102,18 @@ export const businesses = pgTable("businesses", {
   region: text("region"),
   rating: numeric("rating"),
   review_count: integer("review_count"),
-  image_review_count: integer("image_review_count").default(0),
-  maps_url: text("maps_url").notNull().unique(),
-  review_image_urls: text("review_image_urls")
+  imageReviewCount: integer("image_review_count").default(0),
+  mapsUrl: text("maps_url").notNull().unique(),
+  reviewImageUrls: text("review_image_urls")
     .array()
     .default(sql`'{}'::TEXT[]`),
   status: text("status").default("new").notNull(),
-  ward_id: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
-  scraped_at: timestamp("scraped_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
-  is_corrected: boolean("is_corrected").default(true),
-  created_at: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
-  updated_at: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
-  deleted_at: timestamp("deleted_at", { withTimezone: true, mode: "date" }),
+  wardId: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
+  scrapedAt: timestamp("scraped_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  isCorrected: boolean("is_corrected").default(true),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at", { withTimezone: true, mode: "date" }),
 });
 
 export const scrapeRuns = pgTable("scrape_runs", {

@@ -1,3 +1,10 @@
+/**
+ * Formats a phone number for Zalo compatibility (converts leading 0 to country code 84).
+ * (e.g., "0987654321" -> "84987654321").
+ *
+ * @param phone - The raw phone number string, or null.
+ * @returns The formatted phone number, or null if empty or invalid.
+ */
 export function formatZaloPhone(phone: string | null): string | null {
   if (!phone) return null;
   const digits = phone.replace(/\D/g, "");

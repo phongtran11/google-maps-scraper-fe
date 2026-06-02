@@ -18,6 +18,25 @@ export function getIntParam(
 }
 
 /**
+ * Retrieves an array of integer values from the search parameters of a URL for a given key.
+ * Invalid (NaN) values are filtered out. Returns the default value if no valid integers are found.
+ *
+ * @param url - The URL object or URL string to parse.
+ * @param key - The query parameter key.
+ * @param defaultValue - The fallback value if no valid integers are found.
+ * @returns An array of parsed integers, or the defaultValue.
+ */
+export function getIntParams(url: URL | string, key: string, defaultValue: number[]): number[] {
+  const searchParams = typeof url === "string" ? new URL(url).searchParams : url.searchParams;
+  const params = searchParams.getAll(key);
+  const validParams = params
+    .map((param) => Number.parseInt(param, 10))
+    .filter((param) => !Number.isNaN(param));
+
+  return validParams.length > 0 ? validParams : defaultValue;
+}
+
+/**
  * Generates the list of page numbers (with ellipsis) to render in a pagination control.
  *
  * @param currentPage  - The currently active page (1-indexed).
