@@ -1,5 +1,6 @@
-import { Action, Close, Description, Provider, Root, Title, Viewport } from "@radix-ui/react-toast";
 import type { ComponentProps, ReactNode } from "react";
+
+import { Action, Close, Description, Provider, Root, Title, Viewport } from "@radix-ui/react-toast";
 import { createContext, forwardRef, useCallback, useContext, useMemo, useState } from "react";
 
 import { X } from "~/shared/icons/x";
@@ -11,30 +12,30 @@ import { Button } from "../atoms/button";
 /*  Types                                                                     */
 /* -------------------------------------------------------------------------- */
 
-type ToastVariant = "default" | "success" | "error" | "warning" | "info";
-
 interface Toast {
-  id: string;
-  title?: string;
-  description?: string;
-  variant?: ToastVariant;
-  duration?: number;
   action?: {
     label: string;
     onClick: () => void;
   };
+  description?: string;
+  duration?: number;
+  id: string;
+  title?: string;
+  variant?: ToastVariant;
 }
 
 interface ToastContextValue {
-  toast: (props: Omit<Toast, "id">) => string;
   dismiss: (id: string) => void;
+  toast: (props: Omit<Toast, "id">) => string;
 }
+
+type ToastVariant = "default" | "error" | "info" | "success" | "warning";
 
 /* -------------------------------------------------------------------------- */
 /*  Context                                                                   */
 /* -------------------------------------------------------------------------- */
 
-const ToastContext = createContext<ToastContextValue | null>(null);
+const ToastContext = createContext<null | ToastContextValue>(null);
 
 function useToast() {
   const ctx = useContext(ToastContext);
@@ -49,20 +50,20 @@ function useToast() {
 /* -------------------------------------------------------------------------- */
 
 const toastViewportPositions = {
-  "top-right": "top-0 right-0",
-  "top-left": "top-0 left-0",
-  "bottom-right": "bottom-0 right-0",
   "bottom-left": "bottom-0 left-0",
+  "bottom-right": "bottom-0 right-0",
+  "top-left": "top-0 left-0",
+  "top-right": "top-0 right-0",
 } as const;
 
 type ToastPosition = keyof typeof toastViewportPositions;
 
 const toastColorVariants: Record<ToastVariant, string> = {
   default: "border-border bg-card text-card-foreground",
-  success: "border-success/30 bg-success/10 text-success",
   error: "border-destructive/30 bg-destructive/10 text-destructive",
-  warning: "border-warning/30 bg-warning/10 text-warning-foreground",
   info: "border-info/30 bg-info/10 text-info",
+  success: "border-success/30 bg-success/10 text-success",
+  warning: "border-warning/30 bg-warning/10 text-warning-foreground",
 };
 
 /* -------------------------------------------------------------------------- */
@@ -70,28 +71,28 @@ const toastColorVariants: Record<ToastVariant, string> = {
 /* -------------------------------------------------------------------------- */
 
 interface ToastItemProps extends ComponentProps<typeof Root> {
-  variant?: ToastVariant;
   onClose?: () => void;
+  variant?: ToastVariant;
 }
 
 const ToastItem = forwardRef<HTMLLIElement, ToastItemProps>(
-  ({ className, variant = "default", children, onClose, ...props }, ref) => (
+  ({ children, className, onClose, variant = "default", ...props }, ref) => (
     <Root
-      ref={ref}
       className={cn(
         "group data-[state=closed]:animate-hide data-[state=open]:animate-slide-in data-[swipe=end]:animate-swipe-out data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-md border p-4 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-[transform_200ms_ease-out]",
         toastColorVariants[variant],
         className,
       )}
+      ref={ref}
       {...props}
     >
       <div className="flex-1">{children}</div>
       {onClose && (
-        <Close onClick={onClose} asChild>
+        <Close asChild onClick={onClose}>
           <Button
-            variant="ghost"
-            size="icon"
             className="h-7 w-7 shrink-0 rounded-md opacity-70 hover:opacity-100"
+            size="icon"
+            variant="ghost"
           >
             <X className="h-3.5 w-3.5" />
           </Button>
@@ -124,30 +125,30 @@ function ToastProvider({ children, position = "bottom-right" }: ToastProviderPro
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const value = useMemo(() => ({ toast: addToast, dismiss }), [addToast, dismiss]);
+  const value = useMemo(() => ({ dismiss, toast: addToast }), [addToast, dismiss]);
 
   return (
     <ToastContext.Provider value={value}>
-      <Provider swipeDirection="right" duration={5000}>
+      <Provider duration={5000} swipeDirection="right">
         {children}
 
         {toasts.map((t) => (
           <ToastItem
-            key={t.id}
-            variant={t.variant}
             duration={t.duration ?? 5000}
+            key={t.id}
             onClose={() => dismiss(t.id)}
             onOpenChange={(open) => {
               if (!open) dismiss(t.id);
             }}
+            variant={t.variant}
           >
             {t.title && <Title className="text-sm font-medium">{t.title}</Title>}
             {t.description && (
               <Description className="mt-1 text-sm opacity-90">{t.description}</Description>
             )}
             {t.action && (
-              <Action asChild altText={t.action.label}>
-                <Button variant="outline" size="sm" className="mt-2" onClick={t.action.onClick}>
+              <Action altText={t.action.label} asChild>
+                <Button className="mt-2" onClick={t.action.onClick} size="sm" variant="outline">
                   {t.action.label}
                 </Button>
               </Action>

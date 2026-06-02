@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ThemeToggle } from "~/shared/components/molecules/theme-toggle";
 
 const mockToggleTheme = vi.fn();
-let mockTheme: "light" | "dark" = "light";
+let mockTheme: "dark" | "light" = "light";
 
 vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({

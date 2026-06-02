@@ -1,28 +1,31 @@
 import { useSearchParams } from "react-router";
 
-import { DataTable, Pagination } from "~/shared/components";
 import type { GroupedDistrict } from "~/shared/types";
 
+import { DataTable, Pagination } from "~/shared/components";
+import { getStringParams } from "~/shared/utils";
+
 import type { GetBusinessesResult } from "../../types";
+
 import { columns } from "./business-table-config";
 
 export interface BusinessTableProps {
   businesses: GetBusinessesResult[];
-  totalCount: number;
+  districtsWithWard: GroupedDistrict[];
   page: number;
   pageSize: number;
-  districtsWithWard: GroupedDistrict[];
+  totalCount: number;
 }
 
 export function BusinessTable({
   businesses,
-  totalCount,
+  districtsWithWard,
   page,
   pageSize,
-  districtsWithWard,
+  totalCount,
 }: BusinessTableProps) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const wardIds = searchParams.getAll("wardId");
+  const wardIds = getStringParams(searchParams, "wardId");
 
   let wardLabel = "";
   if (wardIds.length > 0) {
@@ -61,19 +64,19 @@ export function BusinessTable({
   return (
     <div className="space-y-0">
       <DataTable
-        data={businesses}
         columns={columns}
-        keyExtractor={(b) => b.id}
+        data={businesses}
         emptyMessage={emptyMessage}
+        keyExtractor={(b) => b.id}
         stickyHeader={true}
       />
       <Pagination
-        page={page}
-        totalPages={totalPages}
-        totalCount={totalCount}
-        pageSize={pageSize}
         getPageUrl={getPageUrl}
         onPageSizeChange={onPageSizeChange}
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+        totalPages={totalPages}
       />
     </div>
   );

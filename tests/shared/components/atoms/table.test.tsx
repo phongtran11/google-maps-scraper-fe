@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 
+import type { DataTableColumn } from "~/shared/components/organisms/data-table";
+
 import {
   Table,
   TableBody,
@@ -12,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/shared/components/atoms/table";
-import type { DataTableColumn } from "~/shared/components/organisms/data-table";
 import { DataTable } from "~/shared/components/organisms/data-table";
 
 describe("Table primitives", () => {
@@ -142,8 +143,8 @@ describe("DataTable", () => {
   ];
 
   const columns: DataTableColumn<TestItem>[] = [
-    { id: "id", header: "ID", accessor: "id" },
-    { id: "name", header: "Tên", accessor: "name" },
+    { accessor: "id", header: "ID", id: "id" },
+    { accessor: "name", header: "Tên", id: "name" },
   ];
 
   const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -151,7 +152,7 @@ describe("DataTable", () => {
   );
 
   it("renders header columns", () => {
-    render(<DataTable data={data} columns={columns} keyExtractor={(item) => item.id} />, {
+    render(<DataTable columns={columns} data={data} keyExtractor={(item) => item.id} />, {
       wrapper: TestWrapper,
     });
     expect(screen.getByText("ID")).toBeInTheDocument();
@@ -159,7 +160,7 @@ describe("DataTable", () => {
   });
 
   it("renders data rows", () => {
-    render(<DataTable data={data} columns={columns} keyExtractor={(item) => item.id} />, {
+    render(<DataTable columns={columns} data={data} keyExtractor={(item) => item.id} />, {
       wrapper: TestWrapper,
     });
     expect(screen.getByText("A")).toBeInTheDocument();
@@ -169,10 +170,10 @@ describe("DataTable", () => {
   it("shows skeleton rows when loading", () => {
     const { container } = render(
       <DataTable
-        data={[]}
         columns={columns}
-        keyExtractor={(item) => item.id}
+        data={[]}
         isLoading
+        keyExtractor={(item) => item.id}
         skeletonRows={3}
       />,
       { wrapper: TestWrapper },
@@ -182,7 +183,7 @@ describe("DataTable", () => {
   });
 
   it("shows empty message when no data", () => {
-    render(<DataTable data={[]} columns={columns} keyExtractor={(item) => item.id} />, {
+    render(<DataTable columns={columns} data={[]} keyExtractor={(item) => item.id} />, {
       wrapper: TestWrapper,
     });
     expect(screen.getByText("Không có dữ liệu")).toBeInTheDocument();
@@ -191,10 +192,10 @@ describe("DataTable", () => {
   it("shows custom empty message", () => {
     render(
       <DataTable
-        data={[]}
         columns={columns}
-        keyExtractor={(item) => item.id}
+        data={[]}
         emptyMessage="Danh sách trống"
+        keyExtractor={(item) => item.id}
       />,
       { wrapper: TestWrapper },
     );
@@ -204,10 +205,10 @@ describe("DataTable", () => {
   it("shows custom empty state component", () => {
     render(
       <DataTable
-        data={[]}
         columns={columns}
-        keyExtractor={(item) => item.id}
+        data={[]}
         emptyState={<div>Không có gì cả</div>}
+        keyExtractor={(item) => item.id}
       />,
       { wrapper: TestWrapper },
     );
@@ -216,15 +217,15 @@ describe("DataTable", () => {
 
   it("cell renders custom component via cell function", () => {
     const columnsWithCustomCell = [
-      { id: "id", header: "ID", accessor: "id" as const },
+      { accessor: "id" as const, header: "ID", id: "id" },
       {
-        id: "custom",
-        header: "Tuỳ chỉnh",
         cell: (item: TestItem) => <strong>{item.name.toUpperCase()}</strong>,
+        header: "Tuỳ chỉnh",
+        id: "custom",
       },
     ];
     render(
-      <DataTable data={data} columns={columnsWithCustomCell} keyExtractor={(item) => item.id} />,
+      <DataTable columns={columnsWithCustomCell} data={data} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     const strong = screen.getByText("A");
@@ -233,10 +234,10 @@ describe("DataTable", () => {
 
   it("applies alignment classes", () => {
     const alignedColumns = [
-      { id: "id", header: "ID", accessor: "id" as const, align: "center" as const },
-      { id: "name", header: "Tên", accessor: "name" as const, align: "right" as const },
+      { accessor: "id" as const, align: "center" as const, header: "ID", id: "id" },
+      { accessor: "name" as const, align: "right" as const, header: "Tên", id: "name" },
     ];
-    render(<DataTable data={data} columns={alignedColumns} keyExtractor={(item) => item.id} />, {
+    render(<DataTable columns={alignedColumns} data={data} keyExtractor={(item) => item.id} />, {
       wrapper: TestWrapper,
     });
     const headerCenter = screen.getByText("ID");
@@ -247,10 +248,10 @@ describe("DataTable", () => {
 
   it("renders null for column without accessor or cell", () => {
     const columnsWithNull: DataTableColumn<TestItem>[] = [
-      { id: "id", header: "ID", accessor: "id" },
-      { id: "empty", header: "Trống", cell: () => null },
+      { accessor: "id", header: "ID", id: "id" },
+      { cell: () => null, header: "Trống", id: "empty" },
     ];
-    render(<DataTable data={data} columns={columnsWithNull} keyExtractor={(item) => item.id} />, {
+    render(<DataTable columns={columnsWithNull} data={data} keyExtractor={(item) => item.id} />, {
       wrapper: TestWrapper,
     });
     expect(screen.getByText("1")).toBeInTheDocument();
@@ -260,13 +261,13 @@ describe("DataTable", () => {
   it("renders accessorFn result", () => {
     const columnsWithAccessorFn: DataTableColumn<TestItem>[] = [
       {
-        id: "computed",
-        header: "Computed",
         accessorFn: (item) => `${item.name}-${item.id}`,
+        header: "Computed",
+        id: "computed",
       },
     ];
     render(
-      <DataTable data={data} columns={columnsWithAccessorFn} keyExtractor={(item) => item.id} />,
+      <DataTable columns={columnsWithAccessorFn} data={data} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     expect(screen.getByText("A-1")).toBeInTheDocument();
@@ -274,14 +275,14 @@ describe("DataTable", () => {
   });
 
   it("renders dash for null/undefined values", () => {
-    const dataWithNulls = [{ id: 1, name: null as string | null }];
+    const dataWithNulls = [{ id: 1, name: null as null | string }];
     const columnsWithNulls: DataTableColumn<(typeof dataWithNulls)[0]>[] = [
-      { id: "name", header: "Name", accessor: "name" },
+      { accessor: "name", header: "Name", id: "name" },
     ];
     render(
       <DataTable
-        data={dataWithNulls}
         columns={columnsWithNulls}
+        data={dataWithNulls}
         keyExtractor={(item) => item.id}
       />,
       { wrapper: TestWrapper },
@@ -292,15 +293,15 @@ describe("DataTable", () => {
   it("handles column with headerClassName and cellClassName", () => {
     const columnsWithClasses: DataTableColumn<TestItem>[] = [
       {
-        id: "id",
-        header: "ID",
         accessor: "id",
-        headerClassName: "header-class",
         cellClassName: "cell-class",
+        header: "ID",
+        headerClassName: "header-class",
+        id: "id",
       },
     ];
     render(
-      <DataTable data={data} columns={columnsWithClasses} keyExtractor={(item) => item.id} />,
+      <DataTable columns={columnsWithClasses} data={data} keyExtractor={(item) => item.id} />,
       { wrapper: TestWrapper },
     );
     const header = screen.getByText("ID");

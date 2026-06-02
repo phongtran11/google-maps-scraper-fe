@@ -7,46 +7,46 @@ import { cn } from "~/shared/utils";
 import { Button } from "../atoms/button";
 import { Checkbox } from "../atoms/checkbox";
 
-interface SubOption {
-  key: string;
-  label: string;
-  disabled?: boolean;
-}
-
 interface GroupOption {
   key: string;
   label: string;
   options: SubOption[];
 }
 
+interface SubOption {
+  disabled?: boolean;
+  key: string;
+  label: string;
+}
+
 const selectVariants = {
   size: {
-    sm: "h-8 rounded-md px-2 text-sm",
-    md: "h-10 rounded-md px-3 text-sm",
     lg: "h-12 rounded-md px-4 text-base",
+    md: "h-10 rounded-md px-3 text-sm",
+    sm: "h-8 rounded-md px-2 text-sm",
   },
 } as const;
 
 interface GroupedSelectCheckboxProps {
+  "aria-label"?: string;
+  className?: string;
+  disabled?: boolean;
   groups: GroupOption[];
-  value: string[];
   onChange: (value: string[]) => void;
   placeholder?: string;
   selectSize?: keyof typeof selectVariants.size;
-  className?: string;
-  disabled?: boolean;
-  "aria-label"?: string;
+  value: string[];
 }
 
 function GroupedSelectCheckbox({
+  "aria-label": ariaLabel,
+  className,
+  disabled,
   groups,
-  value,
   onChange,
   placeholder = "All items",
   selectSize = "md",
-  className,
-  "aria-label": ariaLabel,
-  disabled,
+  value,
 }: GroupedSelectCheckboxProps) {
   const [open, setOpen] = useState(false);
   const [activeGroupKey, setActiveGroupKey] = useState<string>("");
@@ -153,14 +153,11 @@ function GroupedSelectCheckbox({
   };
 
   return (
-    <div ref={containerRef} className={cn("relative inline-block", className)}>
+    <div className={cn("relative inline-block", className)} ref={containerRef}>
       <button
-        type="button"
-        aria-label={ariaLabel}
-        disabled={disabled}
         aria-expanded={open}
         aria-haspopup="dialog"
-        onClick={handleToggle}
+        aria-label={ariaLabel}
         className={cn(
           "border-input bg-background text-foreground flex w-full items-center justify-between gap-2 border",
           "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
@@ -168,7 +165,10 @@ function GroupedSelectCheckbox({
           selectVariants.size[selectSize],
           value.length === 0 && "text-muted-foreground",
         )}
+        disabled={disabled}
+        onClick={handleToggle}
         title={getTriggerLabel()}
+        type="button"
       >
         <span className="min-w-0 flex-1 truncate text-left">{getTriggerLabel()}</span>
         <ChevronDownIcon
@@ -187,8 +187,6 @@ function GroupedSelectCheckbox({
             onClick={handleCancel}
           />
           <div
-            id={`${generatedId}-popover`}
-            role="dialog"
             aria-label={ariaLabel || "Selection popover"}
             className={cn(
               "border-border bg-popover text-popover-foreground flex flex-col transition-all duration-150",
@@ -197,6 +195,8 @@ function GroupedSelectCheckbox({
               // Desktop layout override
               "md:absolute md:inset-auto md:top-full md:left-0 md:z-50 md:mt-1 md:h-auto md:w-[600px] md:rounded-md md:border md:shadow-md",
             )}
+            id={`${generatedId}-popover`}
+            role="dialog"
           >
             {/* Drag handle for mobile */}
             <div className="flex shrink-0 justify-center py-2 md:hidden">
@@ -207,10 +207,10 @@ function GroupedSelectCheckbox({
             <div className="border-border flex shrink-0 items-center justify-between border-b px-3 py-2">
               <span className="text-sm font-semibold">Chọn khu vực</span>
               <button
-                type="button"
-                onClick={handleCancel}
-                className="text-muted-foreground hover:text-foreground rounded-sm p-0.5 transition-colors outline-none"
                 aria-label="Đóng bảng chọn"
+                className="text-muted-foreground hover:text-foreground rounded-sm p-0.5 transition-colors outline-none"
+                onClick={handleCancel}
+                type="button"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -220,21 +220,21 @@ function GroupedSelectCheckbox({
             <div className="flex min-h-0 flex-1 md:h-[280px] md:flex-initial">
               {/* Left column: Group tabs */}
               <div className="border-border bg-muted/20 h-full w-5/12 overflow-y-auto border-r p-1">
-                <ul role="tablist" aria-label="Group list" className="space-y-0.5">
+                <ul aria-label="Group list" className="space-y-0.5" role="tablist">
                   {groups.map((group) => {
                     const isActive = group.key === currentActiveGroupKey;
                     const selectedCount = getSelectedCountInGroup(group.key);
                     return (
                       <li key={group.key}>
                         <button
-                          type="button"
-                          role="tab"
                           aria-selected={isActive}
-                          onClick={() => setActiveGroupKey(group.key)}
                           className={cn(
                             "hover:bg-accent hover:text-accent-foreground flex w-full items-center justify-between rounded-sm px-2.5 py-1.5 text-left text-xs font-medium transition-colors outline-none",
                             isActive && "bg-accent text-accent-foreground font-semibold",
                           )}
+                          onClick={() => setActiveGroupKey(group.key)}
+                          role="tab"
+                          type="button"
                         >
                           <span className="truncate">{group.label}</span>
                           {selectedCount > 0 && (
@@ -259,11 +259,11 @@ function GroupedSelectCheckbox({
                   <div className="flex flex-col gap-3">
                     {/* Select All option */}
                     <Checkbox
-                      label="Chọn tất cả"
                       checked={isAllSelectedInActive}
-                      indeterminate={isIndeterminateInActive}
-                      onChange={handleToggleSelectAllActive}
                       className="font-semibold"
+                      indeterminate={isIndeterminateInActive}
+                      label="Chọn tất cả"
+                      onChange={handleToggleSelectAllActive}
                     />
 
                     <div className="border-border/60 my-0.5 border-t"></div>
@@ -274,10 +274,10 @@ function GroupedSelectCheckbox({
                         const isChecked = draftSelected.includes(opt.key);
                         return (
                           <Checkbox
-                            key={opt.key}
-                            label={opt.label}
                             checked={isChecked}
                             disabled={opt.disabled}
+                            key={opt.key}
+                            label={opt.label}
                             onChange={() => handleToggleOption(opt.key)}
                           />
                         );
@@ -300,10 +300,10 @@ function GroupedSelectCheckbox({
                   : "Chưa chọn khu vực nào"}
               </span>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+                <Button onClick={handleCancel} size="sm" type="button" variant="outline">
                   Hủy
                 </Button>
-                <Button type="button" variant="default" size="sm" onClick={handleApply}>
+                <Button onClick={handleApply} size="sm" type="button" variant="default">
                   Áp dụng
                 </Button>
               </div>

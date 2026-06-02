@@ -1,9 +1,9 @@
 interface FieldProps {
-  label: string;
   children: React.ReactNode;
+  label: string;
 }
 
-export function Field({ label, children }: FieldProps) {
+export function Field({ children, label }: FieldProps) {
   return (
     <dl>
       <dt className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

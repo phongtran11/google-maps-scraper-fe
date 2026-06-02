@@ -11,7 +11,7 @@ const groups = [
     options: [
       { key: "ward1", label: "Xã Xuân Sơn" },
       { key: "ward2", label: "Xã Láng Lớn" },
-      { key: "ward3", label: "Xã Đá Bạc", disabled: true },
+      { disabled: true, key: "ward3", label: "Xã Đá Bạc" },
     ],
   },
   {
@@ -29,22 +29,22 @@ describe("GroupedSelectCheckbox", () => {
     render(
       <GroupedSelectCheckbox
         groups={groups}
-        value={[]}
         onChange={vi.fn()}
         placeholder="Tất cả khu vực"
+        value={[]}
       />,
     );
     expect(screen.getByText("Tất cả khu vực")).toBeInTheDocument();
   });
 
   it("renders comma-separated labels of selected options", () => {
-    render(<GroupedSelectCheckbox groups={groups} value={["ward1", "ward4"]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={["ward1", "ward4"]} />);
     expect(screen.getByText("Xã Xuân Sơn, Phường 1")).toBeInTheDocument();
   });
 
   it("opens popover on click and shows category tabs and active group options", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("GroupedSelectCheckbox", () => {
 
   it("switches active group when clicking a different category tab", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     // Switch to Vũng Tàu
@@ -75,7 +75,7 @@ describe("GroupedSelectCheckbox", () => {
   it("displays draft counts on category tab", async () => {
     const user = userEvent.setup();
     // Initially selected ward1 and ward2 in dist1
-    render(<GroupedSelectCheckbox groups={groups} value={["ward1", "ward2"]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={["ward1", "ward2"]} />);
     await user.click(screen.getByRole("button"));
 
     // Find the count badge next to Châu Đức
@@ -86,7 +86,7 @@ describe("GroupedSelectCheckbox", () => {
 
   it("updates draft counts dynamically when checking checkboxes", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     // Select Xã Xuân Sơn
@@ -102,7 +102,7 @@ describe("GroupedSelectCheckbox", () => {
 
   it("toggles all options in the active group when clicking Select All", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={vi.fn()} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     // Click "Chọn tất cả" in Châu Đức
@@ -119,7 +119,7 @@ describe("GroupedSelectCheckbox", () => {
   it("calls onChange with updated values when clicking Apply", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={onChange} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={onChange} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     await user.click(screen.getByText("Xã Xuân Sơn"));
@@ -137,7 +137,7 @@ describe("GroupedSelectCheckbox", () => {
   it("does not call onChange and discards draft changes when clicking Cancel", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={onChange} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={onChange} value={[]} />);
     await user.click(screen.getByRole("button"));
 
     await user.click(screen.getByText("Xã Xuân Sơn"));
@@ -155,7 +155,7 @@ describe("GroupedSelectCheckbox", () => {
     render(
       <div>
         <div data-testid="outside">Bên ngoài</div>
-        <GroupedSelectCheckbox groups={groups} value={[]} onChange={onChange} />
+        <GroupedSelectCheckbox groups={groups} onChange={onChange} value={[]} />
       </div>,
     );
     await user.click(screen.getByRole("button"));
@@ -172,7 +172,7 @@ describe("GroupedSelectCheckbox", () => {
   it("does not call onChange and discards draft changes when pressing Escape", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={onChange} />);
+    render(<GroupedSelectCheckbox groups={groups} onChange={onChange} value={[]} />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Xuân Sơn"));
 
@@ -185,7 +185,7 @@ describe("GroupedSelectCheckbox", () => {
   });
 
   it("prevents interaction when disabled", () => {
-    render(<GroupedSelectCheckbox groups={groups} value={[]} onChange={vi.fn()} disabled />);
+    render(<GroupedSelectCheckbox disabled groups={groups} onChange={vi.fn()} value={[]} />);
     expect(screen.getByRole("button")).toBeDisabled();
   });
 });

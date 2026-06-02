@@ -24,14 +24,15 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
 
     const dotColorClass =
       {
-        new: "bg-muted-foreground/80",
         approached: "bg-info",
         contacted: "bg-warning",
+        new: "bg-muted-foreground/80",
         qualified: "bg-success",
         rejected: "bg-destructive",
       }[key] || "bg-muted-foreground";
 
     return {
+      disabled: !isCurrent && !isNext,
       key,
       label: (
         <span className="flex items-center gap-2 font-medium">
@@ -39,7 +40,6 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
           <span>{value.label}</span>
         </span>
       ),
-      disabled: !isCurrent && !isNext,
     };
   });
 
@@ -48,8 +48,8 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
       fetcher.submit(
         { status: newStatus },
         {
-          method: "patch",
           action: ROUTES.api.businessStatus.buildPath(businessId),
+          method: "patch",
         },
       );
     }
@@ -62,12 +62,12 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         <Select
-          options={options}
-          value={optimisticStatus}
-          onChange={handleStatusChange}
-          disabled={fetcher.state === "submitting" || hasNoTransitions}
           aria-label="Chọn trạng thái doanh nghiệp"
           className="w-full"
+          disabled={fetcher.state === "submitting" || hasNoTransitions}
+          onChange={handleStatusChange}
+          options={options}
+          value={optimisticStatus}
         />
 
         {optimisticStatus === "rejected" && (

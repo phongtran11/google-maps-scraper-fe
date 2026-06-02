@@ -4,54 +4,54 @@ import { useClickOutside, useListboxKeyboardNavigation } from "~/shared/hooks";
 import { ChevronDownIcon } from "~/shared/icons/chevron-down";
 import { cn } from "~/shared/utils";
 
-interface SubOption {
-  key: string;
-  label: string;
-  disabled?: boolean;
-}
-
 interface GroupOption {
   label: string;
   options: SubOption[];
 }
 
+interface SubOption {
+  disabled?: boolean;
+  key: string;
+  label: string;
+}
+
 const selectVariants = {
   size: {
-    sm: "h-8 rounded-md px-2 text-sm",
-    md: "h-10 rounded-md px-3 text-sm",
     lg: "h-12 rounded-md px-4 text-base",
+    md: "h-10 rounded-md px-3 text-sm",
+    sm: "h-8 rounded-md px-2 text-sm",
   },
 } as const;
 
-interface GroupedSelectProps {
-  groups: GroupOption[];
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  defaultOption?: { key: string; label: string };
-  selectSize?: keyof typeof selectVariants.size;
-  className?: string;
-  "aria-label"?: string;
-  disabled?: boolean;
-}
-
 interface FlatOption {
-  key: string;
-  label: string;
   disabled?: boolean;
   isDefault?: boolean;
+  key: string;
+  label: string;
+}
+
+interface GroupedSelectProps {
+  "aria-label"?: string;
+  className?: string;
+  defaultOption?: { key: string; label: string };
+  disabled?: boolean;
+  groups: GroupOption[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+  selectSize?: keyof typeof selectVariants.size;
+  value: string;
 }
 
 export function GroupedSelect({
+  "aria-label": ariaLabel,
+  className,
+  defaultOption,
+  disabled,
   groups,
-  value,
   onChange,
   placeholder = "Chọn…",
-  defaultOption,
   selectSize = "md",
-  className,
-  "aria-label": ariaLabel,
-  disabled,
+  value,
 }: GroupedSelectProps) {
   const [open, setOpen] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
@@ -63,18 +63,18 @@ export function GroupedSelect({
   const flatOptions: FlatOption[] = [];
   if (defaultOption) {
     flatOptions.push({
+      isDefault: true,
       key: defaultOption.key,
       label: defaultOption.label,
-      isDefault: true,
     });
   }
 
   for (const group of groups) {
     for (const opt of group.options) {
       flatOptions.push({
+        disabled: opt.disabled,
         key: opt.key,
         label: opt.label,
-        disabled: opt.disabled,
       });
     }
   }
@@ -118,11 +118,11 @@ export function GroupedSelect({
 
   useListboxKeyboardNavigation({
     enabled: open,
-    options: flatOptions,
     focusIndex,
+    onClose: close,
     onFocusIndexChange: setFocusIndex,
     onSelect: (opt) => select(opt.key),
-    onClose: close,
+    options: flatOptions,
   });
 
   // Handle scrolling of focused element into view
@@ -162,13 +162,19 @@ export function GroupedSelect({
   let currentFlatIndex = 0;
 
   return (
-    <div ref={containerRef} className={cn("relative", className)}>
+    <div className={cn("relative", className)} ref={containerRef}>
       <button
-        type="button"
-        aria-label={ariaLabel}
-        disabled={disabled}
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-label={ariaLabel}
+        className={cn(
+          "border-input bg-background text-foreground flex w-full items-center justify-between gap-2 border",
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          selectVariants.size[selectSize],
+          !selectedOption && "text-muted-foreground",
+        )}
+        disabled={disabled}
         onClick={handleToggle}
         onKeyDown={(e) => {
           if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -178,13 +184,7 @@ export function GroupedSelect({
             }
           }
         }}
-        className={cn(
-          "border-input bg-background text-foreground flex w-full items-center justify-between gap-2 border",
-          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          selectVariants.size[selectSize],
-          !selectedOption && "text-muted-foreground",
-        )}
+        type="button"
       >
         <span className="truncate text-left">{selectedOption?.label ?? placeholder}</span>
         <ChevronDownIcon
@@ -197,14 +197,14 @@ export function GroupedSelect({
 
       {open && (
         <ul
-          ref={listRef}
-          id={`${generatedId}-listbox`}
-          role="listbox"
           aria-label={ariaLabel}
           className={cn(
             "border-border bg-popover absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border p-1 shadow-md",
             "transition-all duration-150",
           )}
+          id={`${generatedId}-listbox`}
+          ref={listRef}
+          role="listbox"
         >
           {defaultOption &&
             (() => {
@@ -212,18 +212,18 @@ export function GroupedSelect({
               currentFlatIndex++;
               return (
                 <li
-                  key={defaultOption.key}
-                  id={`${generatedId}-option-default`}
-                  role="option"
                   aria-selected={defaultOption.key === value}
-                  onClick={() => select(defaultOption.key)}
-                  onMouseEnter={() => setFocusIndex(index)}
                   className={cn(
                     "relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none",
                     "hover:bg-accent hover:text-accent-foreground",
                     focusIndex === index && "bg-accent text-accent-foreground",
                     defaultOption.key === value && "font-medium",
                   )}
+                  id={`${generatedId}-option-default`}
+                  key={defaultOption.key}
+                  onClick={() => select(defaultOption.key)}
+                  onMouseEnter={() => setFocusIndex(index)}
+                  role="option"
                 >
                   {defaultOption.label}
                 </li>
@@ -233,8 +233,8 @@ export function GroupedSelect({
           {groups.map((group, groupIdx) => {
             const headerElement = (
               <li
-                key={`group-header-${groupIdx}`}
                 className="text-muted-foreground bg-muted/40 cursor-default px-2 py-1 text-xs font-semibold select-none"
+                key={`group-header-${groupIdx}`}
               >
                 {group.label}
               </li>
@@ -245,11 +245,18 @@ export function GroupedSelect({
               currentFlatIndex++;
               return (
                 <li
-                  key={opt.key}
-                  id={`${generatedId}-option-${index}`}
-                  role="option"
-                  aria-selected={opt.key === value}
                   aria-disabled={opt.disabled}
+                  aria-selected={opt.key === value}
+                  className={cn(
+                    "relative flex cursor-pointer items-center rounded-sm py-1.5 pr-2 pl-6 text-sm outline-none select-none",
+                    opt.disabled
+                      ? "text-muted-foreground cursor-not-allowed opacity-40"
+                      : "hover:bg-accent hover:text-accent-foreground",
+                    !opt.disabled && focusIndex === index && "bg-accent text-accent-foreground",
+                    opt.key === value && "font-medium",
+                  )}
+                  id={`${generatedId}-option-${index}`}
+                  key={opt.key}
                   onClick={() => {
                     if (!opt.disabled) {
                       select(opt.key);
@@ -260,14 +267,7 @@ export function GroupedSelect({
                       setFocusIndex(index);
                     }
                   }}
-                  className={cn(
-                    "relative flex cursor-pointer items-center rounded-sm py-1.5 pr-2 pl-6 text-sm outline-none select-none",
-                    opt.disabled
-                      ? "text-muted-foreground cursor-not-allowed opacity-40"
-                      : "hover:bg-accent hover:text-accent-foreground",
-                    !opt.disabled && focusIndex === index && "bg-accent text-accent-foreground",
-                    opt.key === value && "font-medium",
-                  )}
+                  role="option"
                 >
                   {opt.label}
                 </li>

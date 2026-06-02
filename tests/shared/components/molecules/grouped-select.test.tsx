@@ -10,7 +10,7 @@ const groups = [
     options: [
       { key: "ward1", label: "Xã Xuân Sơn" },
       { key: "ward2", label: "Xã Láng Lớn" },
-      { key: "ward3", label: "Xã Đá Bạc", disabled: true },
+      { disabled: true, key: "ward3", label: "Xã Đá Bạc" },
     ],
   },
   {
@@ -24,18 +24,18 @@ const groups = [
 
 describe("GroupedSelect", () => {
   it("renders with placeholder when no value selected", () => {
-    render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="" />);
     expect(screen.getByText("Chọn…")).toBeInTheDocument();
   });
 
   it("renders selected option label", () => {
-    render(<GroupedSelect groups={groups} value="ward2" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="ward2" />);
     expect(screen.getByText("Xã Láng Lớn")).toBeInTheDocument();
   });
 
   it("opens dropdown on click and shows group headers and options", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="" />);
     await user.click(screen.getByRole("button"));
 
     expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -49,10 +49,10 @@ describe("GroupedSelect", () => {
     const user = userEvent.setup();
     render(
       <GroupedSelect
-        groups={groups}
-        value=""
-        onChange={vi.fn()}
         defaultOption={{ key: "", label: "Tất cả khu vực" }}
+        groups={groups}
+        onChange={vi.fn()}
+        value=""
       />,
     );
     expect(screen.getByText("Tất cả khu vực")).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("GroupedSelect", () => {
   it("closes dropdown and calls onChange on option click", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="" onChange={onChange} />);
+    render(<GroupedSelect groups={groups} onChange={onChange} value="" />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Xuân Sơn"));
 
@@ -78,7 +78,7 @@ describe("GroupedSelect", () => {
   it("does not call onChange for disabled option click", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="" onChange={onChange} />);
+    render(<GroupedSelect groups={groups} onChange={onChange} value="" />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Xã Đá Bạc"));
 
@@ -90,7 +90,7 @@ describe("GroupedSelect", () => {
     render(
       <div>
         <span data-testid="outside">Bên ngoài</span>
-        <GroupedSelect groups={groups} value="" onChange={vi.fn()} />
+        <GroupedSelect groups={groups} onChange={vi.fn()} value="" />
       </div>,
     );
     await user.click(screen.getByRole("button"));
@@ -107,10 +107,10 @@ describe("GroupedSelect", () => {
     const user = userEvent.setup();
     render(
       <GroupedSelect
-        groups={groups}
-        value=""
-        onChange={onChange}
         defaultOption={{ key: "", label: "Tất cả khu vực" }}
+        groups={groups}
+        onChange={onChange}
+        value=""
       />,
     );
     await user.click(screen.getByRole("button"));
@@ -127,7 +127,7 @@ describe("GroupedSelect", () => {
 
   it("closes on Escape", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="" />);
     await user.click(screen.getByRole("button"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
 
@@ -138,13 +138,13 @@ describe("GroupedSelect", () => {
   });
 
   it("disabled button prevents interaction", () => {
-    render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} disabled />);
+    render(<GroupedSelect disabled groups={groups} onChange={vi.fn()} value="" />);
     expect(screen.getByRole("button")).toBeDisabled();
   });
 
   it("marks selected option with aria-selected", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="ward1" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="ward1" />);
     await user.click(screen.getByRole("button"));
 
     const options = screen.getAllByRole("option");
@@ -154,7 +154,7 @@ describe("GroupedSelect", () => {
 
   it("marks disabled option with aria-disabled", async () => {
     const user = userEvent.setup();
-    render(<GroupedSelect groups={groups} value="" onChange={vi.fn()} />);
+    render(<GroupedSelect groups={groups} onChange={vi.fn()} value="" />);
     await user.click(screen.getByRole("button"));
 
     const option = screen.getByText("Xã Đá Bạc").closest('[role="option"]');

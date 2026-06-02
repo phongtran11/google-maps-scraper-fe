@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { RouteMatch } from "~/shared/types";
+
 import { getBreadcrumbs } from "~/shared/utils/routing";
 
 describe("getBreadcrumbs", () => {
@@ -13,9 +14,9 @@ describe("getBreadcrumbs", () => {
     const matches: RouteMatch[] = [
       {
         id: "routes/businesses.$id",
-        pathname: "/businesses/123",
-        params: { id: "123" },
         loaderData: { business: { business_name: "Cafe ABC" } },
+        params: { id: "123" },
+        pathname: "/businesses/123",
       },
     ];
     const result = getBreadcrumbs("/businesses/123", matches);
@@ -26,9 +27,9 @@ describe("getBreadcrumbs", () => {
     const matches: RouteMatch[] = [
       {
         id: "routes/businesses.$id",
-        pathname: "/businesses/123",
-        params: { id: "123" },
         loaderData: { business: {} },
+        params: { id: "123" },
+        pathname: "/businesses/123",
       },
     ];
     const result = getBreadcrumbs("/businesses/123", matches);
@@ -42,9 +43,9 @@ describe("getBreadcrumbs", () => {
     const matches: RouteMatch[] = [
       {
         id: "routes/businesses.$id",
-        pathname: "/businesses/123",
-        params: { id: "123" },
         loaderData: undefined,
+        params: { id: "123" },
+        pathname: "/businesses/123",
       },
     ];
     const result = getBreadcrumbs("/businesses/123", matches);
@@ -58,9 +59,9 @@ describe("getBreadcrumbs", () => {
     const matches: RouteMatch[] = [
       {
         id: "routes/other",
-        pathname: "/businesses/123",
-        params: {},
         loaderData: null,
+        params: {},
+        pathname: "/businesses/123",
       },
     ];
     const result = getBreadcrumbs("/businesses/123", matches);

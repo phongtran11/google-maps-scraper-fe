@@ -2,20 +2,20 @@ import { useEffect } from "react";
 
 export interface UseListboxKeyboardNavigationOptions<T> {
   enabled: boolean;
-  options: T[];
   focusIndex: number;
+  onClose: () => void;
   onFocusIndexChange: (index: number) => void;
   onSelect: (option: T) => void;
-  onClose: () => void;
+  options: T[];
 }
 
-export function useListboxKeyboardNavigation<T extends { key: string; disabled?: boolean }>({
+export function useListboxKeyboardNavigation<T extends { disabled?: boolean; key: string }>({
   enabled,
-  options,
   focusIndex,
+  onClose,
   onFocusIndexChange,
   onSelect,
-  onClose,
+  options,
 }: UseListboxKeyboardNavigationOptions<T>): void {
   useEffect(() => {
     if (!enabled) return;

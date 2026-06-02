@@ -11,15 +11,15 @@ describe("groupDistrictsWithWards", () => {
     const input = [
       {
         districts: { id: 1, name: "Thành phố Vũng Tàu" },
-        wards: { id: 10, name: "Phường 1", district_id: 1 },
+        wards: { district_id: 1, id: 10, name: "Phường 1" },
       },
       {
         districts: { id: 1, name: "Thành phố Vũng Tàu" },
-        wards: { id: 11, name: "Phường 2", district_id: 1 },
+        wards: { district_id: 1, id: 11, name: "Phường 2" },
       },
       {
         districts: { id: 2, name: "Thành phố Bà Rịa" },
-        wards: { id: 20, name: "Phường Phước Trung", district_id: 2 },
+        wards: { district_id: 2, id: 20, name: "Phường Phước Trung" },
       },
     ];
 

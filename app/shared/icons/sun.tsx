@@ -1,15 +1,15 @@
 export function Sun({ className, strokeWidth = 2 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
       fill="none"
       stroke="currentColor"
-      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
+      strokeWidth={strokeWidth}
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
     >
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2v2" />

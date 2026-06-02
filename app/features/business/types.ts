@@ -1,9 +1,8 @@
-import type { businessNotes, businesses } from "~/server/database/schema.server";
+import type { businesses, businessNotes } from "~/server/database/schema.server";
+import type { AwaitedReturn } from "~/shared/types";
 
 import type { BUSINESS_STATUS, REGIONS } from "./constants";
 import type { getBusinesses } from "./queries.server";
-
-export type BusinessRow = typeof businesses.$inferSelect;
 
 export type BusinessFilter = {
   limit?: number;
@@ -14,10 +13,12 @@ export type BusinessFilter = {
   wardIds?: number[];
 };
 
+export type BusinessRow = typeof businesses.$inferSelect;
+
 export type BusinessStatus = (typeof BUSINESS_STATUS)[keyof typeof BUSINESS_STATUS];
 
-export type Region = keyof typeof REGIONS;
+export type GetBusinessesResult = AwaitedReturn<typeof getBusinesses>[number];
 
 export type NoteRow = typeof businessNotes.$inferSelect;
 
-export type GetBusinessesResult = Awaited<ReturnType<typeof getBusinesses>>[number];
+export type Region = keyof typeof REGIONS;

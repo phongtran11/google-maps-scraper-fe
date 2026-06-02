@@ -7,35 +7,35 @@ import { Select } from "~/shared/components/atoms/select";
 const options = [
   { key: "option1", label: "Lựa chọn 1" },
   { key: "option2", label: "Lựa chọn 2" },
-  { key: "option3", label: "Lựa chọn 3", disabled: true },
+  { disabled: true, key: "option3", label: "Lựa chọn 3" },
 ];
 
 describe("Select", () => {
   it("renders with placeholder when no value selected", () => {
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     expect(screen.getByText("Chọn…")).toBeInTheDocument();
   });
 
   it("renders selected option label", () => {
-    render(<Select options={options} value="option2" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="option2" />);
     expect(screen.getByText("Lựa chọn 2")).toBeInTheDocument();
   });
 
   it("renders with custom placeholder", () => {
-    render(<Select options={options} value="" onChange={vi.fn()} placeholder="Chọn một…" />);
+    render(<Select onChange={vi.fn()} options={options} placeholder="Chọn một…" value="" />);
     expect(screen.getByText("Chọn một…")).toBeInTheDocument();
   });
 
   it("opens dropdown on click", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
   });
 
   it("has aria-expanded and aria-haspopup attributes", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     const button = screen.getByRole("button");
     expect(button).toHaveAttribute("aria-expanded", "false");
     expect(button).toHaveAttribute("aria-haspopup", "listbox");
@@ -47,7 +47,7 @@ describe("Select", () => {
   it("closes dropdown and calls onChange on option click", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={onChange} />);
+    render(<Select onChange={onChange} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Lựa chọn 1"));
     expect(onChange).toHaveBeenCalledWith("option1");
@@ -59,7 +59,7 @@ describe("Select", () => {
   it("does not call onChange for disabled option click", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={onChange} />);
+    render(<Select onChange={onChange} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     await user.click(screen.getByText("Lựa chọn 3"));
     expect(onChange).not.toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe("Select", () => {
     render(
       <div>
         <span data-testid="outside">Bên ngoài</span>
-        <Select options={options} value="" onChange={vi.fn()} />
+        <Select onChange={vi.fn()} options={options} value="" />
       </div>,
     );
     await user.click(screen.getByRole("button", { name: undefined }));
@@ -84,7 +84,7 @@ describe("Select", () => {
   it("navigates options with ArrowUp", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={onChange} />);
+    render(<Select onChange={onChange} options={options} value="" />);
     const button = screen.getByRole("button");
     await user.click(button);
 
@@ -103,10 +103,10 @@ describe("Select", () => {
     const user = userEvent.setup();
     const opts = [
       { key: "a", label: "A" },
-      { key: "b", label: "B", disabled: true },
+      { disabled: true, key: "b", label: "B" },
       { key: "c", label: "C" },
     ];
-    render(<Select options={opts} value="" onChange={onChange} />);
+    render(<Select onChange={onChange} options={opts} value="" />);
     await user.click(screen.getByRole("button"));
 
     await user.keyboard("{ArrowDown}");
@@ -120,7 +120,7 @@ describe("Select", () => {
   it("ArrowUp at top stays at top", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={onChange} />);
+    render(<Select onChange={onChange} options={options} value="" />);
     await user.click(screen.getByRole("button"));
 
     await user.keyboard("{ArrowUp}");
@@ -131,7 +131,7 @@ describe("Select", () => {
 
   it("closes on Escape", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
     await user.keyboard("{Escape}");
@@ -142,7 +142,7 @@ describe("Select", () => {
 
   it("opens dropdown via ArrowDown keyboard shortcut", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     const button = screen.getByRole("button");
     button.focus();
     await user.keyboard("{ArrowDown}");
@@ -150,13 +150,13 @@ describe("Select", () => {
   });
 
   it("disabled button prevents interaction", () => {
-    render(<Select options={options} value="" onChange={vi.fn()} disabled />);
+    render(<Select disabled onChange={vi.fn()} options={options} value="" />);
     expect(screen.getByRole("button")).toBeDisabled();
   });
 
   it("renders listbox with ARIA role and id", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     const listbox = screen.getByRole("listbox");
     expect(listbox).toHaveAttribute("id");
@@ -165,7 +165,7 @@ describe("Select", () => {
 
   it("marks selected option with aria-selected", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="option1" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="option1" />);
     await user.click(screen.getByRole("button"));
     const optionsList = screen.getAllByRole("option");
     const selected = optionsList.find((opt) => opt.textContent === "Lựa chọn 1");
@@ -174,7 +174,7 @@ describe("Select", () => {
 
   it("marks disabled option with aria-disabled", async () => {
     const user = userEvent.setup();
-    render(<Select options={options} value="" onChange={vi.fn()} />);
+    render(<Select onChange={vi.fn()} options={options} value="" />);
     await user.click(screen.getByRole("button"));
     const disabledOption = screen.getByText("Lựa chọn 3").closest('[role="option"]');
     expect(disabledOption).toHaveAttribute("aria-disabled", "true");

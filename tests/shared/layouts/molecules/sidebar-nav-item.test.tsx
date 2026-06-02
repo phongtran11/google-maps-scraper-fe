@@ -8,7 +8,7 @@ describe("SidebarNavItem", () => {
   it("renders label and icon", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Trang chủ" to="/" icon={<span data-testid="icon">🏠</span>} />
+        <SidebarNavItem icon={<span data-testid="icon">🏠</span>} label="Trang chủ" to="/" />
       </MemoryRouter>,
     );
     expect(screen.getByText("Trang chủ")).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe("SidebarNavItem", () => {
   it("renders as NavLink with correct href", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Dashboard" to="/dashboard" icon={<span>📊</span>} />
+        <SidebarNavItem icon={<span>📊</span>} label="Dashboard" to="/dashboard" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Dashboard/ });
@@ -28,7 +28,7 @@ describe("SidebarNavItem", () => {
   it("applies active styles when isActive is true", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Active" to="/" isActive icon={<span>✓</span>} />
+        <SidebarNavItem icon={<span>✓</span>} isActive label="Active" to="/" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Active/ });
@@ -39,7 +39,7 @@ describe("SidebarNavItem", () => {
   it("applies normal styles when not active", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Normal" to="/" icon={<span>○</span>} />
+        <SidebarNavItem icon={<span>○</span>} label="Normal" to="/" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Normal/ });
@@ -50,7 +50,7 @@ describe("SidebarNavItem", () => {
   it("renders as div with upcoming badge when isUpcoming", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Tính năng mới" to="/soon" isUpcoming icon={<span>🔜</span>} />
+        <SidebarNavItem icon={<span>🔜</span>} isUpcoming label="Tính năng mới" to="/soon" />
       </MemoryRouter>,
     );
     expect(screen.getByText("Tính năng mới")).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe("SidebarNavItem", () => {
   it("applies upcoming styles when isUpcoming", () => {
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Upcoming" to="/" isUpcoming icon={<span>🔜</span>} />
+        <SidebarNavItem icon={<span>🔜</span>} isUpcoming label="Upcoming" to="/" />
       </MemoryRouter>,
     );
     const container = screen.getByText("Upcoming").closest("div")?.parentElement;
@@ -72,7 +72,7 @@ describe("SidebarNavItem", () => {
     const onClick = vi.fn();
     render(
       <MemoryRouter>
-        <SidebarNavItem label="Clickable" to="/" icon={<span>👆</span>} onClick={onClick} />
+        <SidebarNavItem icon={<span>👆</span>} label="Clickable" onClick={onClick} to="/" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Clickable/ });

@@ -8,7 +8,7 @@ describe("useEscapeKey", () => {
     const callback = vi.fn();
     renderHook(() => useEscapeKey(callback, true));
 
-    const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Escape" });
     document.dispatchEvent(event);
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -18,7 +18,7 @@ describe("useEscapeKey", () => {
     const callback = vi.fn();
     renderHook(() => useEscapeKey(callback, true));
 
-    const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Enter" });
     document.dispatchEvent(event);
 
     expect(callback).not.toHaveBeenCalled();
@@ -28,7 +28,7 @@ describe("useEscapeKey", () => {
     const callback = vi.fn();
     renderHook(() => useEscapeKey(callback, false));
 
-    const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Escape" });
     document.dispatchEvent(event);
 
     expect(callback).not.toHaveBeenCalled();
@@ -38,7 +38,7 @@ describe("useEscapeKey", () => {
     const callback = vi.fn();
     renderHook(() => useEscapeKey(callback, true));
 
-    const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Escape" });
     document.dispatchEvent(event);
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ describe("useEscapeKey", () => {
     const callback = vi.fn();
     renderHook(() => useEscapeKey(callback, true, { target: "window" }));
 
-    const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Escape" });
     window.dispatchEvent(event);
 
     expect(callback).toHaveBeenCalledTimes(1);
@@ -59,7 +59,7 @@ describe("useEscapeKey", () => {
     const { unmount } = renderHook(() => useEscapeKey(callback, true));
     unmount();
 
-    const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+    const event = new KeyboardEvent("keydown", { bubbles: true, key: "Escape" });
     document.dispatchEvent(event);
 
     expect(callback).not.toHaveBeenCalled();

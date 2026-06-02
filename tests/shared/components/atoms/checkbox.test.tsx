@@ -22,7 +22,7 @@ describe("Checkbox", () => {
   it("does not call onChange when disabled", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
-    render(<Checkbox label="Disabled Checkbox" disabled onChange={onChange} />);
+    render(<Checkbox disabled label="Disabled Checkbox" onChange={onChange} />);
 
     const input = screen.getByLabelText("Disabled Checkbox");
     expect(input).toBeDisabled();

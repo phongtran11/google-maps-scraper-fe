@@ -5,7 +5,7 @@
  * @param phone - The raw phone number string, or null.
  * @returns The formatted phone number, or null if empty or invalid.
  */
-export function formatZaloPhone(phone: string | null): string | null {
+export function formatZaloPhone(phone: null | string): null | string {
   if (!phone) return null;
   const digits = phone.replace(/\D/g, "");
   if (!digits) return null;

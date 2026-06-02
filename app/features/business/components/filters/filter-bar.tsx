@@ -1,9 +1,11 @@
 import { useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
 
+import type { GroupedDistrict } from "~/shared/types";
+
 import { Button, GroupedSelectCheckbox, Input } from "~/shared/components";
 import { SearchIcon } from "~/shared/icons/search";
-import type { GroupedDistrict } from "~/shared/types";
+import { getStringParams } from "~/shared/utils";
 
 interface FilterBarProps {
   districtsWithWard: GroupedDistrict[];
@@ -14,7 +16,7 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
   const [pending, startTransition] = useTransition();
 
   const [search, setSearch] = useState(() => searchParams.get("search") || "");
-  const [wardIds, setWardIds] = useState<string[]>(() => searchParams.getAll("wardId"));
+  const [wardIds, setWardIds] = useState<string[]>(() => getStringParams(searchParams, "wardId"));
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -27,8 +29,11 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
       else next.delete("search");
 
       // handle wardIds
-      next.delete("wardId");
-      wardIds.forEach((id) => next.append("wardId", id));
+      if (wardIds.length > 0) {
+        next.set("wardId", wardIds.join(","));
+      } else {
+        next.delete("wardId");
+      }
 
       next.set("page", "1");
 
@@ -46,30 +51,29 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
   }));
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <form className="flex flex-col gap-3 sm:flex-row sm:items-center" onSubmit={handleSubmit}>
       <Input
-        type="search"
-        placeholder="Tìm tên doanh nghiệp…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        prefixIcon={<SearchIcon />}
-        inputSize="md"
         className="w-full sm:w-72 sm:max-w-xs"
         disabled={pending}
+        inputSize="md"
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Tìm tên doanh nghiệp…"
+        prefixIcon={<SearchIcon />}
+        type="search"
+        value={search}
       />
 
       <GroupedSelectCheckbox
-        groups={groups}
-        value={wardIds}
-        onChange={setWardIds}
-        selectSize="md"
-        className="w-full sm:w-72"
-        placeholder="Tất cả khu vực"
         aria-label="Lọc theo khu vực"
-        disabled={pending}
+        className="w-full sm:w-72"
+        groups={groups}
+        onChange={setWardIds}
+        placeholder="Tất cả khu vực"
+        selectSize="md"
+        value={wardIds}
       />
 
-      <Button disabled={pending} type="submit" className="w-full sm:w-auto">
+      <Button className="w-full sm:w-auto" disabled={pending} type="submit">
         Tìm kiếm
       </Button>
     </form>

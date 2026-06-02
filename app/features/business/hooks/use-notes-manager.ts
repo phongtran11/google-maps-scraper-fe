@@ -10,14 +10,14 @@ interface UseNotesManagerOptions {
 }
 
 export function useNotesManager({ businessId, initialNotes }: UseNotesManagerOptions) {
-  const noteFetcher = useFetcher<{ notes?: NoteRow[]; error?: string; message?: string }>();
+  const noteFetcher = useFetcher<{ error?: string; message?: string; notes?: NoteRow[] }>();
 
   const notes = noteFetcher.data?.notes ?? initialNotes;
 
   return {
-    notes,
-    noteFetcher,
-    isSubmitting: noteFetcher.state === "submitting",
     action: ROUTES.api.businessNotes.buildPath(businessId),
+    isSubmitting: noteFetcher.state === "submitting",
+    noteFetcher,
+    notes,
   };
 }

@@ -4,18 +4,18 @@ import { describe, expect, it, vi } from "vitest";
 import { useListboxKeyboardNavigation } from "~/shared/hooks";
 
 describe("useListboxKeyboardNavigation", () => {
-  const options = [{ key: "1" }, { key: "2", disabled: true }, { key: "3" }];
+  const options = [{ key: "1" }, { disabled: true, key: "2" }, { key: "3" }];
 
   it("ArrowDown moves focus to next option", () => {
     const onFocusIndexChange = vi.fn();
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 0,
+        onClose: vi.fn(),
         onFocusIndexChange,
         onSelect: vi.fn(),
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -32,11 +32,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 2,
+        onClose: vi.fn(),
         onFocusIndexChange,
         onSelect: vi.fn(),
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -51,11 +51,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 2,
+        onClose: vi.fn(),
         onFocusIndexChange,
         onSelect: vi.fn(),
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -72,11 +72,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 0,
+        onClose: vi.fn(),
         onFocusIndexChange,
         onSelect: vi.fn(),
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -91,11 +91,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 2,
+        onClose: vi.fn(),
         onFocusIndexChange: vi.fn(),
         onSelect,
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -110,11 +110,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 1,
+        onClose: vi.fn(),
         onFocusIndexChange: vi.fn(),
         onSelect,
-        onClose: vi.fn(),
+        options,
       }),
     );
 
@@ -129,11 +129,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: true,
-        options,
         focusIndex: 0,
+        onClose,
         onFocusIndexChange: vi.fn(),
         onSelect: vi.fn(),
-        onClose,
+        options,
       }),
     );
 
@@ -148,11 +148,11 @@ describe("useListboxKeyboardNavigation", () => {
     renderHook(() =>
       useListboxKeyboardNavigation({
         enabled: false,
-        options,
         focusIndex: 0,
+        onClose: vi.fn(),
         onFocusIndexChange,
         onSelect: vi.fn(),
-        onClose: vi.fn(),
+        options,
       }),
     );
 

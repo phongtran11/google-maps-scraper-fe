@@ -1,5 +1,6 @@
-import { useState } from "react";
 import type { MetaFunction } from "react-router";
+
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { Google } from "~/shared/icons/google";
@@ -8,7 +9,7 @@ import { authClient } from "~/shared/utils";
 
 export const meta: MetaFunction = () => [
   { title: "Đăng Nhập - Bảng Điều Khiển" },
-  { name: "description", content: "Đăng nhập để truy cập bảng điều khiển" },
+  { content: "Đăng nhập để truy cập bảng điều khiển", name: "description" },
 ];
 
 export default function Login() {
@@ -19,8 +20,8 @@ export default function Login() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     await authClient.signIn.social({
-      provider: "google",
       callbackURL: "/",
+      provider: "google",
     });
   };
 
@@ -41,9 +42,9 @@ export default function Login() {
         )}
 
         <button
-          onClick={handleGoogleSignIn}
-          disabled={loading}
           className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex w-full items-center justify-center gap-3 rounded-md border px-4 py-3 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          disabled={loading}
+          onClick={handleGoogleSignIn}
         >
           {loading ? <Spinner className="h-5 w-5" /> : <Google className="h-5 w-5" />}
           Đăng nhập với Google

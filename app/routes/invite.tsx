@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
 import type { ActionFunctionArgs, MetaFunction } from "react-router";
+
+import { useEffect, useRef } from "react";
 import { Form, useActionData, useNavigation } from "react-router";
 
 import { checkInviteExists, createInvite } from "~/server/database/invites.server";
@@ -18,13 +19,13 @@ import { Spinner } from "~/shared/icons/spinner";
 
 export const meta: MetaFunction = () => [
   { title: "Mời Thành Viên - Bảng Điều Khiển" },
-  { name: "description", content: "Mời thành viên mới tham gia quản trị" },
+  { content: "Mời thành viên mới tham gia quản trị", name: "description" },
 ];
 
 interface ActionData {
-  success?: boolean;
   email?: string;
   error?: string;
+  success?: boolean;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -53,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     await createInvite(email);
-    return Response.json({ success: true, email });
+    return Response.json({ email, success: true });
   } catch (err) {
     console.error("Invite error:", err);
     return Response.json(
@@ -74,8 +75,8 @@ export default function InviteUser() {
   useEffect(() => {
     if (actionData?.success && actionData.email) {
       toast({
-        title: "Thành công",
         description: `Đã mời thành công email ${actionData.email}`,
+        title: "Thành công",
         variant: "success",
       });
       formRef.current?.reset();
@@ -92,26 +93,26 @@ export default function InviteUser() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form ref={formRef} method="post" className="space-y-4">
+          <Form className="space-y-4" method="post" ref={formRef}>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-foreground text-sm font-medium">
+              <label className="text-foreground text-sm font-medium" htmlFor="email">
                 Địa chỉ Email
               </label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Nhập email (ví dụ: member@gmail.com)"
-                required
                 disabled={isSubmitting}
                 error={!!actionData?.error}
+                id="email"
+                name="email"
+                placeholder="Nhập email (ví dụ: member@gmail.com)"
+                required
+                type="email"
               />
               {actionData?.error && (
                 <p className="text-destructive mt-1 text-xs">{actionData.error}</p>
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button className="w-full" disabled={isSubmitting} type="submit">
               {isSubmitting ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4 animate-spin" />

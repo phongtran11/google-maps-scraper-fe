@@ -3,24 +3,25 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 
-import { AppLayoutTemplate } from "~/shared/layouts/templates/app-layout-template";
 import type { BreadcrumbItem } from "~/shared/types";
+
+import { AppLayoutTemplate } from "~/shared/layouts/templates/app-layout-template";
 
 vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 
 describe("AppLayoutTemplate", () => {
-  const currentUser = { name: "Test User", email: "test@example.com", image: null };
+  const currentUser = { email: "test@example.com", image: null, name: "Test User" };
   const onSignOut = vi.fn();
 
   it("renders children content", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
         >
@@ -39,9 +40,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={breadcrumbs}
           currentPath="/businesses/123"
+          currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
         >
@@ -62,9 +63,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={breadcrumbs}
           currentPath="/businesses/123"
+          currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
         >
@@ -81,9 +82,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
         >
@@ -98,9 +99,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị", to: "/" }, { label: "Chi tiết" }]}
           currentPath="/businesses/123"
+          currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
         >
@@ -115,9 +116,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
         >
@@ -133,9 +134,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={userWithImage}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={userWithImage}
           isRoot
           onSignOut={onSignOut}
         >
@@ -151,9 +152,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
         >
@@ -170,9 +171,9 @@ describe("AppLayoutTemplate", () => {
     render(
       <MemoryRouter>
         <AppLayoutTemplate
-          currentUser={currentUser}
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
           currentPath="/"
+          currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
         >

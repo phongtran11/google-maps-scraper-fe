@@ -16,29 +16,7 @@ import { validateMethod } from "~/server/http/request.server";
 
 const MAX_NOTE_LENGTH = 5000;
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  try {
-    if (!params.id) {
-      return { notes: [] };
-    }
-    const notes = await getBusinessNotes(params.id);
-    return Response.json(
-      { notes },
-      {
-        status: 200,
-        headers: { "Cache-Control": "private, max-age=10" },
-      },
-    );
-  } catch (err) {
-    console.error("Notes loader error:", err);
-    return Response.json(
-      { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error", notes: [] },
-      { status: 500 },
-    );
-  }
-}
-
-export async function action({ request, params, context }: ActionFunctionArgs) {
+export async function action({ context, params, request }: ActionFunctionArgs) {
   validateMethod(request, ["POST", "PATCH", "DELETE"]);
   verifySameOrigin(request);
 
@@ -48,9 +26,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   if (!params.id) {
     return Response.json(
       {
-        message: "Thiếu mã doanh nghiệp",
         code: "business_id_required",
         error: "business_id_required",
+        message: "Thiếu mã doanh nghiệp",
       },
       { status: 400 },
     );
@@ -61,9 +39,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     if (!businessExists) {
       return Response.json(
         {
-          message: "Không tìm thấy doanh nghiệp",
           code: "business_not_found",
           error: "business_not_found",
+          message: "Không tìm thấy doanh nghiệp",
         },
         { status: 404 },
       );
@@ -78,9 +56,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!content) {
         return Response.json(
           {
-            message: "Nội dung không được để trống",
             code: "content_required",
             error: "content_required",
+            message: "Nội dung không được để trống",
           },
           { status: 400 },
         );
@@ -89,9 +67,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (content.length > MAX_NOTE_LENGTH) {
         return Response.json(
           {
-            message: "Nội dung vượt quá độ dài cho phép",
             code: "content_too_long",
             error: "content_too_long",
+            message: "Nội dung vượt quá độ dài cho phép",
           },
           { status: 400 },
         );
@@ -99,7 +77,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
       await createBusinessNote(params.id, content, userEmail);
       const notes = await getBusinessNotes(params.id);
-      return Response.json({ notes, note: notes[0] }, { headers: { "Cache-Control": "no-store" } });
+      return Response.json({ note: notes[0], notes }, { headers: { "Cache-Control": "no-store" } });
     } else if (method === "PATCH") {
       const noteId = formData.get("noteId")?.toString();
       const content = formData.get("content")?.toString()?.trim();
@@ -107,9 +85,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!noteId) {
         return Response.json(
           {
-            message: "Thiếu mã ghi chú",
             code: "note_id_required",
             error: "note_id_required",
+            message: "Thiếu mã ghi chú",
           },
           { status: 400 },
         );
@@ -118,9 +96,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!content) {
         return Response.json(
           {
-            message: "Nội dung không được để trống",
             code: "content_required",
             error: "content_required",
+            message: "Nội dung không được để trống",
           },
           { status: 400 },
         );
@@ -129,9 +107,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (content.length > MAX_NOTE_LENGTH) {
         return Response.json(
           {
-            message: "Nội dung vượt quá độ dài cho phép",
             code: "content_too_long",
             error: "content_too_long",
+            message: "Nội dung vượt quá độ dài cho phép",
           },
           { status: 400 },
         );
@@ -141,9 +119,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!note) {
         return Response.json(
           {
-            message: "Không tìm thấy ghi chú",
             code: "note_not_found",
             error: "note_not_found",
+            message: "Không tìm thấy ghi chú",
           },
           { status: 404 },
         );
@@ -152,9 +130,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (note.created_by !== userEmail) {
         return Response.json(
           {
-            message: "Bạn không có quyền thực hiện hành động này",
             code: "permission_denied",
             error: "permission_denied",
+            message: "Bạn không có quyền thực hiện hành động này",
           },
           { status: 403 },
         );
@@ -168,9 +146,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!noteId) {
         return Response.json(
           {
-            message: "Thiếu mã ghi chú",
             code: "note_id_required",
             error: "note_id_required",
+            message: "Thiếu mã ghi chú",
           },
           { status: 400 },
         );
@@ -180,9 +158,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (!note) {
         return Response.json(
           {
-            message: "Không tìm thấy ghi chú",
             code: "note_not_found",
             error: "note_not_found",
+            message: "Không tìm thấy ghi chú",
           },
           { status: 404 },
         );
@@ -191,9 +169,9 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
       if (note.created_by !== userEmail) {
         return Response.json(
           {
-            message: "Bạn không có quyền thực hiện hành động này",
             code: "permission_denied",
             error: "permission_denied",
+            message: "Bạn không có quyền thực hiện hành động này",
           },
           { status: 403 },
         );
@@ -205,7 +183,29 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   } catch (err) {
     console.error("Notes action error:", err);
     return Response.json(
-      { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error" },
+      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau." },
+      { status: 500 },
+    );
+  }
+}
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  try {
+    if (!params.id) {
+      return { notes: [] };
+    }
+    const notes = await getBusinessNotes(params.id);
+    return Response.json(
+      { notes },
+      {
+        headers: { "Cache-Control": "private, max-age=10" },
+        status: 200,
+      },
+    );
+  } catch (err) {
+    console.error("Notes loader error:", err);
+    return Response.json(
+      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau.", notes: [] },
       { status: 500 },
     );
   }

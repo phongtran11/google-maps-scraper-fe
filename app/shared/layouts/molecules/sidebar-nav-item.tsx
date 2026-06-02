@@ -1,24 +1,25 @@
 import type { ReactNode } from "react";
+
 import { NavLink } from "react-router";
 
 import { cn } from "~/shared/utils";
 
 interface SidebarNavItemProps {
-  label: string;
-  to: string;
+  icon: ReactNode;
   isActive?: boolean;
   isUpcoming?: boolean;
-  icon: ReactNode;
+  label: string;
   onClick?: () => void;
+  to: string;
 }
 
 export function SidebarNavItem({
-  label,
-  to,
+  icon,
   isActive,
   isUpcoming,
-  icon,
+  label,
   onClick,
+  to,
 }: SidebarNavItemProps) {
   const className = cn(
     "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer w-full",
@@ -44,7 +45,7 @@ export function SidebarNavItem({
   }
 
   return (
-    <NavLink to={to} className={className} onClick={onClick}>
+    <NavLink className={className} onClick={onClick} to={to}>
       <div className="flex items-center gap-3">
         {icon}
         <span>{label}</span>

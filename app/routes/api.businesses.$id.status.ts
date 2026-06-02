@@ -9,15 +9,15 @@ import { validateMethod } from "~/server/http/request.server";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 
-export async function action({ request, params, context }: ActionFunctionArgs) {
+export async function action({ context, params, request }: ActionFunctionArgs) {
   validateMethod(request, "PATCH");
   verifySameOrigin(request);
 
   const session = context.get(sessionContext);
   if (!session) {
     return Response.json(
-      { message: "Không có quyền truy cập", error: "unauthorized" },
-      { status: 401, headers: { "Cache-Control": "no-store" } },
+      { error: "unauthorized", message: "Không có quyền truy cập" },
+      { headers: { "Cache-Control": "no-store" }, status: 401 },
     );
   }
 
@@ -27,24 +27,24 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
 
     if (!status || !ALLOWED.includes(status)) {
       return Response.json(
-        { message: "Trạng thái không hợp lệ", error: "invalid_status" },
-        { status: 400, headers: { "Cache-Control": "no-store" } },
+        { error: "invalid_status", message: "Trạng thái không hợp lệ" },
+        { headers: { "Cache-Control": "no-store" }, status: 400 },
       );
     }
 
     const numId = parseInt(params.id ?? "", 10);
     if (isNaN(numId)) {
       return Response.json(
-        { message: "ID không hợp lệ", error: "invalid_id" },
-        { status: 400, headers: { "Cache-Control": "no-store" } },
+        { error: "invalid_id", message: "ID không hợp lệ" },
+        { headers: { "Cache-Control": "no-store" }, status: 400 },
       );
     }
 
     const business = await getBusinessById(numId);
     if (!business) {
       return Response.json(
-        { message: "Không tìm thấy doanh nghiệp", error: "business_not_found" },
-        { status: 404, headers: { "Cache-Control": "no-store" } },
+        { error: "business_not_found", message: "Không tìm thấy doanh nghiệp" },
+        { headers: { "Cache-Control": "no-store" }, status: 404 },
       );
     }
 
@@ -54,24 +54,24 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
     if (currentStatus !== status && !allowedTransitions.includes(status)) {
       return Response.json(
         {
-          message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
           error: "invalid_transition",
+          message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
         },
-        { status: 400, headers: { "Cache-Control": "no-store" } },
+        { headers: { "Cache-Control": "no-store" }, status: 400 },
       );
     }
 
     const result = await updateBusinessStatus(numId, status);
 
     return Response.json(
-      { message: "Status updated successfully", data: result },
-      { status: 200, headers: { "Cache-Control": "no-store" } },
+      { data: result, message: "Status updated successfully" },
+      { headers: { "Cache-Control": "no-store" }, status: 200 },
     );
   } catch (err) {
     console.error("Status action error:", err);
     return Response.json(
-      { message: "Lỗi máy chủ. Vui lòng thử lại sau.", error: "server_error" },
-      { status: 500, headers: { "Cache-Control": "no-store" } },
+      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau." },
+      { headers: { "Cache-Control": "no-store" }, status: 500 },
     );
   }
 }

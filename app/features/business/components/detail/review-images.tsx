@@ -13,15 +13,15 @@ export function ReviewImages({ urls }: ReviewImagesProps) {
       <CardContent>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {urls.map((url, i) => (
-            <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+            <a href={url} key={i} rel="noopener noreferrer" target="_blank">
               <img
-                src={url}
                 alt={`Ảnh ${i + 1}`}
-                width={300}
-                height={300}
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="aspect-square w-full rounded-md border object-cover transition-opacity hover:opacity-80"
+                height={300}
                 loading="lazy"
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                src={url}
+                width={300}
               />
             </a>
           ))}

@@ -12,7 +12,7 @@ describe("PageHeader", () => {
   });
 
   it("renders description when provided", () => {
-    render(<PageHeader title="Tiêu đề" description="Mô tả trang" />);
+    render(<PageHeader description="Mô tả trang" title="Tiêu đề" />);
     expect(screen.getByText("Mô tả trang")).toBeInTheDocument();
   });
 
@@ -22,7 +22,7 @@ describe("PageHeader", () => {
   });
 
   it("renders actions slot", () => {
-    render(<PageHeader title="Tiêu đề" actions={<button>Thêm mới</button>} />);
+    render(<PageHeader actions={<button>Thêm mới</button>} title="Tiêu đề" />);
     expect(screen.getByRole("button", { name: "Thêm mới" })).toBeInTheDocument();
   });
 
@@ -32,12 +32,12 @@ describe("PageHeader", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(<PageHeader title="Tiêu đề" className="custom-header" />);
+    const { container } = render(<PageHeader className="custom-header" title="Tiêu đề" />);
     expect(container.firstChild).toHaveClass("custom-header");
   });
 
   it("passes additional props to container", () => {
-    render(<PageHeader title="Tiêu đề" data-testid="page-header" />);
+    render(<PageHeader data-testid="page-header" title="Tiêu đề" />);
     expect(screen.getByTestId("page-header")).toBeInTheDocument();
   });
 

@@ -3,8 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useSearchParams } from "react-router";
 import { describe, expect, it } from "vitest";
 
-import { FilterBar } from "~/features/business";
 import type { GroupedDistrict } from "~/shared/types";
+
+import { FilterBar } from "~/features/business";
 
 const mockDistrictsWithWard: GroupedDistrict[] = [
   {
@@ -108,7 +109,7 @@ describe("FilterBar", () => {
     const submitButton = screen.getByRole("button", { name: "Tìm kiếm" });
     await user.click(submitButton);
 
-    expect(currentParams.getAll("wardId")).toEqual(["101", "201"]);
+    expect(currentParams.get("wardId")).toBe("101,201");
     expect(currentParams.get("page")).toBe("1");
   });
 

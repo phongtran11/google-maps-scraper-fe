@@ -4,21 +4,29 @@ import { useFetcher, useRouteLoaderData } from "react-router";
 import { Button, Card, CardContent, CardHeader, CardTitle, Textarea } from "~/shared/components";
 import { relativeTime } from "~/shared/utils";
 
-import { useNotesManager } from "../../hooks/use-notes-manager";
 import type { NoteRow } from "../../types";
+
+import { useNotesManager } from "../../hooks/use-notes-manager";
+
+interface NoteInputProps {
+  action: string;
+  isSubmitting: boolean;
+  noteFetcher: ReturnType<typeof useFetcher>;
+}
+
+interface NoteItemProps {
+  action: string;
+  currentUserEmail: string | undefined;
+  note: NoteRow;
+  noteFetcher: ReturnType<typeof useFetcher>;
+}
 
 interface NotesSectionProps {
   businessId: number;
   initialNotes: NoteRow[];
 }
 
-interface NoteInputProps {
-  noteFetcher: ReturnType<typeof useFetcher>;
-  action: string;
-  isSubmitting: boolean;
-}
-
-function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
+function NoteInput({ action, isSubmitting, noteFetcher }: NoteInputProps) {
   const [content, setContent] = useState("");
 
   useEffect(() => {
@@ -37,26 +45,26 @@ function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
   };
 
   return (
-    <noteFetcher.Form method="post" action={action}>
+    <noteFetcher.Form action={action} method="post">
       <Textarea
-        name="content"
-        rows={3}
-        placeholder="Nhập ghi chú..."
         className="resize-none"
         maxLength={5000}
-        onKeyDown={handleKeyDown}
-        value={content}
+        name="content"
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Nhập ghi chú..."
+        rows={3}
+        value={content}
       />
       {content.length > 4500 && (
         <span className="text-muted-foreground text-xs">{5000 - content.length} ký tự còn lại</span>
       )}
       <Button
-        loading={isSubmitting}
-        disabled={!content.trim() || isSubmitting}
-        type="submit"
         className="mt-5"
+        disabled={!content.trim() || isSubmitting}
+        loading={isSubmitting}
         size="sm"
+        type="submit"
       >
         Thêm ghi chú
       </Button>
@@ -64,18 +72,11 @@ function NoteInput({ noteFetcher, action, isSubmitting }: NoteInputProps) {
   );
 }
 
-interface NoteItemProps {
-  note: NoteRow;
-  currentUserEmail: string | undefined;
-  noteFetcher: ReturnType<typeof useFetcher>;
-  action: string;
-}
-
 const NoteItem = memo(function NoteItem({
-  note,
-  currentUserEmail,
-  noteFetcher,
   action,
+  currentUserEmail,
+  note,
+  noteFetcher,
 }: NoteItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(note.content);
@@ -92,10 +93,10 @@ const NoteItem = memo(function NoteItem({
     if (editContent.trim() && editContent.trim() !== note.content) {
       noteFetcher.submit(
         {
-          noteId: String(note.id),
           content: editContent.trim(),
+          noteId: String(note.id),
         },
-        { method: "patch", action },
+        { action, method: "patch" },
       );
     }
     setIsEditing(false);
@@ -114,7 +115,7 @@ const NoteItem = memo(function NoteItem({
   };
 
   const handleDelete = () => {
-    noteFetcher.submit({ noteId: String(note.id) }, { method: "delete", action });
+    noteFetcher.submit({ noteId: String(note.id) }, { action, method: "delete" });
     setShowDeleteConfirm(false);
   };
 
@@ -129,16 +130,16 @@ const NoteItem = memo(function NoteItem({
         {isCreator && !isEditing && !showDeleteConfirm && (
           <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <button
-              onClick={() => setIsEditing(true)}
               className="text-primary cursor-pointer text-[11px] font-medium hover:underline"
+              onClick={() => setIsEditing(true)}
               type="button"
             >
               Sửa
             </button>
             <span className="text-muted-foreground/40 text-[10px]">•</span>
             <button
-              onClick={() => setShowDeleteConfirm(true)}
               className="text-destructive cursor-pointer text-[11px] font-medium hover:underline"
+              onClick={() => setShowDeleteConfirm(true)}
               type="button"
             >
               Xóa
@@ -148,33 +149,33 @@ const NoteItem = memo(function NoteItem({
       </div>
 
       {isEditing ? (
-        <form onSubmit={handleEditSubmit} className="mt-1 space-y-2">
+        <form className="mt-1 space-y-2" onSubmit={handleEditSubmit}>
           <Textarea
-            value={editContent}
+            autoFocus
+            className="w-full resize-none text-sm"
             onChange={(e) => setEditContent(e.target.value)}
             onKeyDown={handleKeyDown}
             rows={2}
-            className="w-full resize-none text-sm"
-            autoFocus
+            value={editContent}
           />
           <div className="flex items-center justify-end gap-2">
             <Button
-              size="sm"
-              variant="outline"
-              type="button"
               className="h-7 rounded px-2.5 text-xs"
               onClick={() => {
                 setIsEditing(false);
                 setEditContent(note.content);
               }}
+              size="sm"
+              type="button"
+              variant="outline"
             >
               Hủy
             </Button>
             <Button
-              size="sm"
-              type="submit"
               className="h-7 rounded px-2.5 text-xs"
               disabled={!editContent.trim() || editContent.trim() === note.content}
+              size="sm"
+              type="submit"
             >
               Lưu
             </Button>
@@ -187,20 +188,20 @@ const NoteItem = memo(function NoteItem({
           </p>
           <div className="flex items-center justify-end gap-2">
             <Button
-              size="sm"
-              variant="ghost"
-              type="button"
               className="h-7 rounded px-2.5 text-xs"
               onClick={() => setShowDeleteConfirm(false)}
+              size="sm"
+              type="button"
+              variant="ghost"
             >
               Hủy
             </Button>
             <Button
-              size="sm"
-              variant="destructive"
-              type="button"
               className="h-7 rounded px-2.5 text-xs"
               onClick={handleDelete}
+              size="sm"
+              type="button"
+              variant="destructive"
             >
               Xóa
             </Button>
@@ -216,12 +217,12 @@ const NoteItem = memo(function NoteItem({
 });
 
 export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
-  const { noteFetcher, notes, isSubmitting, action } = useNotesManager({
+  const { action, isSubmitting, noteFetcher, notes } = useNotesManager({
     businessId,
     initialNotes,
   });
 
-  type AppLayoutData = { user: { name: string; email: string; image?: string | null } };
+  type AppLayoutData = { user: { email: string; image?: null | string; name: string } };
   const appLayoutData = useRouteLoaderData<AppLayoutData>("routes/app-layout");
   const currentUserEmail = appLayoutData?.user?.email;
 
@@ -231,7 +232,7 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
         <CardTitle>Ghi Chú</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <NoteInput noteFetcher={noteFetcher} action={action} isSubmitting={isSubmitting} />
+        <NoteInput action={action} isSubmitting={isSubmitting} noteFetcher={noteFetcher} />
 
         {noteFetcher.data?.error && (
           <p className="text-destructive text-sm">
@@ -243,11 +244,11 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
           <div className="space-y-3 pt-2">
             {notes.map((n) => (
               <NoteItem
+                action={action}
+                currentUserEmail={currentUserEmail}
                 key={n.id}
                 note={n}
-                currentUserEmail={currentUserEmail}
                 noteFetcher={noteFetcher}
-                action={action}
               />
             ))}
           </div>

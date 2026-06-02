@@ -1,7 +1,7 @@
 export const BUSINESS_STATUS = {
-  NEW: "new",
   APPROACHED: "approached",
   CONTACTED: "contacted",
+  NEW: "new",
   QUALIFIED: "qualified",
   REJECTED: "rejected",
 } as const;
@@ -10,20 +10,20 @@ export const STATUS_MAP: Record<
   string,
   {
     label: string;
-    variant: "secondary" | "info" | "warning" | "success" | "destructive";
+    variant: "destructive" | "info" | "secondary" | "success" | "warning";
   }
 > = {
-  new: { label: "Mới", variant: "secondary" },
   approached: { label: "Đã tiếp cận", variant: "info" },
   contacted: { label: "Đã liên hệ", variant: "warning" },
+  new: { label: "Mới", variant: "secondary" },
   qualified: { label: "Tiềm năng", variant: "success" },
   rejected: { label: "Từ chối", variant: "destructive" },
 };
 
 export const NEXT_STATUS: Record<string, string[]> = {
-  new: ["approached", "contacted", "qualified"],
   approached: ["new", "contacted", "qualified", "rejected"],
   contacted: ["new", "approached", "qualified", "rejected"],
+  new: ["approached", "contacted", "qualified"],
   qualified: ["new", "approached", "contacted", "rejected"],
   rejected: [],
 };
@@ -38,10 +38,10 @@ export const REGIONS = {
   ba_ria: "Bà Rịa",
   chau_duc: "Châu Đức",
   dong_nai: "Đồng Nai",
-  vung_tau: "Vũng Tàu",
   hcm: "Hồ Chí Minh",
   long_dat: "Long Đất",
   phu_my: "Phú Mỹ",
+  vung_tau: "Vũng Tàu",
   xuyen_moc: "Xuyên Mộc",
 } as const;
 

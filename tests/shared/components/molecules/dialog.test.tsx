@@ -19,7 +19,7 @@ beforeEach(() => {
 describe("Dialog", () => {
   it("returns null when closed", () => {
     render(
-      <Dialog open={false} onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open={false}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -32,7 +32,7 @@ describe("Dialog", () => {
 
   it("renders dialog when open", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -50,7 +50,7 @@ describe("Dialog", () => {
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <Dialog open onOpenChange={onOpenChange}>
+      <Dialog onOpenChange={onOpenChange} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -72,7 +72,7 @@ describe("Dialog", () => {
     const onOpenChange = vi.fn();
     const user = userEvent.setup();
     render(
-      <Dialog open onOpenChange={onOpenChange}>
+      <Dialog onOpenChange={onOpenChange} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -86,7 +86,7 @@ describe("Dialog", () => {
 
   it("locks body scroll when open", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -99,7 +99,7 @@ describe("Dialog", () => {
 
   it("restores body scroll on close", () => {
     const { rerender } = render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -110,7 +110,7 @@ describe("Dialog", () => {
     expect(document.body.style.overflow).toBe("hidden");
 
     rerender(
-      <Dialog open={false} onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open={false}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -123,7 +123,7 @@ describe("Dialog", () => {
 
   it("has correct ARIA attributes", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -142,7 +142,7 @@ describe("Dialog", () => {
 
   it("links title and description IDs to dialog", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -161,7 +161,7 @@ describe("Dialog", () => {
 
   it("renders different content sizes", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent size="sm">Nội dung sm</DialogContent>
       </Dialog>,
     );
@@ -170,7 +170,7 @@ describe("Dialog", () => {
 
   it("renders xl size", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent size="xl">Nội dung xl</DialogContent>
       </Dialog>,
     );
@@ -179,7 +179,7 @@ describe("Dialog", () => {
 
   it("renders fullscreen size", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent size="fullscreen">Nội dung full</DialogContent>
       </Dialog>,
     );
@@ -188,7 +188,7 @@ describe("Dialog", () => {
 
   it("renders DialogFooter with children", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogFooter>
             <button>Đóng</button>
@@ -202,7 +202,7 @@ describe("Dialog", () => {
   it("focus trap: Tab at last focusable wraps to first", () => {
     const onOpenChange = vi.fn();
     render(
-      <Dialog open onOpenChange={onOpenChange}>
+      <Dialog onOpenChange={onOpenChange} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -215,14 +215,14 @@ describe("Dialog", () => {
     const last = screen.getByTestId("last");
     const first = screen.getByTestId("first");
     last.focus();
-    fireEvent.keyDown(document, { key: "Tab", bubbles: true });
+    fireEvent.keyDown(document, { bubbles: true, key: "Tab" });
     expect(document.activeElement).toBe(first);
   });
 
   it("focus trap: Shift+Tab at first focusable wraps to last", () => {
     const onOpenChange = vi.fn();
     render(
-      <Dialog open onOpenChange={onOpenChange}>
+      <Dialog onOpenChange={onOpenChange} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>
@@ -235,13 +235,13 @@ describe("Dialog", () => {
     const first = screen.getByTestId("first");
     const last = screen.getByTestId("last");
     first.focus();
-    fireEvent.keyDown(document, { key: "Tab", shiftKey: true, bubbles: true });
+    fireEvent.keyDown(document, { bubbles: true, key: "Tab", shiftKey: true });
     expect(document.activeElement).toBe(last);
   });
 
   it("handles dialog with no focusable children", () => {
     render(
-      <Dialog open onOpenChange={vi.fn()}>
+      <Dialog onOpenChange={vi.fn()} open>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tiêu đề</DialogTitle>

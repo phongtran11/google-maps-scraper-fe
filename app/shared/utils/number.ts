@@ -2,10 +2,10 @@
  * Safely extracts an integer search parameter with optional min/max boundaries.
  */
 export function getIntParam(
-  url: URL | string,
+  url: string | URL,
   key: string,
   defaultValue: number,
-  options?: { min?: number; max?: number },
+  options?: { max?: number; min?: number },
 ): number {
   const searchParams = typeof url === "string" ? new URL(url).searchParams : url.searchParams;
   const val = Number.parseInt(searchParams.get(key) ?? "", 10);
@@ -26,10 +26,11 @@ export function getIntParam(
  * @param defaultValue - The fallback value if no valid integers are found.
  * @returns An array of parsed integers, or the defaultValue.
  */
-export function getIntParams(url: URL | string, key: string, defaultValue: number[]): number[] {
+export function getIntParams(url: string | URL, key: string, defaultValue: number[]): number[] {
   const searchParams = typeof url === "string" ? new URL(url).searchParams : url.searchParams;
   const params = searchParams.getAll(key);
   const validParams = params
+    .flatMap((param) => (param ? param.split(",") : []))
     .map((param) => Number.parseInt(param, 10))
     .filter((param) => !Number.isNaN(param));
 
@@ -71,7 +72,7 @@ export function getPageNumbers(currentPage: number, totalPages: number): (number
  * Safely parses an ID (string or number) into a valid number.
  * Returns null if the result is NaN.
  */
-export function parseId(id: string | number): number | null {
+export function parseId(id: number | string): null | number {
   const num = typeof id === "string" ? Number.parseInt(id, 10) : id;
   if (Number.isNaN(num)) return null;
   return num;

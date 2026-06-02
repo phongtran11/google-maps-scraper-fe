@@ -1,5 +1,6 @@
-import { ROUTES } from "~/shared/constants";
 import type { BreadcrumbItem, RouteMatch } from "~/shared/types";
+
+import { ROUTES } from "../constants";
 
 /**
  * Generates an array of breadcrumb items based on the active path and route matches.
@@ -17,7 +18,7 @@ export function getBreadcrumbs(pathname: string, matches: RouteMatch[]): Breadcr
   } else if (ROUTES.businessDetail.pattern.test(pathname)) {
     const detailMatch = matches.find((m) => m.id === ROUTES.businessDetail.matchId);
     const businessName = (
-      detailMatch?.loaderData as { business?: { business_name?: string } } | undefined
+      detailMatch?.loaderData as undefined | { business?: { business_name?: string } }
     )?.business?.business_name;
     breadcrumbs.push(
       { label: ROUTES.dashboard.label, to: ROUTES.dashboard.path },

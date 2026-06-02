@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getIntParam, parseId } from "~/shared/utils/number";
+import { getIntParam, getIntParams, parseId } from "~/shared/utils/number";
 
 describe("getIntParam", () => {
   it("returns default value when param is missing", () => {
@@ -30,12 +30,12 @@ describe("getIntParam", () => {
 
   it("applies both min and max", () => {
     const url = new URL("http://example.com?page=0");
-    expect(getIntParam(url, "page", 5, { min: 1, max: 10 })).toBe(1);
+    expect(getIntParam(url, "page", 5, { max: 10, min: 1 })).toBe(1);
   });
 
   it("returns value within range", () => {
     const url = new URL("http://example.com?page=5");
-    expect(getIntParam(url, "page", 1, { min: 1, max: 10 })).toBe(5);
+    expect(getIntParam(url, "page", 1, { max: 10, min: 1 })).toBe(5);
   });
 
   it("accepts string URL input", () => {
@@ -50,6 +50,33 @@ describe("getIntParam", () => {
   it("handles float values by truncating to integer", () => {
     const url = new URL("http://example.com?page=3.7");
     expect(getIntParam(url, "page", 1)).toBe(3);
+  });
+});
+
+describe("getIntParams", () => {
+  it("returns defaultValue when param is missing", () => {
+    const url = new URL("http://example.com");
+    expect(getIntParams(url, "wardId", [1, 2])).toEqual([1, 2]);
+  });
+
+  it("returns parsed integers from multiple parameters", () => {
+    const url = new URL("http://example.com?wardId=10&wardId=20");
+    expect(getIntParams(url, "wardId", [])).toEqual([10, 20]);
+  });
+
+  it("returns parsed integers from a comma-separated parameter", () => {
+    const url = new URL("http://example.com?wardId=10,20,30");
+    expect(getIntParams(url, "wardId", [])).toEqual([10, 20, 30]);
+  });
+
+  it("returns parsed integers combining both multiple and comma-separated formats", () => {
+    const url = new URL("http://example.com?wardId=10,20&wardId=30");
+    expect(getIntParams(url, "wardId", [])).toEqual([10, 20, 30]);
+  });
+
+  it("filters out invalid NaN values", () => {
+    const url = new URL("http://example.com?wardId=10,abc,20");
+    expect(getIntParams(url, "wardId", [])).toEqual([10, 20]);
   });
 });
 

@@ -8,13 +8,13 @@ import { Pagination } from "~/shared/components/molecules/pagination";
 function renderPagination(props: Partial<Parameters<typeof Pagination>[0]> = {}) {
   return render(
     <Pagination
-      page={props.page ?? 1}
-      totalPages={props.totalPages ?? 10}
-      totalCount={props.totalCount ?? 100}
-      pageSize={props.pageSize ?? 10}
       getPageUrl={props.getPageUrl ?? ((p) => `/?page=${p}`)}
-      pageSizeOptions={props.pageSizeOptions}
       onPageSizeChange={props.onPageSizeChange}
+      page={props.page ?? 1}
+      pageSize={props.pageSize ?? 10}
+      pageSizeOptions={props.pageSizeOptions}
+      totalCount={props.totalCount ?? 100}
+      totalPages={props.totalPages ?? 10}
     />,
     { wrapper: MemoryRouter },
   );
@@ -24,11 +24,11 @@ describe("Pagination", () => {
   it("returns null when only 1 page and no pageSizeOptions", () => {
     const { container } = render(
       <Pagination
-        page={1}
-        totalPages={1}
-        totalCount={5}
-        pageSize={10}
         getPageUrl={(p) => `/?page=${p}`}
+        page={1}
+        pageSize={10}
+        totalCount={5}
+        totalPages={1}
       />,
       { wrapper: MemoryRouter },
     );
@@ -37,10 +37,10 @@ describe("Pagination", () => {
 
   it("renders when pageSizeOptions is provided even with 1 page", () => {
     renderPagination({
-      totalPages: 1,
-      totalCount: 5,
-      pageSizeOptions: [5, 10, 20],
       onPageSizeChange: vi.fn(),
+      pageSizeOptions: [5, 10, 20],
+      totalCount: 5,
+      totalPages: 1,
     });
     expect(screen.getByText(/Hiển thị/)).toBeInTheDocument();
   });
@@ -51,7 +51,7 @@ describe("Pagination", () => {
   });
 
   it("displays range summary", () => {
-    renderPagination({ page: 2, totalPages: 10, totalCount: 100, pageSize: 10 });
+    renderPagination({ page: 2, pageSize: 10, totalCount: 100, totalPages: 10 });
     expect(screen.getByText(/Hiển thị/)).toBeInTheDocument();
     expect(screen.getByText("11")).toBeInTheDocument();
     expect(screen.getByText("20")).toBeInTheDocument();
@@ -59,7 +59,7 @@ describe("Pagination", () => {
   });
 
   it("shows 0 for range when totalCount is 0", () => {
-    renderPagination({ totalPages: 5, totalCount: 0 });
+    renderPagination({ totalCount: 0, totalPages: 5 });
     const nav = screen.getByRole("navigation");
     expect(nav.textContent).toContain("Hiển thị");
     expect(nav.textContent).toContain("0");
@@ -121,8 +121,8 @@ describe("Pagination", () => {
 
   it("renders page-size selector when options provided", () => {
     renderPagination({
-      pageSizeOptions: [5, 10, 20],
       onPageSizeChange: vi.fn(),
+      pageSizeOptions: [5, 10, 20],
     });
     expect(screen.getByRole("button", { name: "Số dòng mỗi trang" })).toBeInTheDocument();
   });
@@ -131,8 +131,8 @@ describe("Pagination", () => {
     const onPageSizeChange = vi.fn();
     const user = userEvent.setup();
     renderPagination({
-      pageSizeOptions: [5, 10, 20],
       onPageSizeChange,
+      pageSizeOptions: [5, 10, 20],
     });
     const selectButton = screen.getByRole("button", { name: "Số dòng mỗi trang" });
     await user.click(selectButton);

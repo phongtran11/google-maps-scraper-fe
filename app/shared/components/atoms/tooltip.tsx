@@ -1,4 +1,5 @@
 import type { FocusEvent, MouseEvent, ReactElement, ReactNode, Ref } from "react";
+
 import { Children, cloneElement, memo, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -6,23 +7,23 @@ import { useEscapeKey } from "~/shared/hooks";
 import { cn } from "~/shared/utils";
 
 export interface TooltipProps {
-  content: ReactNode;
   children: ReactElement;
-  delay?: number;
   className?: string;
+  content: ReactNode;
+  delay?: number;
 }
 
 const TooltipComponent = memo(function Tooltip({
-  content,
   children,
-  delay = 200,
   className,
+  content,
+  delay = 200,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+  const [coords, setCoords] = useState<null | { left: number; top: number }>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
-  const showTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showTimeout = useRef<null | ReturnType<typeof setTimeout>>(null);
+  const hideTimeout = useRef<null | ReturnType<typeof setTimeout>>(null);
   const tooltipId = useId();
 
   // Clean up timeouts on unmount
@@ -37,8 +38,8 @@ const TooltipComponent = memo(function Tooltip({
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       setCoords({
-        top: rect.top,
         left: rect.left + rect.width / 2,
+        top: rect.top,
       });
     }
   };
@@ -93,11 +94,11 @@ const TooltipComponent = memo(function Tooltip({
 
   // Ensure children is a single React element
   const child = Children.only(children) as ReactElement<{
-    ref?: Ref<HTMLElement>;
+    onBlur?: (e: FocusEvent) => void;
+    onFocus?: (e: FocusEvent) => void;
     onMouseEnter?: (e: MouseEvent) => void;
     onMouseLeave?: (e: MouseEvent) => void;
-    onFocus?: (e: FocusEvent) => void;
-    onBlur?: (e: FocusEvent) => void;
+    ref?: Ref<HTMLElement>;
   }>;
 
   // Merge refs
@@ -112,8 +113,15 @@ const TooltipComponent = memo(function Tooltip({
   };
 
   const triggerProps = {
-    ref: handleRef,
     "aria-describedby": isVisible ? tooltipId : undefined,
+    onBlur: (e: FocusEvent) => {
+      child.props.onBlur?.(e);
+      hideTooltip();
+    },
+    onFocus: (e: FocusEvent) => {
+      child.props.onFocus?.(e);
+      showTooltip();
+    },
     onMouseEnter: (e: MouseEvent) => {
       child.props.onMouseEnter?.(e);
       showTooltip();
@@ -122,14 +130,7 @@ const TooltipComponent = memo(function Tooltip({
       child.props.onMouseLeave?.(e);
       hideTooltip();
     },
-    onFocus: (e: FocusEvent) => {
-      child.props.onFocus?.(e);
-      showTooltip();
-    },
-    onBlur: (e: FocusEvent) => {
-      child.props.onBlur?.(e);
-      hideTooltip();
-    },
+    ref: handleRef,
   };
 
   const clonedChild = cloneElement(child, triggerProps);
@@ -149,21 +150,21 @@ const TooltipComponent = memo(function Tooltip({
         coords &&
         createPortal(
           <div
-            id={tooltipId}
-            style={{
-              position: "fixed",
-              top: `${coords.top - 6}px`,
-              left: `${coords.left}px`,
-              transform: "translate(-50%, -100%)",
-              zIndex: 9999,
-            }}
             className={cn(
               "bg-popover text-popover-foreground border-border animate-in fade-in zoom-in-95 max-w-[280px] rounded-md border px-3 py-1.5 text-xs leading-relaxed font-normal wrap-break-word shadow-md duration-150 select-none",
               className,
             )}
-            role="tooltip"
+            id={tooltipId}
             onMouseEnter={showTooltip}
             onMouseLeave={hideTooltip}
+            role="tooltip"
+            style={{
+              left: `${coords.left}px`,
+              position: "fixed",
+              top: `${coords.top - 6}px`,
+              transform: "translate(-50%, -100%)",
+              zIndex: 9999,
+            }}
           >
             {content}
           </div>,

@@ -10,12 +10,17 @@ import {
   tableVariants,
 } from "../atoms/table";
 
+type DataTableColumn<T> =
+  | DataTableColumnWithAccessor<T>
+  | DataTableColumnWithAccessorFn<T>
+  | DataTableColumnWithCell<T>;
+
 interface DataTableColumnBase {
-  id: string;
-  header: React.ReactNode;
+  align?: "center" | "left" | "right";
   cellClassName?: string;
+  header: React.ReactNode;
   headerClassName?: string;
-  align?: "left" | "center" | "right";
+  id: string;
 }
 
 type DataTableColumnWithAccessor<T> = DataTableColumnBase & {
@@ -25,75 +30,16 @@ type DataTableColumnWithAccessor<T> = DataTableColumnBase & {
 };
 
 type DataTableColumnWithAccessorFn<T> = DataTableColumnBase & {
-  accessorFn: (item: T) => React.ReactNode;
   accessor?: never;
+  accessorFn: (item: T) => React.ReactNode;
   cell?: never;
 };
 
 type DataTableColumnWithCell<T> = DataTableColumnBase & {
-  cell: (item: T, index: number) => React.ReactNode;
   accessor?: never;
   accessorFn?: never;
+  cell: (item: T, index: number) => React.ReactNode;
 };
-
-type DataTableColumn<T> =
-  | DataTableColumnWithAccessor<T>
-  | DataTableColumnWithAccessorFn<T>
-  | DataTableColumnWithCell<T>;
-
-interface DataTableProps<T> {
-  data: T[];
-  columns: DataTableColumn<T>[];
-  keyExtractor: (item: T) => string | number;
-  isLoading?: boolean;
-  skeletonRows?: number;
-  emptyMessage?: string;
-  emptyState?: React.ReactNode;
-  variant?: keyof typeof tableVariants.variant;
-  tableSize?: keyof typeof tableVariants.size;
-  stickyHeader?: boolean;
-  className?: string;
-  wrapperClassName?: string;
-}
-
-function renderCellValue(value: unknown): React.ReactNode {
-  if (value === null || value === undefined) {
-    return "-";
-  }
-  if (value instanceof Date) {
-    return value.toLocaleDateString("vi-VN");
-  }
-  if (typeof value === "object") {
-    return JSON.stringify(value);
-  }
-  return value as React.ReactNode;
-}
-
-interface DataTableSkeletonProps<T> {
-  columns: DataTableColumn<T>[];
-  rows?: number;
-}
-
-function DataTableSkeleton<T>({ columns, rows = 20 }: DataTableSkeletonProps<T>) {
-  return (
-    <>
-      {Array.from({ length: rows }).map((_, rowIdx) => (
-        <TableRow key={`skeleton-${rowIdx}`}>
-          {columns.map((col) => (
-            <TableCell key={col.id} className={col.cellClassName}>
-              <div
-                className={cn(
-                  "bg-muted h-5.5 animate-pulse rounded",
-                  col.id.charCodeAt(0) % 2 === 0 ? "w-full" : "w-3/4",
-                )}
-              />
-            </TableCell>
-          ))}
-        </TableRow>
-      ))}
-    </>
-  );
-}
 
 interface DataTableEmptyProps<T> {
   columns: DataTableColumn<T>[];
@@ -101,23 +47,85 @@ interface DataTableEmptyProps<T> {
   state?: React.ReactNode;
 }
 
-function DataTableEmpty<T>({ columns, message, state }: DataTableEmptyProps<T>) {
+interface DataTableProps<T> {
+  className?: string;
+  columns: DataTableColumn<T>[];
+  data: T[];
+  emptyMessage?: string;
+  emptyState?: React.ReactNode;
+  isLoading?: boolean;
+  keyExtractor: (item: T) => number | string;
+  skeletonRows?: number;
+  stickyHeader?: boolean;
+  tableSize?: keyof typeof tableVariants.size;
+  variant?: keyof typeof tableVariants.variant;
+  wrapperClassName?: string;
+}
+
+interface DataTableSkeletonProps<T> {
+  columns: DataTableColumn<T>[];
+  rows?: number;
+}
+
+function DataTable<T>({
+  className,
+  columns,
+  data,
+  emptyMessage,
+  emptyState,
+  isLoading = false,
+  keyExtractor,
+  skeletonRows = 20,
+  stickyHeader = false,
+  tableSize = "md",
+  variant = "default",
+  wrapperClassName,
+}: DataTableProps<T>) {
   return (
-    <TableRow>
-      <TableCell colSpan={columns.length} className="h-24 text-center">
-        {state ?? <span className="text-muted-foreground">{message ?? "Không có dữ liệu"}</span>}
-      </TableCell>
-    </TableRow>
+    <div className={cn("space-y-0", className)}>
+      <Table
+        stickyHeader={stickyHeader}
+        tableSize={tableSize}
+        variant={variant}
+        wrapperClassName={wrapperClassName}
+      >
+        <TableHeader>
+          <TableRow>
+            {columns.map((col) => (
+              <TableHead
+                className={cn(
+                  col.align === "center" && "text-center",
+                  col.align === "right" && "text-right",
+                  col.headerClassName,
+                )}
+                key={col.id}
+              >
+                {col.header}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading ? (
+            <DataTableSkeleton columns={columns} rows={skeletonRows} />
+          ) : data.length === 0 ? (
+            <DataTableEmpty columns={columns} message={emptyMessage} state={emptyState} />
+          ) : (
+            <DataTableContent columns={columns} data={data} keyExtractor={keyExtractor} />
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
 function DataTableContent<T>({
-  data,
   columns,
+  data,
   keyExtractor,
 }: {
-  data: T[];
   columns: DataTableColumn<T>[];
+  data: T[];
   keyExtractor: DataTableProps<T>["keyExtractor"];
 }) {
   return data.map((item, index) => (
@@ -135,12 +143,12 @@ function DataTableContent<T>({
 
         return (
           <TableCell
-            key={col.id}
             className={cn(
               col.align === "center" && "text-center",
               col.align === "right" && "text-right",
               col.cellClassName,
             )}
+            key={col.id}
           >
             {cellValue}
           </TableCell>
@@ -150,56 +158,48 @@ function DataTableContent<T>({
   ));
 }
 
-function DataTable<T>({
-  data,
-  columns,
-  keyExtractor,
-  isLoading = false,
-  skeletonRows = 20,
-  emptyMessage,
-  emptyState,
-  variant = "default",
-  tableSize = "md",
-  stickyHeader = false,
-  className,
-  wrapperClassName,
-}: DataTableProps<T>) {
+function DataTableEmpty<T>({ columns, message, state }: DataTableEmptyProps<T>) {
   return (
-    <div className={cn("space-y-0", className)}>
-      <Table
-        variant={variant}
-        tableSize={tableSize}
-        stickyHeader={stickyHeader}
-        wrapperClassName={wrapperClassName}
-      >
-        <TableHeader>
-          <TableRow>
-            {columns.map((col) => (
-              <TableHead
-                key={col.id}
-                className={cn(
-                  col.align === "center" && "text-center",
-                  col.align === "right" && "text-right",
-                  col.headerClassName,
-                )}
-              >
-                {col.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            <DataTableSkeleton columns={columns} rows={skeletonRows} />
-          ) : data.length === 0 ? (
-            <DataTableEmpty columns={columns} message={emptyMessage} state={emptyState} />
-          ) : (
-            <DataTableContent data={data} columns={columns} keyExtractor={keyExtractor} />
-          )}
-        </TableBody>
-      </Table>
-    </div>
+    <TableRow>
+      <TableCell className="h-24 text-center" colSpan={columns.length}>
+        {state ?? <span className="text-muted-foreground">{message ?? "Không có dữ liệu"}</span>}
+      </TableCell>
+    </TableRow>
   );
+}
+
+function DataTableSkeleton<T>({ columns, rows = 20 }: DataTableSkeletonProps<T>) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, rowIdx) => (
+        <TableRow key={`skeleton-${rowIdx}`}>
+          {columns.map((col) => (
+            <TableCell className={col.cellClassName} key={col.id}>
+              <div
+                className={cn(
+                  "bg-muted h-5.5 animate-pulse rounded",
+                  col.id.charCodeAt(0) % 2 === 0 ? "w-full" : "w-3/4",
+                )}
+              />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </>
+  );
+}
+
+function renderCellValue(value: unknown): React.ReactNode {
+  if (value === null || value === undefined) {
+    return "-";
+  }
+  if (value instanceof Date) {
+    return value.toLocaleDateString("vi-VN");
+  }
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+  return value as React.ReactNode;
 }
 DataTable.displayName = "DataTable";
 

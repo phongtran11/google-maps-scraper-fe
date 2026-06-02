@@ -1,27 +1,24 @@
-import { useCallback } from "react";
 import type { LoaderFunctionArgs } from "react-router";
+
+import { useCallback } from "react";
 import { Outlet, useLoaderData, useLocation, useMatches } from "react-router";
+
+import type { RouteMatch } from "~/shared/types";
 
 import { requireAuth, sessionContext } from "~/server/auth/require-auth.server";
 import { ROUTES } from "~/shared/constants";
 import { AppLayoutTemplate } from "~/shared/layouts";
-import type { RouteMatch } from "~/shared/types";
 import { authClient, getBreadcrumbs } from "~/shared/utils";
 
 import type { Route } from "./+types/app-layout";
 
 export const middleware: Route.MiddlewareFunction[] = [
-  async ({ request, context }, next) => {
+  async ({ context, request }, next) => {
     const session = await requireAuth(request);
     context.set(sessionContext, session);
     return next();
   },
 ];
-
-export async function loader({ context }: LoaderFunctionArgs) {
-  const session = context.get(sessionContext);
-  return { user: session.user };
-}
 
 export default function AppLayout() {
   const loaderData = useLoaderData<typeof loader>();
@@ -39,9 +36,9 @@ export default function AppLayout() {
   }, []);
 
   const currentUser = {
-    name: loaderData.user.name,
     email: loaderData.user.email,
     image: loaderData.user.image ?? null,
+    name: loaderData.user.name,
   };
 
   const isRoot = location.pathname === ROUTES.dashboard.path;
@@ -50,13 +47,18 @@ export default function AppLayout() {
 
   return (
     <AppLayoutTemplate
-      currentUser={currentUser}
       breadcrumbs={breadcrumbs}
       currentPath={location.pathname}
+      currentUser={currentUser}
       isRoot={isRoot}
       onSignOut={handleSignOut}
     >
       <Outlet />
     </AppLayoutTemplate>
   );
+}
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const session = context.get(sessionContext);
+  return { user: session.user };
 }

@@ -1,10 +1,12 @@
 import js from "@eslint/js";
+import perfectionist from "eslint-plugin-perfectionist";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
 import hooks from "eslint-plugin-react-hooks";
-import simpleImportSort from "eslint-plugin-simple-import-sort";
+import { defineConfig } from "eslint/config";
 import ts from "typescript-eslint";
 
-export default ts.config(
+export default defineConfig(
   {
     ignores: [
       ".react-router/**/*",
@@ -17,13 +19,9 @@ export default ts.config(
   },
   js.configs.recommended,
   ...ts.configs.recommended,
+  perfectionist.configs["recommended-natural"],
   {
     files: ["**/*.{ts,tsx}"],
-    plugins: {
-      react,
-      "react-hooks": hooks,
-      "simple-import-sort": simpleImportSort,
-    },
     languageOptions: {
       parserOptions: {
         ecmaFeatures: {
@@ -31,29 +29,15 @@ export default ts.config(
         },
       },
     },
+    plugins: {
+      react,
+      "react-hooks": hooks,
+    },
     rules: {
       ...react.configs.recommended.rules,
       ...hooks.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off",
-      "simple-import-sort/imports": [
-        "error",
-        {
-          groups: [
-            // 1. Side effect imports (e.g. css files)
-            ["^\\u0000"],
-            // 2. Node.js built-in modules
-            ["^node:"],
-            // 3. External npm packages (e.g. react, radix, etc.)
-            ["^@?\\w"],
-            // 4. Internal paths using the alias ~/
-            ["^~"],
-            // 5. Sibling and parent relative imports
-            ["^\\."],
-          ],
-        },
-      ],
-      "simple-import-sort/exports": "error",
+      "react/react-in-jsx-scope": "off",
     },
     settings: {
       react: {
@@ -61,4 +45,5 @@ export default ts.config(
       },
     },
   },
+  eslintPluginPrettierRecommended,
 );

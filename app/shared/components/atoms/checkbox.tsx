@@ -1,16 +1,17 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import { CheckIcon } from "~/shared/icons";
 import { cn } from "~/shared/utils";
 
 interface CheckboxProps extends Omit<ComponentPropsWithoutRef<"input">, "type"> {
-  label?: ReactNode;
   indeterminate?: boolean;
+  label?: ReactNode;
 }
 
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ className, label, indeterminate = false, checked, disabled, ...props }, ref) => {
+  ({ checked, className, disabled, indeterminate = false, label, ...props }, ref) => {
     const localRef = useRef<HTMLInputElement>(null);
     useImperativeHandle(ref, () => localRef.current!);
 
@@ -31,11 +32,11 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       >
         <div className="border-input bg-background focus-within:ring-ring relative flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors duration-150 focus-within:ring-2">
           <input
-            type="checkbox"
-            ref={localRef}
             checked={checked}
-            disabled={disabled}
             className="sr-only"
+            disabled={disabled}
+            ref={localRef}
+            type="checkbox"
             {...props}
           />
           {checked && !indeterminate && <CheckIcon className="text-primary h-2.5 w-2.5" />}

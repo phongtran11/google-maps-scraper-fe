@@ -1,14 +1,8 @@
 import { Badge } from "./badge";
 
 interface RatingBadgeProps {
-  rating: number | null;
-  size?: "sm" | "md";
-}
-
-function toNum(v: unknown): number | null {
-  if (v == null) return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
+  rating: null | number;
+  size?: "md" | "sm";
 }
 
 export function RatingBadge({ rating, size = "sm" }: RatingBadgeProps) {
@@ -16,8 +10,14 @@ export function RatingBadge({ rating, size = "sm" }: RatingBadgeProps) {
   if (num == null) return null;
   const variant = num >= 4.5 ? "success" : num >= 4 ? "info" : "warning";
   return (
-    <Badge variant={variant} size={size} aria-label={`Đánh giá ${num.toFixed(1)} trên 5 sao`}>
+    <Badge aria-label={`Đánh giá ${num.toFixed(1)} trên 5 sao`} size={size} variant={variant}>
       {num.toFixed(1)}
     </Badge>
   );
+}
+
+function toNum(v: unknown): null | number {
+  if (v == null) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
 }

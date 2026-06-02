@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { AsyncLocalStorage } from "node:async_hooks";
-
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
+import { AsyncLocalStorage } from "node:async_hooks";
 
 import * as schema from "./schema.server";
 
@@ -14,35 +13,41 @@ class DB {
   public pool: Pool;
 
   private logColor = {
-    TAG: "\x1b[36m[DB]\x1b[0m",
-    TIMESTAMP: "\x1b[90m",
-    QUERY: "\x1b[32m",
+    ERROR: "\x1b[31m",
     MS: "\x1b[35m",
     PARAMS: "\x1b[90m",
-    ERROR: "\x1b[31m",
+    QUERY: "\x1b[32m",
     RESET: "\x1b[0m",
+    TAG: "\x1b[36m[DB]\x1b[0m",
+    TIMESTAMP: "\x1b[90m",
   };
 
   constructor() {
     this.pool = new Pool({
       connectionString: process.env.NEON_DATABASE_URL,
-      max: 10,
-      idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000,
+      idleTimeoutMillis: 30000,
+      max: 10,
     });
 
     const originalConnect = this.pool.connect.bind(this.pool);
 
-    this.pool.connect = (async (...args: any[]) => {
+    this.pool.connect = async (...args: any[]) => {
       const client = await (originalConnect as any)(...args);
-      if (client && !(client as any)[WRAPPED_SYMBOL]) {
-        (client as any)[WRAPPED_SYMBOL] = true;
+      if (client && !client[WRAPPED_SYMBOL]) {
+        client[WRAPPED_SYMBOL] = true;
         client.query = this.wrapQuery(client.query.bind(client), false);
       }
       return client;
-    }) as any;
+    };
 
     this.pool.query = this.wrapQuery(this.pool.query.bind(this.pool), true);
+  }
+
+  init() {
+    return drizzle(this.pool, {
+      schema,
+    });
   }
 
   private wrapQuery(originalQuery: Function, isPool: boolean) {
@@ -81,12 +86,6 @@ class DB {
         throw error;
       }
     };
-  }
-
-  init() {
-    return drizzle(this.pool, {
-      schema,
-    });
   }
 }
 

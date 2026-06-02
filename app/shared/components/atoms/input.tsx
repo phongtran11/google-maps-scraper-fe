@@ -1,38 +1,39 @@
 import type { ComponentProps, ReactNode } from "react";
+
 import { forwardRef, useId } from "react";
 
 import { cn } from "~/shared/utils";
 
 const inputVariants = {
+  inputSize: {
+    lg: "h-12 rounded-md px-4 text-base",
+    md: "h-10 rounded-md px-3 text-sm",
+    sm: "h-8 rounded-md px-2 text-sm",
+  },
   variant: {
     default: "border border-input bg-background text-foreground placeholder:text-muted-foreground",
     filled: "border-0 bg-muted text-foreground placeholder:text-muted-foreground",
   },
-  inputSize: {
-    sm: "h-8 rounded-md px-2 text-sm",
-    md: "h-10 rounded-md px-3 text-sm",
-    lg: "h-12 rounded-md px-4 text-base",
-  },
 } as const;
 
 interface InputProps extends Omit<ComponentProps<"input">, "size"> {
-  variant?: keyof typeof inputVariants.variant;
-  inputSize?: keyof typeof inputVariants.inputSize;
   error?: boolean;
+  inputSize?: keyof typeof inputVariants.inputSize;
   prefixIcon?: ReactNode;
   suffixIcon?: ReactNode;
+  variant?: keyof typeof inputVariants.variant;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       className,
-      variant = "default",
-      inputSize = "md",
+      disabled,
       error = false,
+      inputSize = "md",
       prefixIcon,
       suffixIcon,
-      disabled,
+      variant = "default",
       ...props
     },
     ref,
@@ -47,11 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           </span>
         )}
         <input
-          ref={ref}
-          id={props.id ?? generatedId}
-          disabled={disabled}
           aria-invalid={error || undefined}
-          data-error={error || undefined}
           className={cn(
             "focus-visible:ring-ring flex w-full file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
             inputVariants.variant[variant],
@@ -61,6 +58,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             error && "border-destructive focus-visible:ring-destructive",
             className,
           )}
+          data-error={error || undefined}
+          disabled={disabled}
+          id={props.id ?? generatedId}
+          ref={ref}
           {...props}
         />
         {suffixIcon && (

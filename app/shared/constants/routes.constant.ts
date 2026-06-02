@@ -1,23 +1,4 @@
 export const ROUTES = {
-  dashboard: {
-    path: "/",
-    label: "Trang Quản Trị",
-  },
-  login: {
-    path: "/login",
-    label: "Đăng nhập",
-  },
-  invite: {
-    path: "/invite",
-    label: "Mời Thành Viên",
-  },
-  businessDetail: {
-    path: "/businesses/:id",
-    pattern: /^\/businesses\/[^/]+$/,
-    buildPath: (id: string | number) => `/businesses/${id}`,
-    label: (businessName?: string) => businessName || "Chi tiết doanh nghiệp",
-    matchId: "routes/businesses.$id",
-  },
   api: {
     auth: {
       path: "/api/auth/*",
@@ -26,12 +7,31 @@ export const ROUTES = {
       path: "/api/businesses",
     },
     businessNotes: {
+      buildPath: (id: number | string) => `/api/businesses/${id}/notes`,
       path: "/api/businesses/:id/notes",
-      buildPath: (id: string | number) => `/api/businesses/${id}/notes`,
     },
     businessStatus: {
+      buildPath: (id: number | string) => `/api/businesses/${id}/status`,
       path: "/api/businesses/:id/status",
-      buildPath: (id: string | number) => `/api/businesses/${id}/status`,
     },
+  },
+  businessDetail: {
+    buildPath: (id: number | string) => `/businesses/${id}`,
+    label: (businessName?: string) => businessName || "Chi tiết doanh nghiệp",
+    matchId: "routes/businesses.$id",
+    path: "/businesses/:id",
+    pattern: /^\/businesses\/[^/]+$/,
+  },
+  dashboard: {
+    label: "Trang Quản Trị",
+    path: "/",
+  },
+  invite: {
+    label: "Mời Thành Viên",
+    path: "/invite",
+  },
+  login: {
+    label: "Đăng nhập",
+    path: "/login",
   },
 } as const;

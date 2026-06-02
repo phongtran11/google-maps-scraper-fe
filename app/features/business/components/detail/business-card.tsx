@@ -4,8 +4,9 @@ import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/s
 import { ROUTES } from "~/shared/constants";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 
-import { STATUS_MAP } from "../../constants";
 import type { BusinessRow } from "../../types";
+
+import { STATUS_MAP } from "../../constants";
 
 interface BusinessCardProps {
   business: BusinessRow;
@@ -18,10 +19,10 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
   };
 
   return (
-    <Link to={ROUTES.businessDetail.buildPath(b.id)} className="group block">
+    <Link className="group block" to={ROUTES.businessDetail.buildPath(b.id)}>
       <Card
-        variant="elevated"
         className="flex h-full flex-col transition-shadow group-hover:shadow-xl"
+        variant="elevated"
       >
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
@@ -29,7 +30,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
               {b.business_name}
             </CardTitle>
             <div className="flex shrink-0 items-center gap-1.5">
-              <Badge variant={s.variant} size="sm">
+              <Badge size="sm" variant={s.variant}>
                 {s.label}
               </Badge>
             </div>
@@ -46,8 +47,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
         </CardContent>
         <CardFooter>
           <span
-            role="link"
-            tabIndex={0}
+            className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -60,7 +60,8 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
                 window.open(b.mapsUrl, "_blank", "noopener,noreferrer");
               }
             }}
-            className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex cursor-pointer items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+            role="link"
+            tabIndex={0}
           >
             Xem trên Maps
             <ExternalLinkIcon className="h-3.5 w-3.5" />

@@ -7,30 +7,30 @@ import { getPageNumbers } from "~/shared/utils";
 import { Select } from "../atoms/select";
 
 export interface PaginationProps {
-  /** Currently active page (1-indexed). */
-  page: number;
-  /** Total number of pages. */
-  totalPages: number;
-  /** Total number of records (used for the summary label). */
-  totalCount: number;
-  /** Number of records per page (used for the summary label). */
-  pageSize: number;
   /** Returns the URL/href for a given page number. */
   getPageUrl: (page: number) => string;
-  /** Available page size options. When provided, a dropdown is rendered. */
-  pageSizeOptions?: number[];
   /** Called when the user selects a new page size. Should navigate/reset to page 1. */
   onPageSizeChange?: (pageSize: number) => void;
+  /** Currently active page (1-indexed). */
+  page: number;
+  /** Number of records per page (used for the summary label). */
+  pageSize: number;
+  /** Available page size options. When provided, a dropdown is rendered. */
+  pageSizeOptions?: number[];
+  /** Total number of records (used for the summary label). */
+  totalCount: number;
+  /** Total number of pages. */
+  totalPages: number;
 }
 
 export function Pagination({
-  page,
-  totalPages,
-  totalCount,
-  pageSize,
   getPageUrl,
-  pageSizeOptions = [20, 50, 100],
   onPageSizeChange,
+  page,
+  pageSize,
+  pageSizeOptions = [20, 50, 100],
+  totalCount,
+  totalPages,
 }: PaginationProps) {
   const pageNumbers = getPageNumbers(page, totalPages);
 
@@ -56,14 +56,14 @@ export function Pagination({
         {pageSizeOptions && onPageSizeChange && (
           <div className="flex items-center gap-1.5">
             <Select
+              aria-label="Số dòng mỗi trang"
+              onChange={(v) => onPageSizeChange(Number(v))}
               options={pageSizeOptions.map((n) => ({
                 key: String(n),
                 label: String(n),
               }))}
-              value={String(pageSize)}
-              onChange={(v) => onPageSizeChange(Number(v))}
               selectSize="sm"
-              aria-label="Số dòng mỗi trang"
+              value={String(pageSize)}
             />
           </div>
         )}
@@ -73,11 +73,11 @@ export function Pagination({
       <div className="flex items-center gap-1">
         {/* Previous */}
         <Link
-          to={page > 1 ? getPageUrl(page - 1) : "#"}
           className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
             page <= 1 ? "pointer-events-none opacity-40" : ""
           }`}
           title="Trang trước"
+          to={page > 1 ? getPageUrl(page - 1) : "#"}
         >
           <ChevronLeftIcon className="h-4 w-4" />
         </Link>
@@ -87,8 +87,8 @@ export function Pagination({
           if (num === "...") {
             return (
               <span
-                key={`ellipsis-${idx}`}
                 className="text-muted-foreground inline-flex h-8 w-8 items-center justify-center text-sm"
+                key={`ellipsis-${idx}`}
               >
                 ...
               </span>
@@ -98,13 +98,13 @@ export function Pagination({
           const isActive = num === page;
           return (
             <Link
-              key={`page-${num}`}
-              to={getPageUrl(num as number)}
               className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-primary text-primary-foreground border-primary"
                   : "bg-background border-input text-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
+              key={`page-${num}`}
+              to={getPageUrl(num as number)}
             >
               {num}
             </Link>
@@ -113,11 +113,11 @@ export function Pagination({
 
         {/* Next */}
         <Link
-          to={page < totalPages ? getPageUrl(page + 1) : "#"}
           className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
             page >= totalPages ? "pointer-events-none opacity-40" : ""
           }`}
           title="Trang sau"
+          to={page < totalPages ? getPageUrl(page + 1) : "#"}
         >
           <ChevronRightIcon className="h-4 w-4" />
         </Link>

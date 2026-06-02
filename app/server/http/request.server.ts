@@ -1,4 +1,4 @@
-type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+type HTTPMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
 
 /**
  * Validates that the request method is one of the allowed methods.
@@ -12,9 +12,9 @@ export function validateMethod(request: Request, allowedMethods: HTTPMethod | HT
   if (!upperCaseMethods.includes(method)) {
     throw Response.json(
       {
-        message: "Method not allowed",
         code: "method_not_allowed",
         error: `Method ${request.method} is not allowed. Only ${methods.join(", ")} is supported.`,
+        message: "Method not allowed",
       },
       { status: 405 },
     );

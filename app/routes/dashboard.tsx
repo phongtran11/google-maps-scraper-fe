@@ -10,26 +10,6 @@ import type { Route } from "./+types/dashboard";
 
 export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  const wardIds = getIntParams(url, "wardId", []);
-  const search = getStringParam(url, "search", "", 200);
-  const status = getStringParam(url, "status", "", 50);
-  const page = getIntParam(url, "page", 1, { min: 1 });
-  const limit = getIntParam(url, "limit", 20, { min: 1 });
-  const offset = (page - 1) * limit;
-
-  const [businesses, totalCount, districts] = await Promise.all([
-    getBusinesses({ search, status, limit, offset, wardIds }),
-    getBusinessesCount({ search, status, wardIds }),
-    getDistrictsWithWard(),
-  ]);
-
-  const districtsWithWard = groupDistrictsWithWards(districts);
-
-  return { businesses, totalCount, page, limit, districtsWithWard };
-}
-
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-8">
@@ -39,11 +19,31 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
       <BusinessTable
         businesses={loaderData.businesses}
-        totalCount={loaderData.totalCount}
+        districtsWithWard={loaderData.districtsWithWard}
         page={loaderData.page}
         pageSize={loaderData.limit}
-        districtsWithWard={loaderData.districtsWithWard}
+        totalCount={loaderData.totalCount}
       />
     </div>
   );
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const wardIds = getIntParams(url, "wardId", []);
+  const search = getStringParam(url, "search", "", 200);
+  const status = getStringParam(url, "status", "", 50);
+  const page = getIntParam(url, "page", 1, { min: 1 });
+  const limit = getIntParam(url, "limit", 20, { min: 1 });
+  const offset = (page - 1) * limit;
+
+  const [businesses, totalCount, districts] = await Promise.all([
+    getBusinesses({ limit, offset, search, status, wardIds }),
+    getBusinessesCount({ search, status, wardIds }),
+    getDistrictsWithWard(),
+  ]);
+
+  const districtsWithWard = groupDistrictsWithWards(districts);
+
+  return { businesses, districtsWithWard, limit, page, totalCount };
 }

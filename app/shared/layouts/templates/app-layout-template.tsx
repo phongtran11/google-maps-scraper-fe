@@ -1,35 +1,37 @@
 import type { ReactNode } from "react";
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+
+import type { BreadcrumbItem } from "~/shared/types";
 
 import { Button } from "~/shared/components";
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { Menu } from "~/shared/icons/menu";
-import type { BreadcrumbItem } from "~/shared/types";
 import { cn } from "~/shared/utils";
 
 import { AdminSidebar } from "../organisms/admin-sidebar";
 
 export interface AppLayoutTemplateProps {
-  currentUser: {
-    name: string;
-    email: string;
-    image: string | null;
-  };
   breadcrumbs: BreadcrumbItem[];
+  children: ReactNode;
   currentPath: string;
+  currentUser: {
+    email: string;
+    image: null | string;
+    name: string;
+  };
   isRoot: boolean;
   onSignOut: () => void;
-  children: ReactNode;
 }
 
 export function AppLayoutTemplate({
-  currentUser,
   breadcrumbs,
+  children,
   currentPath,
+  currentUser,
   isRoot,
   onSignOut,
-  children,
 }: AppLayoutTemplateProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
@@ -46,7 +48,7 @@ export function AppLayoutTemplate({
     <div className="bg-background flex h-screen w-screen overflow-hidden">
       {/* Sidebar for Desktop */}
       <aside className="border-border bg-card text-card-foreground hidden shrink-0 border-r md:sticky md:top-0 md:flex md:h-screen md:w-64 md:flex-col">
-        <AdminSidebar currentPath={currentPath} user={currentUser} onSignOut={onSignOut} />
+        <AdminSidebar currentPath={currentPath} onSignOut={onSignOut} user={currentUser} />
       </aside>
 
       {/* Mobile Sidebar Drawer */}
@@ -74,10 +76,10 @@ export function AppLayoutTemplate({
         >
           <AdminSidebar
             currentPath={currentPath}
-            user={currentUser}
-            onSignOut={onSignOut}
             onClickItem={handleCloseMobile}
             onClose={handleCloseMobile}
+            onSignOut={onSignOut}
+            user={currentUser}
           />
         </aside>
       </div>
@@ -88,9 +90,9 @@ export function AppLayoutTemplate({
         <header className="border-border bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b px-4 backdrop-blur sm:px-6">
           {/* Hamburger Menu (Mobile only) */}
           <button
-            onClick={handleOpenMobile}
-            className="hover:bg-accent text-muted-foreground hover:text-foreground -ml-2 shrink-0 cursor-pointer rounded-md p-2 transition-colors md:hidden"
             aria-label="Open menu"
+            className="hover:bg-accent text-muted-foreground hover:text-foreground -ml-2 shrink-0 cursor-pointer rounded-md p-2 transition-colors md:hidden"
+            onClick={handleOpenMobile}
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -99,10 +101,10 @@ export function AppLayoutTemplate({
           {!isRoot && (
             <>
               <Button
+                aria-label="Quay lại"
+                onClick={() => navigate(-1)}
                 size="icon"
                 variant="ghost"
-                onClick={() => navigate(-1)}
-                aria-label="Quay lại"
               >
                 <ChevronLeftIcon className="h-4 w-4" />
               </Button>
@@ -113,10 +115,10 @@ export function AppLayoutTemplate({
           {/* Breadcrumbs */}
           <nav className="text-muted-foreground flex min-w-0 flex-1 items-center gap-2 truncate text-sm font-medium select-none">
             {breadcrumbs.map((crumb, idx) => (
-              <div key={idx} className="flex items-center gap-2 truncate">
+              <div className="flex items-center gap-2 truncate" key={idx}>
                 {idx > 0 && <span className="text-muted-foreground/45">/</span>}
                 {crumb.to ? (
-                  <Link to={crumb.to} className="hover:text-foreground truncate transition-colors">
+                  <Link className="hover:text-foreground truncate transition-colors" to={crumb.to}>
                     {crumb.label}
                   </Link>
                 ) : (
@@ -130,9 +132,9 @@ export function AppLayoutTemplate({
           <div className="flex shrink-0 items-center md:hidden">
             {currentUser.image ? (
               <img
-                src={currentUser.image}
                 alt={currentUser.name}
                 className="h-7 w-7 rounded-full"
+                src={currentUser.image}
               />
             ) : (
               <div className="bg-primary/10 text-primary flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold">

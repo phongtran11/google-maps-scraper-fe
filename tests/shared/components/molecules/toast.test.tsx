@@ -5,14 +5,14 @@ import { describe, expect, it, vi } from "vitest";
 import { ToastProvider, useToast } from "~/shared/components/molecules/toast";
 
 function TestConsumer() {
-  const { toast, dismiss } = useToast();
+  const { dismiss, toast } = useToast();
   return (
     <div>
       <button
         onClick={() =>
           toast({
-            title: "Thành công",
             description: "Thao tác hoàn tất",
+            title: "Thành công",
             variant: "success",
           })
         }
@@ -30,11 +30,11 @@ function TestConsumer() {
       <button
         onClick={() =>
           toast({
-            title: "Có hành động",
             action: {
               label: "Hoàn tác",
               onClick: vi.fn(),
             },
+            title: "Có hành động",
           })
         }
       >
