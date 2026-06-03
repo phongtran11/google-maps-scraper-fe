@@ -1,13 +1,23 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 import { Field } from "~/shared/components";
 
-import type { BusinessRow } from "../../types";
+type BusinessDetailsProps = {
+  address: null | string;
+  businessName: null | string;
+  category: null | string;
+  phone: null | string;
+  region: null | string;
+  website: null | string;
+};
 
-interface BusinessDetailsProps {
-  business: BusinessRow;
-}
-
-export function BusinessDetails({ business: b }: BusinessDetailsProps) {
+export function BusinessDetails({
+  address,
+  businessName,
+  category,
+  phone,
+  region,
+  website,
+}: BusinessDetailsProps) {
   return (
     <Card>
       <CardHeader>
@@ -15,12 +25,12 @@ export function BusinessDetails({ business: b }: BusinessDetailsProps) {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Tên Doanh Nghiệp">{b.businessName}</Field>
-          <Field label="Danh Mục">{b.category}</Field>
-          <Field label="Địa Chỉ">{b.address}</Field>
-          <Field label="Điện Thoại">{b.phone}</Field>
-          <Field label="Website">{b.website}</Field>
-          <Field label="Khu Vực">{b.region}</Field>
+          <Field label="Tên Doanh Nghiệp">{businessName}</Field>
+          <Field label="Danh Mục">{category}</Field>
+          <Field label="Địa Chỉ">{address}</Field>
+          <Field label="Điện Thoại">{phone}</Field>
+          <Field label="Website">{website}</Field>
+          <Field label="Khu Vực">{region}</Field>
         </div>
       </CardContent>
     </Card>

@@ -146,7 +146,7 @@ export function AppLayoutTemplate({
 
         {/* Content wrapper - Independent Y scroll */}
         <main className="bg-background flex-1 overflow-y-auto">
-          <div className="container mx-auto w-full p-4 sm:p-6 lg:p-8">{children}</div>
+          <div className="container mx-auto w-full space-y-8 p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
     </div>

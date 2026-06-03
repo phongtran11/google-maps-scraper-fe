@@ -1,18 +1,10 @@
 import { memo, useEffect, useState } from "react";
-import { useFetcher, useRouteLoaderData } from "react-router";
+import { useFetcher } from "react-router";
 
-import { Button, Card, CardContent, CardHeader, CardTitle, Textarea } from "~/shared/components";
+import { Button, Textarea } from "~/shared/components";
 import { relativeTime } from "~/shared/utils";
 
-import type { NoteRow } from "../../types";
-
-import { useNotesManager } from "../../hooks/use-notes-manager";
-
-interface NoteInputProps {
-  action: string;
-  isSubmitting: boolean;
-  noteFetcher: ReturnType<typeof useFetcher>;
-}
+import type { NoteRow } from "../../../types";
 
 interface NoteItemProps {
   action: string;
@@ -21,58 +13,7 @@ interface NoteItemProps {
   noteFetcher: ReturnType<typeof useFetcher>;
 }
 
-interface NotesSectionProps {
-  businessId: number;
-  initialNotes: NoteRow[];
-}
-
-function NoteInput({ action, isSubmitting, noteFetcher }: NoteInputProps) {
-  const [content, setContent] = useState("");
-
-  useEffect(() => {
-    if (noteFetcher.state === "idle" && noteFetcher.data) {
-      setContent("");
-    }
-  }, [noteFetcher.state, noteFetcher.data]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (content.trim()) {
-        noteFetcher.submit(e.currentTarget.form);
-      }
-    }
-  };
-
-  return (
-    <noteFetcher.Form action={action} method="post">
-      <Textarea
-        className="resize-none"
-        maxLength={5000}
-        name="content"
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Nhập ghi chú..."
-        rows={3}
-        value={content}
-      />
-      {content.length > 4500 && (
-        <span className="text-muted-foreground text-xs">{5000 - content.length} ký tự còn lại</span>
-      )}
-      <Button
-        className="mt-5"
-        disabled={!content.trim() || isSubmitting}
-        loading={isSubmitting}
-        size="sm"
-        type="submit"
-      >
-        Thêm ghi chú
-      </Button>
-    </noteFetcher.Form>
-  );
-}
-
-const NoteItem = memo(function NoteItem({
+export const NoteItem = memo(function NoteItem({
   action,
   currentUserEmail,
   note,
@@ -215,49 +156,3 @@ const NoteItem = memo(function NoteItem({
     </div>
   );
 });
-
-export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
-  const { action, isSubmitting, noteFetcher, notes } = useNotesManager({
-    businessId,
-    initialNotes,
-  });
-
-  type AppLayoutData = { user: { email: string; image?: null | string; name: string } };
-  const appLayoutData = useRouteLoaderData<AppLayoutData>("routes/app-layout");
-  const currentUserEmail = appLayoutData?.user?.email;
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Ghi Chú</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <NoteInput action={action} isSubmitting={isSubmitting} noteFetcher={noteFetcher} />
-
-        {noteFetcher.data?.error && (
-          <p className="text-destructive text-sm">
-            Lỗi: {noteFetcher.data.message || "Đã xảy ra lỗi"}
-          </p>
-        )}
-
-        {notes.length > 0 && (
-          <div className="space-y-3 pt-2">
-            {notes.map((n) => (
-              <NoteItem
-                action={action}
-                currentUserEmail={currentUserEmail}
-                key={n.id}
-                note={n}
-                noteFetcher={noteFetcher}
-              />
-            ))}
-          </div>
-        )}
-
-        {notes.length === 0 && (
-          <p className="text-muted-foreground py-4 text-center text-sm">Chưa có ghi chú nào.</p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}

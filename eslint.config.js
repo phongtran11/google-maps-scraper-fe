@@ -36,6 +36,7 @@ export default defineConfig(
     rules: {
       ...react.configs.recommended.rules,
       ...hooks.configs.recommended.rules,
+      "perfectionist/sort-objects": "off",
       "react/jsx-uses-react": "off",
       "react/react-in-jsx-scope": "off",
     },

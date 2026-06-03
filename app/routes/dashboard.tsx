@@ -1,5 +1,3 @@
-import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-
 import { BusinessTable, FilterBar } from "~/features/business";
 import { getBusinesses, getBusinessesCount } from "~/features/business/queries.server";
 import { getDistrictsWithWard } from "~/server/database/districts.server";
@@ -8,11 +6,11 @@ import { getIntParam, getIntParams, getStringParam, groupDistrictsWithWards } fr
 
 import type { Route } from "./+types/dashboard";
 
-export const meta: MetaFunction = () => [{ title: "Trang Quản Trị" }];
+export const meta: Route.MetaFunction = () => [{ title: "Trang Quản Trị" }];
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   return (
-    <div className="space-y-8">
+    <>
       <PageHeader title="Trang quản trị" />
 
       <FilterBar districtsWithWard={loaderData.districtsWithWard} />
@@ -24,7 +22,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
         pageSize={loaderData.limit}
         totalCount={loaderData.totalCount}
       />
-    </div>
+    </>
   );
 }
 

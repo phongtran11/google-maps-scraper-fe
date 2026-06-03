@@ -42,11 +42,8 @@ export async function checkBusinessExists(id: number | string): Promise<boolean>
   return result.length > 0;
 }
 
-export async function getBusinessById(id: number | string) {
-  const numId = parseId(id);
-  if (numId === null) return null;
-
-  const result = await db.select().from(businesses).where(eq(businesses.id, numId)).limit(1);
+export async function getBusinessById(id: number) {
+  const result = await db.select().from(businesses).where(eq(businesses.id, id)).limit(1);
 
   return result.length > 0 ? result[0] : null;
 }
@@ -111,9 +108,17 @@ export async function getBusinessesCount({
 
 export async function getBusinessNote(noteId: number | string) {
   const id = parseId(noteId);
-  if (id === null) throw new Error("Invalid ID");
+  if (id === null) return null;
   const result = await db
-    .select()
+    .select({
+      businessId: businessNotes.businessId,
+      content: businessNotes.content,
+      createdAt: businessNotes.createdAt,
+      createdBy: businessNotes.createdBy,
+      deletedAt: businessNotes.deletedAt,
+      id: businessNotes.id,
+      updatedAt: businessNotes.updatedAt,
+    })
     .from(businessNotes)
     .where(and(eq(businessNotes.id, id), isNull(businessNotes.deletedAt)))
     .limit(1);
@@ -121,14 +126,19 @@ export async function getBusinessNote(noteId: number | string) {
   return result.length > 0 ? result[0] : null;
 }
 
-export async function getBusinessNotes(businessId: number | string, limit = 50, offset = 0) {
-  const id = parseId(businessId);
-  if (id === null) throw new Error("Invalid ID");
-
+export async function getBusinessNotes(businessId: number, limit = 50, offset = 0) {
   const result = await db
-    .select()
+    .select({
+      businessId: businessNotes.businessId,
+      content: businessNotes.content,
+      createdAt: businessNotes.createdAt,
+      createdBy: businessNotes.createdBy,
+      deletedAt: businessNotes.deletedAt,
+      id: businessNotes.id,
+      updatedAt: businessNotes.updatedAt,
+    })
     .from(businessNotes)
-    .where(and(eq(businessNotes.businessId, id), isNull(businessNotes.deletedAt)))
+    .where(and(eq(businessNotes.businessId, businessId), isNull(businessNotes.deletedAt)))
     .orderBy(desc(businessNotes.createdAt))
     .limit(limit)
     .offset(offset);

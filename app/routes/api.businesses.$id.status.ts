@@ -6,6 +6,7 @@ import { getBusinessById } from "~/features/business/queries.server";
 import { sessionContext } from "~/server/auth/require-auth.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import { validateMethod } from "~/server/http/request.server";
+import { parseId } from "~/shared/utils";
 
 const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
 
@@ -32,8 +33,8 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
       );
     }
 
-    const numId = parseInt(params.id ?? "", 10);
-    if (isNaN(numId)) {
+    const numId = parseId(params.id);
+    if (numId === null) {
       return Response.json(
         { error: "invalid_id", message: "ID không hợp lệ" },
         { headers: { "Cache-Control": "no-store" }, status: 400 },

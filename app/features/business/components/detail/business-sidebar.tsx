@@ -1,27 +1,35 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
+import {
+  buttonBase,
+  buttonVariants,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "~/shared/components";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
-import { formatZaloPhone } from "~/shared/utils";
-
-import type { BusinessRow } from "../../types";
+import { cn, formatZaloPhone } from "~/shared/utils";
 
 import { StatusCard } from "./status-card";
 
-interface BusinessSidebarProps {
-  business: BusinessRow;
-}
+type BusinessSidebarProps = {
+  id: number;
+  mapsUrl: null | string;
+  phone: null | string;
+  status: null | string;
+};
 
-export function BusinessSidebar({ business: b }: BusinessSidebarProps) {
-  const zaloPhone = formatZaloPhone(b.phone);
+export function BusinessSidebar({ id, mapsUrl, phone, status }: BusinessSidebarProps) {
+  const zaloPhone = formatZaloPhone(phone);
 
   return (
     <div className="space-y-6">
-      <StatusCard businessId={b.id} status={b.status ?? "new"} />
+      <StatusCard businessId={id} status={status ?? "new"} />
 
-      <LinkCard href={b.mapsUrl} label="Xem trên Google Maps" title="Bản Đồ" />
+      {mapsUrl ? <LinkCard href={mapsUrl} label="Xem trên Google Maps" title="Bản Đồ" /> : null}
 
-      {zaloPhone && (
+      {zaloPhone ? (
         <LinkCard href={`https://zalo.me/${zaloPhone}`} label="Gửi tin nhắn Zalo" title="Zalo" />
-      )}
+      ) : null}
     </div>
   );
 }
@@ -34,7 +42,11 @@ function LinkCard({ href, label, title }: { href: string; label: string; title: 
       </CardHeader>
       <CardContent>
         <a
-          className="border-input bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-md border px-4 py-2 text-sm font-medium shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className={cn(
+            buttonBase,
+            buttonVariants["size"]["default"],
+            buttonVariants["variant"]["outline"],
+          )}
           href={href}
           rel="noopener noreferrer"
           target="_blank"
