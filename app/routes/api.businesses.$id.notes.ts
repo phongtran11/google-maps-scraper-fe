@@ -127,7 +127,7 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
         );
       }
 
-      if (note.created_by !== userEmail) {
+      if (note.createdBy !== userEmail) {
         return Response.json(
           {
             code: "permission_denied",
@@ -166,7 +166,7 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
         );
       }
 
-      if (note.created_by !== userEmail) {
+      if (note.createdBy !== userEmail) {
         return Response.json(
           {
             code: "permission_denied",

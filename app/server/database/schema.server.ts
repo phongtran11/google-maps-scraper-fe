@@ -82,18 +82,19 @@ export const businesses = pgTable("businesses", {
   imageReviewCount: integer("image_review_count").default(0),
   isCorrected: boolean("is_corrected").default(true),
   mapsUrl: text("maps_url").notNull().unique(),
+  phone: text("phone"),
   rating: numeric("rating"),
   region: text("region"),
-  review_count: integer("review_count"),
+  reviewCount: integer("review_count"),
   reviewImageUrls: text("review_image_urls")
     .array()
     .default(sql`'{}'::TEXT[]`),
-  scraped_at: timestamp("scraped_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  search_keyword: text("search_keyword").notNull(),
+  searchKeyword: text("search_keyword").notNull(),
   status: text("status").default("new").notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   wardId: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
+  website: text("website"),
 });
 
 export const districts = pgTable("districts", {
@@ -104,82 +105,80 @@ export const districts = pgTable("districts", {
 export const wards = pgTable(
   "wards",
   {
-    district_id: integer("district_id")
+    districtId: integer("district_id")
       .notNull()
       .references(() => districts.id, { onDelete: "cascade" }),
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
   },
   (table) => {
-    return [unique("wards_name_district_unique").on(table.name, table.district_id)];
+    return [unique("wards_name_district_unique").on(table.name, table.districtId)];
   },
 );
 
 export const scrapeRuns = pgTable("scrape_runs", {
-  duration_ms: bigint("duration_ms", { mode: "bigint" })
+  durationMs: bigint("duration_ms", { mode: "bigint" })
     .default(sql`0`)
     .notNull(),
   errors: text("errors")
     .array()
     .default(sql`'{}'::TEXT[]`),
   failed: integer("failed").default(0).notNull(),
-  finished_at: timestamp("finished_at", { mode: "date", withTimezone: true }),
+  finishedAt: timestamp("finished_at", { mode: "date", withTimezone: true }),
   id: serial("id").primaryKey(),
   keyword: text("keyword").notNull(),
-  listings_found: integer("listings_found").default(0).notNull(),
-  skipped_dups: integer("skipped_dups").default(0).notNull(),
-  started_at: timestamp("started_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  listingsFound: integer("listings_found").default(0).notNull(),
+  skippedDups: integer("skipped_dups").default(0).notNull(),
+  startedAt: timestamp("started_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   status: text("status").default("running").notNull(),
   succeeded: integer("succeeded").default(0).notNull(),
-  total_scraped: integer("total_scraped").default(0).notNull(),
+  totalScraped: integer("total_scraped").default(0).notNull(),
 });
 
 export const businessNotes = pgTable("business_notes", {
-  business_id: integer("business_id")
+  businessId: integer("business_id")
     .notNull()
     .references(() => businesses.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  created_at: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  created_by: text("created_by").notNull(),
-  deleted_at: timestamp("deleted_at", { mode: "date", withTimezone: true }),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  createdBy: text("created_by").notNull(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
   id: serial("id").primaryKey(),
-  updated_at: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
 });
 
 export const userInvites = pgTable("user_invites", {
-  deleted_at: timestamp("deleted_at", { mode: "date", withTimezone: true }),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
   email: text("email").notNull().unique(),
   id: serial("id").primaryKey(),
-  invited_at: timestamp("invited_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  updated_at: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  invitedAt: timestamp("invited_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
 });
 
 export const approachLists = pgTable("approach_lists", {
-  created_at: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  created_by: text("created_by").notNull(),
-  deleted_at: timestamp("deleted_at", { mode: "date", withTimezone: true }),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  createdBy: text("created_by").notNull(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  updated_at: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
 });
 
 export const approachListItems = pgTable(
   "approach_list_items",
   {
-    added_at: timestamp("added_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-    business_id: integer("business_id")
+    addedAt: timestamp("added_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+    businessId: integer("business_id")
       .notNull()
       .references(() => businesses.id, { onDelete: "cascade" }),
     id: serial("id").primaryKey(),
-    list_id: integer("list_id")
+    listId: integer("list_id")
       .notNull()
       .references(() => approachLists.id, { onDelete: "cascade" }),
     note: text("note"),
   },
   (table) => {
-    return [
-      unique("approach_list_items_list_business_unique").on(table.list_id, table.business_id),
-    ];
+    return [unique("approach_list_items_list_business_unique").on(table.listId, table.businessId)];
   },
 );
 
@@ -187,25 +186,25 @@ export const approachListItems = pgTable(
 
 export const vBusinessesClassified = pgView("v_businesses_classified", {
   address: text("address"),
-  business_name: text("business_name"),
+  businessName: text("business_name"),
   category: text("category"),
-  created_at: timestamp("created_at", { mode: "date", withTimezone: true }),
-  district_city: text("district_city"),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }),
+  districtCity: text("district_city"),
   id: integer("id"),
-  is_corrected: boolean("is_corrected"),
-  maps_url: text("maps_url"),
+  isCorrected: boolean("is_corrected"),
+  mapsUrl: text("maps_url"),
   phone: text("phone"),
   rating: numeric("rating"),
   region: text("region"),
-  review_count: integer("review_count"),
-  review_image_urls: text("review_image_urls").array(),
-  scraped_at: timestamp("scraped_at", { mode: "date", withTimezone: true }),
-  search_keyword: text("search_keyword"),
+  reviewCount: integer("review_count"),
+  reviewImageUrls: text("review_image_urls").array(),
+  scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }),
+  searchKeyword: text("search_keyword"),
   status: text("status"),
-  ward_commune: text("ward_commune"),
+  wardCommune: text("ward_commune"),
   website: text("website"),
 }).as(sql`
-  SELECT 
+  SELECT
     b.id,
     b.search_keyword,
     b.business_name,

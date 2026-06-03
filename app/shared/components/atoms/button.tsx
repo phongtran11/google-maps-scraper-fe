@@ -5,12 +5,16 @@ import { forwardRef } from "react";
 import { Spinner } from "~/shared/icons/spinner";
 import { cn } from "~/shared/utils";
 
+const buttonBase =
+  "focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+
 const buttonVariants = {
   size: {
     default: "h-10 px-4 py-2",
     icon: "h-10 w-10",
     lg: "h-11 rounded-md px-8 text-base",
     sm: "h-9 rounded-md px-3 text-sm",
+    xs: "h-8 w-8 text-xs",
   },
   variant: {
     default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
@@ -50,7 +54,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         aria-busy={loading || undefined}
         className={cn(
-          "focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+          buttonBase,
           buttonVariants.variant[variant],
           !isIconOnly && buttonVariants.size[size],
           isIconOnly && buttonVariants.size.icon,
@@ -70,5 +74,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+export { Button, buttonBase, buttonVariants };
 export type { ButtonProps };

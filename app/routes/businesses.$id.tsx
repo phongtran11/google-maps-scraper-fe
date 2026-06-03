@@ -32,7 +32,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  const name = data?.business.business_name ?? "Chi Tiết Doanh Nghiệp";
+  const name = data?.business.businessName ?? "Chi Tiết Doanh Nghiệp";
   return [{ title: `${name} - Quản Trị` }];
 };
 
@@ -42,7 +42,7 @@ export default function BusinessDetail() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={b.business_name} />
+      <PageHeader title={b.businessName} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">

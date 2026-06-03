@@ -13,5 +13,5 @@ export async function getWards() {
 }
 
 export async function getWardsByDistrictId(districtId: number) {
-  return db.select().from(wards).where(eq(wards.district_id, districtId)).orderBy(wards.name);
+  return db.select().from(wards).where(eq(wards.districtId, districtId)).orderBy(wards.name);
 }

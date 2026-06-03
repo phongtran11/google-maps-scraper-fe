@@ -12,16 +12,16 @@ export async function createBusinessNote(
   const id = parseId(businessId);
   if (id === null) throw new Error("Invalid ID");
   await db.insert(businessNotes).values({
-    business_id: id,
+    businessId: id,
     content,
-    created_by: createdBy,
+    createdBy: createdBy,
   });
 }
 
 export async function deleteBusinessNote(noteId: number | string): Promise<void> {
   const id = parseId(noteId);
   if (id === null) throw new Error("Invalid ID");
-  await db.update(businessNotes).set({ deleted_at: new Date() }).where(eq(businessNotes.id, id));
+  await db.update(businessNotes).set({ deletedAt: new Date() }).where(eq(businessNotes.id, id));
 }
 
 export async function updateBusinessNote(noteId: number | string, content: string): Promise<void> {

@@ -86,7 +86,7 @@ const NoteItem = memo(function NoteItem({
     setEditContent(note.content);
   }, [note.content]);
 
-  const isCreator = currentUserEmail && note.created_by === currentUserEmail;
+  const isCreator = currentUserEmail && note.createdBy === currentUserEmail;
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,8 +123,8 @@ const NoteItem = memo(function NoteItem({
     <div className="group bg-muted/30 hover:bg-muted/40 relative rounded-md border p-3 transition-colors">
       <div className="mb-2 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-foreground text-xs font-semibold">{note.created_by}</span>
-          <span className="text-muted-foreground text-xs">{relativeTime(note.created_at)}</span>
+          <span className="text-foreground text-xs font-semibold">{note.createdBy}</span>
+          <span className="text-muted-foreground text-xs">{relativeTime(note.createdAt)}</span>
         </div>
 
         {isCreator && !isEditing && !showDeleteConfirm && (

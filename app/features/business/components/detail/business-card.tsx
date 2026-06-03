@@ -27,7 +27,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="group-hover:text-primary line-clamp-2 text-base transition-colors">
-              {b.business_name}
+              {b.businessName}
             </CardTitle>
             <div className="flex shrink-0 items-center gap-1.5">
               <Badge size="sm" variant={s.variant}>
@@ -40,8 +40,8 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
           {b.address && <p className="text-muted-foreground text-sm">{b.address}</p>}
           <div className="flex flex-wrap items-center gap-2">
             {b.phone && <span className="text-muted-foreground text-sm">{b.phone}</span>}
-            {b.review_count != null && (
-              <span className="text-muted-foreground text-sm">{b.review_count} đánh giá</span>
+            {b.reviewCount != null && (
+              <span className="text-muted-foreground text-sm">{b.reviewCount} đánh giá</span>
             )}
           </div>
         </CardContent>

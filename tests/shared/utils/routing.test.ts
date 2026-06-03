@@ -14,7 +14,7 @@ describe("getBreadcrumbs", () => {
     const matches: RouteMatch[] = [
       {
         id: "routes/businesses.$id",
-        loaderData: { business: { business_name: "Cafe ABC" } },
+        loaderData: { business: { businessName: "Cafe ABC" } },
         params: { id: "123" },
         pathname: "/businesses/123",
       },

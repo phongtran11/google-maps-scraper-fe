@@ -3,6 +3,8 @@ export { Alert, AlertAction, AlertDescription, AlertTitle, alertVariants } from 
 export { Badge } from "./badge";
 export type { ButtonProps } from "./button";
 export { Button, buttonVariants } from "./button";
+export type { ButtonLinkProps } from "./button-link";
+export { ButtonLink } from "./button-link";
 export type { CardProps } from "./card";
 export {
   Card,

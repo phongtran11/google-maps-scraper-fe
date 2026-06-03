@@ -2,10 +2,17 @@ import { Link } from "react-router";
 
 import type { DataTableColumn } from "~/shared/components";
 
-import { Badge, Button, Tooltip } from "~/shared/components";
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  buttonBase,
+  buttonVariants,
+  Tooltip,
+} from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
 import { ExternalLinkIcon } from "~/shared/icons";
-import { formatZaloPhone } from "~/shared/utils";
+import { cn, formatZaloPhone } from "~/shared/utils";
 
 import type { GetBusinessesResult } from "../../types";
 
@@ -15,19 +22,19 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
   {
     cell: (b) => (
       <div className="space-y-1">
-        <Tooltip content={b.business_name}>
+        <Tooltip content={b.businessName}>
           <Link
-            className="text-primary block max-w-[240px] truncate font-semibold hover:underline md:max-w-[320px]"
+            className="text-primary block max-w-60 truncate font-semibold hover:underline md:max-w-[320px]"
             to={ROUTES.businessDetail.buildPath(b.id)}
           >
-            {b.business_name}
+            {b.businessName}
           </Link>
         </Tooltip>
       </div>
     ),
     cellClassName: "font-medium",
     header: "Tên Doanh Nghiệp",
-    id: "business_name",
+    id: "businessName",
   },
   {
     cell: (b) => b.phone || "-",
@@ -65,32 +72,30 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
       const zaloPhone = formatZaloPhone(b.phone);
       return (
         <div className="flex items-center justify-end gap-1.5">
-          <Link
-            className="border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-medium transition-colors"
-            to={ROUTES.businessDetail.buildPath(b.id)}
-          >
+          <ButtonLink size="sm" to={ROUTES.businessDetail.buildPath(b.id)} variant="outline">
             Chi tiết
-          </Link>
+          </ButtonLink>
           {zaloPhone ? (
             <a
+              className={cn(buttonBase, buttonVariants.size.sm, buttonVariants.variant.outline)}
               href={`https://zalo.me/${zaloPhone}`}
               rel="noopener noreferrer"
               target="_blank"
-              title="Nhắn tin Zalo"
             >
-              <Button size="sm" variant="outline">
-                Zalo
-              </Button>
+              Zalo
             </a>
           ) : (
             <Button disabled size="sm" variant="ghost">
               Zalo
             </Button>
           )}
-          <a href={b.maps_url} rel="noopener noreferrer" target="_blank" title="Xem trên Maps">
-            <Button size="icon" variant="ghost">
-              <ExternalLinkIcon className="h-4 w-4" />
-            </Button>
+          <a
+            className={cn(buttonBase, buttonVariants.size.sm, buttonVariants.variant.outline)}
+            href={b.mapUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <ExternalLinkIcon className="h-4 w-4" />
           </a>
         </div>
       );

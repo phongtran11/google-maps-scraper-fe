@@ -1,8 +1,9 @@
 // Atoms
 export { Alert } from "./atoms/alert";
 export { Badge } from "./atoms/badge";
-export type { ButtonProps } from "./atoms/button";
-export { Button, buttonVariants } from "./atoms/button";
+export { Button, buttonBase, buttonVariants } from "./atoms/button";
+export type { ButtonLinkProps } from "./atoms/button-link";
+export { ButtonLink } from "./atoms/button-link";
 export {
   Card,
   CardContent,

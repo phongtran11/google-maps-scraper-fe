@@ -17,7 +17,7 @@ export function buildConditions(filter: BusinessFilter) {
     conditions.push(eq(businesses.region, filter.region));
   }
   if (filter.search) {
-    conditions.push(ilike(businesses.business_name, `%${filter.search}%`));
+    conditions.push(ilike(businesses.businessName, `%${filter.search}%`));
   }
   if (filter.status && STATUS_MAP[filter.status]) {
     conditions.push(eq(businesses.status, filter.status));
@@ -64,12 +64,13 @@ export async function getBusinesses({
   const query = db
     .select({
       address: businesses.address,
-      businessName: businesses.business_name,
+      businessName: businesses.businessName,
       id: businesses.id,
       mapUrl: businesses.mapsUrl,
       rating: businesses.rating,
       region: businesses.region,
       status: businesses.status,
+      phone: businesses.phone,
     })
     .from(businesses)
     .orderBy(desc(businesses.imageReviewCount))
@@ -114,7 +115,7 @@ export async function getBusinessNote(noteId: number | string) {
   const result = await db
     .select()
     .from(businessNotes)
-    .where(and(eq(businessNotes.id, id), isNull(businessNotes.deleted_at)))
+    .where(and(eq(businessNotes.id, id), isNull(businessNotes.deletedAt)))
     .limit(1);
 
   return result.length > 0 ? result[0] : null;
@@ -127,8 +128,8 @@ export async function getBusinessNotes(businessId: number | string, limit = 50, 
   const result = await db
     .select()
     .from(businessNotes)
-    .where(and(eq(businessNotes.business_id, id), isNull(businessNotes.deleted_at)))
-    .orderBy(desc(businessNotes.created_at))
+    .where(and(eq(businessNotes.businessId, id), isNull(businessNotes.deletedAt)))
+    .orderBy(desc(businessNotes.createdAt))
     .limit(limit)
     .offset(offset);
 

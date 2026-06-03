@@ -1,9 +1,8 @@
-import { Link } from "react-router";
-
 import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
 import { ChevronRightIcon } from "~/shared/icons/chevron-right";
-import { getPageNumbers } from "~/shared/utils";
+import { cn, getPageNumbers } from "~/shared/utils";
 
+import { ButtonLink } from "../atoms";
 import { Select } from "../atoms/select";
 
 export interface PaginationProps {
@@ -44,7 +43,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Phân trang"
-      className="border-border bg-muted/20 flex items-center justify-between border-t px-4 py-4"
+      className="border-border bg-muted/20 flex flex-col items-center gap-3 border-t px-4 py-4 sm:flex-row sm:justify-between"
     >
       {/* Summary label + page-size selector */}
       <div className="flex items-center gap-3">
@@ -72,15 +71,15 @@ export function Pagination({
       {/* Page controls */}
       <div className="flex items-center gap-1">
         {/* Previous */}
-        <Link
-          className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
-            page <= 1 ? "pointer-events-none opacity-40" : ""
-          }`}
-          title="Trang trước"
+        <ButtonLink
+          aria-label="Trang trước"
+          className={cn("text-muted-foreground", page <= 1 && "pointer-events-none opacity-40")}
+          size="xs"
           to={page > 1 ? getPageUrl(page - 1) : "#"}
+          variant="outline"
         >
-          <ChevronLeftIcon className="h-4 w-4" />
-        </Link>
+          <ChevronLeftIcon />
+        </ButtonLink>
 
         {/* Page numbers */}
         {pageNumbers.map((num, idx) => {
@@ -97,30 +96,30 @@ export function Pagination({
 
           const isActive = num === page;
           return (
-            <Link
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-background border-input text-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
+            <ButtonLink
               key={`page-${num}`}
+              size="xs"
               to={getPageUrl(num as number)}
+              variant={isActive ? "default" : "outline"}
             >
               {num}
-            </Link>
+            </ButtonLink>
           );
         })}
 
         {/* Next */}
-        <Link
-          className={`border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors ${
-            page >= totalPages ? "pointer-events-none opacity-40" : ""
-          }`}
-          title="Trang sau"
+        <ButtonLink
+          aria-label="Trang sau"
+          className={cn(
+            "text-muted-foreground",
+            page >= totalPages && "pointer-events-none opacity-40",
+          )}
+          size="xs"
           to={page < totalPages ? getPageUrl(page + 1) : "#"}
+          variant="outline"
         >
-          <ChevronRightIcon className="h-4 w-4" />
-        </Link>
+          <ChevronRightIcon />
+        </ButtonLink>
       </div>
     </nav>
   );

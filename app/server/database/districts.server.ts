@@ -21,6 +21,6 @@ export async function getDistrictsWithWard() {
   return db
     .select()
     .from(districts)
-    .innerJoin(wards, eq(districts.id, wards.district_id))
+    .innerJoin(wards, eq(districts.id, wards.districtId))
     .orderBy(districts.name);
 }

@@ -89,28 +89,30 @@ describe("Pagination", () => {
 
   it("disables previous on first page", () => {
     renderPagination({ page: 1, totalPages: 10 });
-    const prevLink = screen.getByTitle("Trang trước").closest("a");
-    expect(prevLink?.className).toContain("pointer-events-none");
+    const prevLink = screen.getByLabelText("Trang trước");
+    expect(prevLink.className).toContain("opacity-40");
+    expect(prevLink.getAttribute("href")).toBe("/");
   });
 
   it("enables previous when not on first page", () => {
     renderPagination({ page: 3, totalPages: 10 });
-    const prevLink = screen.getByTitle("Trang trước").closest("a");
-    expect(prevLink?.getAttribute("href")).toContain("page=2");
-    expect(prevLink?.className).not.toContain("pointer-events-none");
+    const prevLink = screen.getByLabelText("Trang trước");
+    expect(prevLink.className).not.toContain("opacity-40");
+    expect(prevLink.getAttribute("href")).toContain("page=2");
   });
 
   it("disables next on last page", () => {
     renderPagination({ page: 10, totalPages: 10 });
-    const nextLink = screen.getByTitle("Trang sau").closest("a");
-    expect(nextLink?.className).toContain("pointer-events-none");
+    const nextLink = screen.getByLabelText("Trang sau");
+    expect(nextLink.className).toContain("opacity-40");
+    expect(nextLink.getAttribute("href")).toBe("/");
   });
 
   it("enables next when not on last page", () => {
     renderPagination({ page: 5, totalPages: 10 });
-    const nextLink = screen.getByTitle("Trang sau").closest("a");
-    expect(nextLink?.getAttribute("href")).toContain("page=6");
-    expect(nextLink?.className).not.toContain("pointer-events-none");
+    const nextLink = screen.getByLabelText("Trang sau");
+    expect(nextLink.className).not.toContain("opacity-40");
+    expect(nextLink.getAttribute("href")).toContain("page=6");
   });
 
   it("renders ellipsis for large page counts", () => {
