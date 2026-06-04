@@ -2,15 +2,15 @@ import { useFetcher } from "react-router";
 
 import { ROUTES } from "~/shared/constants";
 
-import type { NoteRow } from "../types";
+import type { GetBusinessNotesResult, NoteFetcherData } from "../queries.server";
 
 interface UseNotesManagerOptions {
   businessId: number;
-  initialNotes: NoteRow[];
+  initialNotes: GetBusinessNotesResult[];
 }
 
 export function useNotesManager({ businessId, initialNotes }: UseNotesManagerOptions) {
-  const noteFetcher = useFetcher<{ error?: string; message?: string; notes?: NoteRow[] }>();
+  const noteFetcher = useFetcher<NoteFetcherData>();
 
   const notes = noteFetcher.data?.notes ?? initialNotes;
 

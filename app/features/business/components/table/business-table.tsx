@@ -5,7 +5,7 @@ import type { GroupedDistrict } from "~/shared/types";
 import { DataTable, Pagination } from "~/shared/components";
 import { getStringParams } from "~/shared/utils";
 
-import type { GetBusinessesResult } from "../../types";
+import type { GetBusinessesResult } from "../../queries.server";
 
 import { columns } from "./business-table-config";
 
@@ -62,7 +62,7 @@ export function BusinessTable({
   };
 
   return (
-    <div className="space-y-0">
+    <div>
       <DataTable
         columns={columns}
         data={businesses}

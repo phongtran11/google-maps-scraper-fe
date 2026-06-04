@@ -3,6 +3,8 @@ import type { ActionFunctionArgs, MetaFunction } from "react-router";
 import { useEffect, useRef } from "react";
 import { Form, useActionData, useNavigation } from "react-router";
 
+import type { RouteHandle } from "~/shared/types";
+
 import { checkInviteExists, createInvite } from "~/server/database/invites.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import {
@@ -16,6 +18,10 @@ import {
   useToast,
 } from "~/shared/components";
 import { Spinner } from "~/shared/icons/spinner";
+
+export const handle: RouteHandle = {
+  breadcrumb: () => "Mời Thành Viên",
+};
 
 export const meta: MetaFunction = () => [
   { title: "Mời Thành Viên - Bảng Điều Khiển" },

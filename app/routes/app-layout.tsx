@@ -1,14 +1,14 @@
 import type { LoaderFunctionArgs } from "react-router";
 
 import { useCallback } from "react";
-import { Outlet, useLoaderData, useLocation, useMatches } from "react-router";
+import { Outlet, useLocation, useMatches, useNavigation } from "react-router";
 
 import type { RouteMatch } from "~/shared/types";
 
 import { requireAuth, sessionContext } from "~/server/auth/require-auth.server";
 import { ROUTES } from "~/shared/constants";
 import { AppLayoutTemplate } from "~/shared/layouts";
-import { authClient, getBreadcrumbs } from "~/shared/utils";
+import { authClient, collectBreadcrumbs } from "~/shared/utils";
 
 import type { Route } from "./+types/app-layout";
 
@@ -20,10 +20,12 @@ export const middleware: Route.MiddlewareFunction[] = [
   },
 ];
 
-export default function AppLayout() {
-  const loaderData = useLoaderData<typeof loader>();
+export default function AppLayout({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   const matches = useMatches();
+  const navigation = useNavigation();
+
+  const isLoading = navigation.state === "loading";
 
   const handleSignOut = useCallback(() => {
     authClient.signOut({
@@ -42,19 +44,24 @@ export default function AppLayout() {
   };
 
   const isRoot = location.pathname === ROUTES.dashboard.path;
-
-  const breadcrumbs = getBreadcrumbs(location.pathname, matches as unknown as RouteMatch[]);
+  const breadcrumbs = collectBreadcrumbs(matches as unknown as RouteMatch[]);
 
   return (
-    <AppLayoutTemplate
-      breadcrumbs={breadcrumbs}
-      currentPath={location.pathname}
-      currentUser={currentUser}
-      isRoot={isRoot}
-      onSignOut={handleSignOut}
-    >
-      <Outlet />
-    </AppLayoutTemplate>
+    <>
+      {isLoading && (
+        <div className="fixed top-0 left-0 z-50 h-1 w-full overflow-hidden">
+          <div className="bg-primary animate-progress h-full w-1/3" />
+        </div>
+      )}
+      <AppLayoutTemplate
+        breadcrumbs={breadcrumbs}
+        currentUser={currentUser}
+        isRoot={isRoot}
+        onSignOut={handleSignOut}
+      >
+        <Outlet />
+      </AppLayoutTemplate>
+    </>
   );
 }
 

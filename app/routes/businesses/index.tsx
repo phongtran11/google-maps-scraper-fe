@@ -5,15 +5,15 @@ import { getBusinesses, getBusinessesCount } from "~/features/business/queries.s
 import { getDistrictsWithWard } from "~/server/database/districts.server";
 import { getIntParam, getIntParams, getStringParam, groupDistrictsWithWards } from "~/shared/utils";
 
-import type { Route } from "./+types/dashboard";
+import type { Route } from "./+types/index";
+
+export const meta: Route.MetaFunction = () => [{ title: "Khách Hàng" }];
 
 export const handle: RouteHandle = {
-  breadcrumb: () => "Trang Quản Trị",
+  breadcrumb: () => "Khách Hàng",
 };
 
-export const meta: Route.MetaFunction = () => [{ title: "Trang Quản Trị" }];
-
-export default function Dashboard({ loaderData }: Route.ComponentProps) {
+export default function Businesses({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <FilterBar districtsWithWard={loaderData.districtsWithWard} />

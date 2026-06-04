@@ -1,16 +1,17 @@
+import type { useFetcher } from "react-router";
+
 import { memo, useEffect, useState } from "react";
-import { useFetcher } from "react-router";
 
 import { Button, Textarea } from "~/shared/components";
 import { relativeTime } from "~/shared/utils";
 
-import type { NoteRow } from "../../../types";
+import type { GetBusinessNotesResult, NoteFetcherData } from "../../../queries.server";
 
 interface NoteItemProps {
   action: string;
   currentUserEmail: string | undefined;
-  note: NoteRow;
-  noteFetcher: ReturnType<typeof useFetcher>;
+  note: GetBusinessNotesResult;
+  noteFetcher: ReturnType<typeof useFetcher<NoteFetcherData>>;
 }
 
 export const NoteItem = memo(function NoteItem({

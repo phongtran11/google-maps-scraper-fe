@@ -24,9 +24,9 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
 
     const dotColorClass =
       {
+        new: "bg-muted-foreground/80",
         approached: "bg-info",
         contacted: "bg-warning",
-        new: "bg-muted-foreground/80",
         qualified: "bg-success",
         rejected: "bg-destructive",
       }[key] || "bg-muted-foreground";

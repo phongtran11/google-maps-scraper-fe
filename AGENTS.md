@@ -1,138 +1,54 @@
 # AGENTS.md
 
-## Language
+## Language & Stack
 
-This project uses **Vietnamese** for all user-facing text (UI labels, messages, page content).
+- **Language**: Vietnamese for all user-facing text.
+- **Stack**: React Router 7 (SSR), Neon Postgres + Drizzle ORM (camelCase casing), Better Auth, TailwindCSS v4, Vitest, pnpm.
 
-## Project overview
+## Directory Layout & Conventions
 
-React Router 7 full-stack SSR dashboard for scraped Google Maps businesses. Neon Postgres, Drizzle ORM, Better Auth (Google OAuth, invite-only), TailwindCSS v4.
+Import alias: `~/*` → `./app/*`.
 
-## Commands
+### 📂 Architecture
 
-```bash
-pnpm run dev            # HMR dev server on :5173
-pnpm run build          # production build → build/client + build/server
-pnpm run start          # serve production build
-pnpm run typecheck      # react-router typegen → tsc (order matters)
-pnpm run test           # run all tests (vitest run)
-pnpm run test:watch     # run tests in watch mode
-pnpm run migrate        # run database migration script (uses --env-file=.env)
-pnpm run db:studio      # open Drizzle Kit studio
-pnpm run format         # format all files with Prettier
-```
+- `app/features/[feature-name]/`: Clean Architecture. Presentation separated from Logic.
+  - `queries.server.ts` / `mutations.server.ts`: Server-only data operations.
+  - `components/`, `hooks/`, `constants.ts`
+  - `index.ts`: Barrel export for components + constants ONLY.
+- `app/shared/`: Global design system, utils, hooks, types.
+- `app/server/`: Auth setup, DB schema, global server-helpers.
+- `app/routes/`: Route modules (centralized via `routes.ts`).
 
-## Structure Layout & Naming Conventions
+### 🏷 Naming
 
-Module/Feature separation with Clean Architecture (Presentation separated from Business Logic). Import alias: `~/*` → `./app/*`.
+1. UI Components / Routes / Hooks: kebab-case (e.g., `business-card.tsx`, `use-theme.ts`).
+2. Server files: Suffix `.server.ts`.
 
-### 📂 Directory Layout
+### ❌ Architectural Constraints (STRICT)
 
-```
-app/
-  features/[feature-name]/           # Each domain/feature is a separate folder
-    components/                      # Feature UI components → @ui works here
-    hooks/                           # Custom hooks (state, validation, fetch) → @logic works here
-  shared/                            # Shared code across the project
-    components/                      # Design system (atoms, molecules, organisms) → @ui works here
-    icons/                           # SVG icon components
-    hooks/                           # Shared hooks (theme, click-outside, keyboard nav)
-    layouts/                         # App shell (sidebar, breadcrumbs)
-    constants/                       # Shared constants (barrel export)
-    types/                           # Shared types (barrel export)
-    utils/                           # Shared utilities (barrel export)
-  server/                            # Server-only code → @logic works here
-    auth/                            # Better Auth setup + session guard
-    database/                        # Drizzle ORM schema + query modules per domain
-    http/                            # CSRF, request validation helpers
-  routes/                            # Route modules (self-contained: loader + action + meta + component)
-    routes.ts                        # Central route config
-    *.tsx / *.ts                     # Page routes + API endpoints
-tests/                               # Mirror source structure (features/, shared/)
-```
+- **No Logic in UI**: Components only receive data via props or hooks. No direct `fetch()` or `db.select()`.
+- **No cross-feature imports**: Features must not import from each other. Move to `shared/` if needed.
+- **No server code in client**: Use `import type` when client components need types from `*.server.ts`.
+- **No standalone `types.ts` in features**: Domain/Query types live inside `queries.server.ts` or `mutations.server.ts` using `AwaitedReturn`.
+- **No helper definitions inside component files**.
 
-### 🏷 Naming Conventions
+## Query & Mutation Patterns
 
-1. **UI Components:** kebab-case (e.g. `business-card.tsx`, `filter-bar.tsx`)
-2. **Custom Hooks:** `use` prefix + kebab-case (e.g. `use-click-outside.ts`, `use-theme.ts`)
-3. **Logic/Service/Types/Constants files:** kebab-case + `.ts` (e.g. `businesses.server.ts`, `business.ts`, `businesses.constant.ts`)
-4. **Route modules:** kebab-case, `.` separates params (e.g. `businesses.$id.tsx`, `api.businesses.$id.notes.ts`)
-5. **Server files:** suffix `.server.ts` — only import from route modules or other server files
+- **Strict ID Typing**: All ID params in queries/mutations MUST be `number`. The caller (route/action) is responsible for parsing via `parseId()`.
+- **No `SELECT *`**: Always define explicit column schemas at the module level and select only needed columns.
+- **Export Result Types**: Always export query/mutation return types using `AwaitedReturn<typeof fn>`.
 
-### ❌ Architectural Constraints
+## Core Business Rules
 
-- **No Logic in UI:** Components in `components/` only receive data from props or custom hooks. Never write `fetch()`, `db.select()` directly in components.
-- **No cross-feature imports:** Files in `app/features/dashboard/` must not import directly from `app/features/business-detail/`. If shared → move to `app/shared/` or pass through route loader.
-- **No server code in client:** `*.server.ts` files are only imported from route modules or other server files.
-- **Helper functions:** Never define helpers inside component files. Shared helpers → `app/shared/utils/`. Server code → `app/server/`. Constants → `app/shared/constants/`. Types → `app/shared/types/`.
+- **Status Pipeline**: new → approached → contacted → qualified → rejected. (Optimistic UI required).
+- **Notes**: Supports soft-delete (`deleted_at`). PATCH/DELETE must enforce author ownership.
+- **Zalo Integration**: Phone numbers must be formatted from `098...` to `8498...` before opening `https://zalo.me/p/...`.
+- **Navigation**: Use `ROUTES.<route>.path` or `buildPath()`, never hardcode URLs.
 
-### 📦 Import & Export Conventions
+## Critical Gotchas & Workarounds
 
-- **Named imports** — no `import * as React`. No unnecessary `forwardRef` on presentational leaf components.
-- **Barrel exports** at each feature's `components/index.ts`, `hooks/index.ts`, and `shared/*/index.ts`. Server modules imported directly by path (no barrel).
-- **Route types**: Route modules use types from `./+types/<filename>` (React Router 7 typegen).
-- **ROUTES constant**: Use `ROUTES.<route>.path` and `ROUTES.<route>.buildPath()` for all navigation instead of hardcoded strings.
-
-## Features
-
-- **Dashboard filter**: Search input + status select + ward multi-select (grouped by district via `GroupedSelectCheckbox`) + "Lọc" submit button. Filters are URL-driven (`?search=&status=&wardId=&page=`), form uses local state and pushes to URL on submit only. Server-side pagination via `page`/`limit` params.
-- **Status pipeline**: new → approached → contacted → qualified → rejected. Updated via `<StatusCard>` with optimistic UI. Terminal when rejected.
-- **Notes per business**: Multiple notes with author + relative timestamps. Enter-to-submit. Supports create, update, and soft delete. PATCH/DELETE enforce ownership (only note author can edit/delete). Returns full list after insert for instant sync.
-- **Zalo button**: Formats VN phone (098… → 8498…) and opens `https://zalo.me/p/…` in new tab.
-- **Invite management**: `/invite` route provides web UI to add emails to the invite list (previously CLI-only via `pnpm invite`).
-- **Ward-based filtering**: Districts and wards loaded in dashboard loader. `BusinessFilter` supports `wardId` (single or multi-select). `groupDistrictsWithWards` utility groups query results for the `GroupedSelectCheckbox` component.
-
-## Database schema (Drizzle ORM)
-
-Schema defined in `app/server/database/schema.server.ts`. Query modules in `app/server/database/*.server.ts`.
-
-| Table / View              | Notes                                                                         |
-| ------------------------- | ----------------------------------------------------------------------------- |
-| `user`                    | Better Auth — id, name, email, emailVerified, image, createdAt, updatedAt     |
-| `session`                 | Better Auth — id, expiresAt, token, userId (FK → user), ipAddress, userAgent  |
-| `account`                 | Better Auth — OAuth accounts with tokens                                      |
-| `verification`            | Better Auth — email verification tokens                                       |
-| `districts`               | id (serial PK), name (unique)                                                 |
-| `wards`                   | id (serial PK), name, district_id (FK → districts), unique(name, district_id) |
-| `businesses`              | Scraped business data + status + ward_id (FK → wards) + is_corrected          |
-| `scrape_runs`             | Scrape job tracking — keyword, counts, duration, errors, status               |
-| `business_notes`          | business_id FK, content, created_by, created_at, deleted_at (soft delete)     |
-| `user_invites`            | email (unique) + invited_at                                                   |
-| `v_businesses_classified` | Read-only SQL view joining businesses with wards + districts                  |
-
-## Testing
-
-- **Framework**: Vitest + @testing-library/react + @testing-library/jest-dom + jsdom
-- **Config**: `vitest.config.ts` — jsdom environment, globals enabled, CSS enabled, v8 coverage
-- **Setup**: `tests/setup.ts` — imports jest-dom matchers, mocks `scrollIntoView`
-- **Structure**: Tests mirror source structure under `tests/` (features/, shared/)
-- **Run**: `pnpm run test` (single run) or `pnpm run test:watch` (watch mode)
-- **Coverage**: `@vitest/coverage-v8` provider
-
-## CI/CD
-
-- **GitHub Actions**: `.github/workflows/docker-publish.yml`
-- **Pipeline**: Test + typecheck job → Docker build + push to GHCR on push to master
-- **Docker**: Multi-stage Node 22 Alpine build with pnpm, runs `react-router-serve` on port 3000
-- **Tags**: branch name, semver, commit SHA, `latest`
-
-## Gotchas
-
-- `typecheck` runs `react-router typegen` first, which generates `.react-router/types/`. If typecheck fails, try running `pnpm run dev` once to populate the types.
-- `*.server.ts` files are server-only. Don't import them in client components. Import directly from sub-paths (e.g. `~/server/database/businesses.server`).
-- Auth uses React Router 7 middleware (`export const middleware`) with `createContext`. Loaders/actions access the session via `context.get(sessionContext)`, not from loader args.
-- PostgreSQL `numeric`/`float` columns may arrive as strings from the Neon driver — use `Number()` before `.toFixed()`.
-- `<fetcher.Form method="patch">` sends URL-encoded data, not JSON. Use `request.formData()` in actions.
-- **`tsx` does NOT auto-load `.env`**: Scripts run via `npx tsx` (like `pnpm invite`, `pnpm migrate`) must include `--env-file=.env` flag. Vite/React Router dev server loads `.env` automatically.
-- `FilterBar` uses local state for form fields — only pushes to URL search params on submit (the "Lọc" button). This means external URL manipulation (e.g. back/forward) won't sync with the form until submit.
-- Notes use soft delete (`deleted_at` timestamp). Queries should filter out soft-deleted notes. PATCH/DELETE enforce ownership — only the note author can modify.
-- Drizzle schema uses `casing: "camelCase"` — Postgres columns are snake_case but accessed as camelCase in TypeScript.
-- `.env` must contain `NEON_DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`.
-
-## Rate limiting
-
-Rate limiting is not implemented in application code. Recommended approaches:
-
-- **Cloudflare**: Use WAF rate limiting rules (preferred for production)
-- **Nginx**: `limit_req_zone` + `limit_req` directives (if self-hosted)
-- Apply to mutation endpoints: `/api/businesses/:id/notes`, `/api/businesses/:id/status`, `/invite`
+- **Typegen**: Run `pnpm run dev` first if `.react-router/types/` is missing during typecheck.
+- **Auth**: Access session via `context.get(sessionContext)` inside loaders/actions (React Router 7 middleware), NOT from loader args.
+- **Data Types**: Neon/PostgreSQL `numeric` columns return as strings. Wrap in `Number()` before mutations/formatting.
+- **Forms**: `<fetcher.Form method="patch">` sends URL-encoded data. Use `request.formData()`.
+- **Scripts**: External TSX scripts (migrations, seeds) do NOT auto-load `.env`. Must append `--env-file=.env`.

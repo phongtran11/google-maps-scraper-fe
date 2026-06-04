@@ -1,4 +1,5 @@
 export { BarChart } from "./bar-chart";
+export { Building } from "./building";
 export { CheckIcon } from "./check";
 export { ChevronDownIcon } from "./chevron-down";
 export { ChevronLeftIcon } from "./chevron-left";

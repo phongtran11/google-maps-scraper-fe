@@ -11,6 +11,10 @@ vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 
+vi.mock("~/shared/layouts/nav.constant", () => ({
+  NAV_ITEMS: [{ icon: "🏠", label: "Trang Quản Trị", to: "/" }],
+}));
+
 describe("AppLayoutTemplate", () => {
   const currentUser = { email: "test@example.com", image: null, name: "Test User" };
   const onSignOut = vi.fn();
@@ -20,7 +24,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
@@ -41,7 +44,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={breadcrumbs}
-          currentPath="/businesses/123"
           currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
@@ -64,7 +66,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={breadcrumbs}
-          currentPath="/businesses/123"
           currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
@@ -83,7 +84,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
@@ -100,7 +100,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị", to: "/" }, { label: "Chi tiết" }]}
-          currentPath="/businesses/123"
           currentUser={currentUser}
           isRoot={false}
           onSignOut={onSignOut}
@@ -117,7 +116,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
@@ -135,7 +133,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={userWithImage}
           isRoot
           onSignOut={onSignOut}
@@ -153,7 +150,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}
@@ -172,7 +168,6 @@ describe("AppLayoutTemplate", () => {
       <MemoryRouter>
         <AppLayoutTemplate
           breadcrumbs={[{ label: "Trang Quản Trị" }]}
-          currentPath="/"
           currentUser={currentUser}
           isRoot
           onSignOut={onSignOut}

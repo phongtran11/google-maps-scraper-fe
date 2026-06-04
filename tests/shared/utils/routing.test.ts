@@ -1,78 +1,93 @@
 import { describe, expect, it } from "vitest";
 
-import type { RouteMatch } from "~/shared/types";
+import type { RouteHandle, RouteMatch } from "~/shared/types";
 
-import { getBreadcrumbs } from "~/shared/utils/routing";
+import { collectBreadcrumbs } from "~/shared/utils/routing";
 
-describe("getBreadcrumbs", () => {
-  it("returns single dashboard crumb for root path", () => {
-    const result = getBreadcrumbs("/", []);
-    expect(result).toEqual([{ label: "Trang Quản Trị" }]);
+function makeMatch(overrides: Partial<RouteMatch> = {}): RouteMatch {
+  return {
+    handle: undefined,
+    id: "routes/test",
+    loaderData: undefined,
+    params: {},
+    pathname: "/",
+    ...overrides,
+  };
+}
+
+describe("collectBreadcrumbs", () => {
+  it("returns empty array when no matches have breadcrumb handle", () => {
+    const matches: RouteMatch[] = [makeMatch()];
+    expect(collectBreadcrumbs(matches)).toEqual([]);
   });
 
-  it("returns dashboard + business name for business detail path", () => {
+  it("collects breadcrumbs from matches with handle.breadcrumb", () => {
+    const handle: RouteHandle = { breadcrumb: () => "Trang Quản Trị" };
+    const matches: RouteMatch[] = [makeMatch({ handle, pathname: "/" })];
+    expect(collectBreadcrumbs(matches)).toEqual([{ label: "Trang Quản Trị" }]);
+  });
+
+  it("resolves dynamic label from loader data", () => {
+    const handle: RouteHandle = {
+      breadcrumb: (data) => {
+        const d = data as { business?: { businessName?: string } };
+        return d.business?.businessName ?? "Chi Tiết";
+      },
+    };
     const matches: RouteMatch[] = [
-      {
-        id: "routes/businesses.$id",
+      makeMatch({
+        handle: { breadcrumb: () => "Trang Quản Trị" },
+        pathname: "/",
+      }),
+      makeMatch({
+        handle,
         loaderData: { business: { businessName: "Cafe ABC" } },
-        params: { id: "123" },
         pathname: "/businesses/123",
-      },
+      }),
     ];
-    const result = getBreadcrumbs("/businesses/123", matches);
-    expect(result).toEqual([{ label: "Trang Quản Trị", to: "/" }, { label: "Cafe ABC" }]);
-  });
-
-  it("returns fallback label when business name is missing", () => {
-    const matches: RouteMatch[] = [
-      {
-        id: "routes/businesses.$id",
-        loaderData: { business: {} },
-        params: { id: "123" },
-        pathname: "/businesses/123",
-      },
-    ];
-    const result = getBreadcrumbs("/businesses/123", matches);
-    expect(result).toEqual([
+    expect(collectBreadcrumbs(matches)).toEqual([
       { label: "Trang Quản Trị", to: "/" },
-      { label: "Chi tiết doanh nghiệp" },
+      { label: "Cafe ABC" },
     ]);
   });
 
-  it("returns fallback label when loaderData has no business", () => {
-    const matches: RouteMatch[] = [
-      {
-        id: "routes/businesses.$id",
-        loaderData: undefined,
-        params: { id: "123" },
-        pathname: "/businesses/123",
+  it("uses fallback when loader data is missing", () => {
+    const handle: RouteHandle = {
+      breadcrumb: (data) => {
+        const d = (data ?? {}) as { business?: { businessName?: string } };
+        return d.business?.businessName ?? "Chi Tiết";
       },
+    };
+    const matches: RouteMatch[] = [
+      makeMatch({
+        handle: { breadcrumb: () => "Trang Quản Trị" },
+        pathname: "/",
+      }),
+      makeMatch({ handle, pathname: "/businesses/123" }),
     ];
-    const result = getBreadcrumbs("/businesses/123", matches);
-    expect(result).toEqual([
+    expect(collectBreadcrumbs(matches)).toEqual([
       { label: "Trang Quản Trị", to: "/" },
-      { label: "Chi tiết doanh nghiệp" },
+      { label: "Chi Tiết" },
     ]);
   });
 
-  it("returns fallback when matching route id is not found", () => {
+  it("last breadcrumb has no link (current page)", () => {
     const matches: RouteMatch[] = [
-      {
-        id: "routes/other",
-        loaderData: null,
-        params: {},
-        pathname: "/businesses/123",
-      },
+      makeMatch({ handle: { breadcrumb: () => "A" }, pathname: "/a" }),
+      makeMatch({ handle: { breadcrumb: () => "B" }, pathname: "/a/b" }),
+      makeMatch({ handle: { breadcrumb: () => "C" }, pathname: "/a/b/c" }),
     ];
-    const result = getBreadcrumbs("/businesses/123", matches);
-    expect(result).toEqual([
-      { label: "Trang Quản Trị", to: "/" },
-      { label: "Chi tiết doanh nghiệp" },
-    ]);
+    const result = collectBreadcrumbs(matches);
+    expect(result[0]).toHaveProperty("to", "/a");
+    expect(result[1]).toHaveProperty("to", "/a/b");
+    expect(result[2]).not.toHaveProperty("to");
   });
 
-  it('returns generic "Chi tiết" for unknown non-root paths', () => {
-    const result = getBreadcrumbs("/some/other/path", []);
-    expect(result).toEqual([{ label: "Trang Quản Trị", to: "/" }, { label: "Chi tiết" }]);
+  it("skips matches without breadcrumb handle", () => {
+    const matches: RouteMatch[] = [
+      makeMatch({ pathname: "/" }), // no handle — skipped
+      makeMatch({ handle: { breadcrumb: () => "Page" }, pathname: "/page" }),
+    ];
+    expect(collectBreadcrumbs(matches)).toEqual([{ label: "Page" }]);
   });
 });

@@ -5,8 +5,8 @@ import type { DataTableColumn } from "~/shared/components";
 import {
   Badge,
   Button,
-  ButtonLink,
   buttonBase,
+  ButtonLink,
   buttonVariants,
   Tooltip,
 } from "~/shared/components";
@@ -14,7 +14,7 @@ import { ROUTES } from "~/shared/constants";
 import { ExternalLinkIcon } from "~/shared/icons";
 import { cn, formatZaloPhone } from "~/shared/utils";
 
-import type { GetBusinessesResult } from "../../types";
+import type { GetBusinessesResult } from "../../queries.server";
 
 import { STATUS_MAP } from "../../constants";
 
@@ -91,7 +91,7 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
           )}
           <a
             className={cn(buttonBase, buttonVariants.size.sm, buttonVariants.variant.outline)}
-            href={b.mapUrl}
+            href={b.mapsUrl}
             rel="noopener noreferrer"
             target="_blank"
           >

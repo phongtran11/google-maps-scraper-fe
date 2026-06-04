@@ -1,3 +1,8 @@
+type RouteConfig = {
+  buildPath?: (...args: (number | string)[]) => string;
+  path: string;
+};
+
 export const ROUTES = {
   api: {
     auth: {
@@ -15,23 +20,20 @@ export const ROUTES = {
       path: "/api/businesses/:id/status",
     },
   },
-  businessDetail: {
-    buildPath: (id: number | string) => `/businesses/${id}`,
-    label: (businessName?: string) => businessName || "Chi tiết doanh nghiệp",
-    matchId: "routes/businesses.$id",
-    path: "/businesses/:id",
-    pattern: /^\/businesses\/[^/]+$/,
-  },
   dashboard: {
-    label: "Trang Quản Trị",
     path: "/",
   },
+  businesses: {
+    path: "/businesses",
+  },
+  businessDetail: {
+    buildPath: (id: number | string) => `/businesses/${id}`,
+    path: "/businesses/:id",
+  },
   invite: {
-    label: "Mời Thành Viên",
     path: "/invite",
   },
   login: {
-    label: "Đăng nhập",
     path: "/login",
   },
-} as const;
+} as const satisfies Record<string, Record<string, RouteConfig> | RouteConfig>;

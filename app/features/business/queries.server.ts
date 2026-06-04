@@ -1,81 +1,109 @@
 import { and, desc, eq, ilike, inArray, isNull, sql } from "drizzle-orm";
 
+import type { AwaitedReturn } from "~/shared/types";
+
 import { db } from "~/server/database/db.server";
 import { businesses, businessNotes } from "~/server/database/schema.server";
-import { parseId } from "~/shared/utils";
 
-import type { BusinessFilter } from "./types";
+// ── Types ──────────────────────────────────────────────────────────
 
-import { REGIONS, STATUS_MAP } from "./constants";
+export type BusinessRow = typeof businesses.$inferSelect;
 
-export type GetBusinessesResult = Awaited<ReturnType<typeof getBusinesses>>[number];
+export type CheckBusinessExistsResult = AwaitedReturn<typeof checkBusinessExists>;
+export type GetBusinessByIdResult = AwaitedReturn<typeof getBusinessById>;
+export type GetBusinessesCountResult = AwaitedReturn<typeof getBusinessesCount>;
+export type GetBusinessesResult = AwaitedReturn<typeof getBusinesses>[number];
+export type GetBusinessNoteResult = AwaitedReturn<typeof getBusinessNote>;
+export type GetBusinessNotesResult = AwaitedReturn<typeof getBusinessNotes>[number];
 
-export function buildConditions(filter: BusinessFilter) {
-  const conditions = [];
+/** Shape returned by the note fetcher (Form + loader). */
+export type NoteFetcherData = { error?: string; message?: string; notes?: NoteRow[] };
 
-  if (filter.region && REGIONS[filter.region as keyof typeof REGIONS]) {
-    conditions.push(eq(businesses.region, filter.region));
-  }
-  if (filter.search) {
-    conditions.push(ilike(businesses.businessName, `%${filter.search}%`));
-  }
-  if (filter.status && STATUS_MAP[filter.status]) {
-    conditions.push(eq(businesses.status, filter.status));
-  }
-  if (filter.wardIds?.length) {
-    conditions.push(inArray(businesses.wardId, filter.wardIds));
-  }
+/** Single note row — matches the columns returned by queries & mutations. */
+export type NoteRow = GetBusinessNotesResult;
 
-  return conditions;
-}
+// ── Select Schemas ─────────────────────────────────────────────────
 
-export async function checkBusinessExists(id: number | string): Promise<boolean> {
-  const numId = parseId(id);
-  if (numId === null) return false;
+/** Columns needed by BusinessTable (dashboard + businesses list) */
+const businessListColumns = {
+  id: businesses.id,
+  businessName: businesses.businessName,
+  phone: businesses.phone,
+  address: businesses.address,
+  status: businesses.status,
+  mapsUrl: businesses.mapsUrl,
+} as const;
 
+/** Columns needed by BusinessDetail page (detail + sidebar + status) */
+const businessDetailColumns = {
+  id: businesses.id,
+  businessName: businesses.businessName,
+  address: businesses.address,
+  phone: businesses.phone,
+  website: businesses.website,
+  region: businesses.region,
+  mapsUrl: businesses.mapsUrl,
+  status: businesses.status,
+} as const;
+
+/** Columns needed by NoteItem (notes section) */
+const noteColumns = {
+  id: businessNotes.id,
+  businessId: businessNotes.businessId,
+  content: businessNotes.content,
+  createdAt: businessNotes.createdAt,
+  createdBy: businessNotes.createdBy,
+  updatedAt: businessNotes.updatedAt,
+} as const;
+
+// ── Queries ──────────────────────────────────────────────────────────
+
+export async function checkBusinessExists(id: number): Promise<boolean> {
   const result = await db
     .select({ id: businesses.id })
     .from(businesses)
-    .where(eq(businesses.id, numId))
+    .where(eq(businesses.id, id))
     .limit(1);
 
   return result.length > 0;
 }
 
 export async function getBusinessById(id: number) {
-  const result = await db.select().from(businesses).where(eq(businesses.id, id)).limit(1);
+  const result = await db
+    .select(businessDetailColumns)
+    .from(businesses)
+    .where(eq(businesses.id, id))
+    .limit(1);
 
   return result.length > 0 ? result[0] : null;
 }
 
 export async function getBusinesses({
-  limit = 20,
-  offset = 0,
-  region = "",
-  search = "",
-  status = "",
-  wardIds = [],
-}: BusinessFilter) {
+  limit,
+  offset,
+  region,
+  search,
+  status,
+  wardIds,
+}: {
+  limit: number;
+  offset: number;
+  region?: string;
+  search?: string;
+  status?: string;
+  wardIds?: number[];
+}) {
   const conditions = buildConditions({ region, search, status, wardIds });
 
   const query = db
-    .select({
-      address: businesses.address,
-      businessName: businesses.businessName,
-      id: businesses.id,
-      mapUrl: businesses.mapsUrl,
-      rating: businesses.rating,
-      region: businesses.region,
-      status: businesses.status,
-      phone: businesses.phone,
-    })
+    .select(businessListColumns)
     .from(businesses)
     .orderBy(desc(businesses.imageReviewCount))
     .limit(limit)
     .offset(offset);
 
-  if (conditions.length > 0) {
-    query.where(and(...conditions));
+  if (conditions) {
+    query.where(conditions);
   }
 
   const result = await query;
@@ -83,44 +111,38 @@ export async function getBusinesses({
 }
 
 export async function getBusinessesCount({
-  region = "",
-  search = "",
-  status = "",
-  wardIds = [],
-}: BusinessFilter): Promise<number> {
-  const hasFilters = !!(region || search || status || wardIds.length);
+  region,
+  search,
+  status,
+  wardIds,
+}: {
+  region?: string;
+  search?: string;
+  status?: string;
+  wardIds?: number[];
+} = {}): Promise<number> {
+  const conditions = buildConditions({ region, search, status, wardIds });
 
-  if (!hasFilters) {
+  if (!conditions) {
     const result = await db.execute<{ count: string }>(
       sql<string>`SELECT reltuples::bigint AS count FROM pg_class WHERE relname = 'businesses'`,
     );
     return Number(result.rows[0]?.count) || 0;
   }
 
-  const conditions = buildConditions({ region, search, status, wardIds });
   const result = await db
     .select({ count: sql<number>`count(*)` })
     .from(businesses)
-    .where(conditions.length > 0 ? and(...conditions) : undefined);
+    .where(conditions);
 
   return result[0]?.count ?? 0;
 }
 
-export async function getBusinessNote(noteId: number | string) {
-  const id = parseId(noteId);
-  if (id === null) return null;
+export async function getBusinessNote(noteId: number) {
   const result = await db
-    .select({
-      businessId: businessNotes.businessId,
-      content: businessNotes.content,
-      createdAt: businessNotes.createdAt,
-      createdBy: businessNotes.createdBy,
-      deletedAt: businessNotes.deletedAt,
-      id: businessNotes.id,
-      updatedAt: businessNotes.updatedAt,
-    })
+    .select(noteColumns)
     .from(businessNotes)
-    .where(and(eq(businessNotes.id, id), isNull(businessNotes.deletedAt)))
+    .where(and(eq(businessNotes.id, noteId), isNull(businessNotes.deletedAt)))
     .limit(1);
 
   return result.length > 0 ? result[0] : null;
@@ -128,15 +150,7 @@ export async function getBusinessNote(noteId: number | string) {
 
 export async function getBusinessNotes(businessId: number, limit = 50, offset = 0) {
   const result = await db
-    .select({
-      businessId: businessNotes.businessId,
-      content: businessNotes.content,
-      createdAt: businessNotes.createdAt,
-      createdBy: businessNotes.createdBy,
-      deletedAt: businessNotes.deletedAt,
-      id: businessNotes.id,
-      updatedAt: businessNotes.updatedAt,
-    })
+    .select(noteColumns)
     .from(businessNotes)
     .where(and(eq(businessNotes.businessId, businessId), isNull(businessNotes.deletedAt)))
     .orderBy(desc(businessNotes.createdAt))
@@ -144,4 +158,27 @@ export async function getBusinessNotes(businessId: number, limit = 50, offset = 
     .offset(offset);
 
   return result;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function buildConditions({
+  region,
+  search,
+  status,
+  wardIds,
+}: {
+  region?: string;
+  search?: string;
+  status?: string;
+  wardIds?: number[];
+}): ReturnType<typeof and> | undefined {
+  const conditions = [];
+
+  if (region) conditions.push(eq(businesses.region, region));
+  if (search) conditions.push(ilike(businesses.businessName, `%${search}%`));
+  if (status) conditions.push(eq(businesses.status, status));
+  if (wardIds?.length) conditions.push(inArray(businesses.wardId, wardIds));
+
+  return conditions.length > 0 ? and(...conditions) : undefined;
 }

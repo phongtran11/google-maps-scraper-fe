@@ -25,10 +25,10 @@ describe("SidebarNavItem", () => {
     expect(link).toHaveAttribute("href", "/dashboard");
   });
 
-  it("applies active styles when isActive is true", () => {
+  it("applies active styles when on matching route", () => {
     render(
-      <MemoryRouter>
-        <SidebarNavItem icon={<span>✓</span>} isActive label="Active" to="/" />
+      <MemoryRouter initialEntries={["/dashboard"]}>
+        <SidebarNavItem icon={<span>✓</span>} label="Active" to="/dashboard" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Active/ });
@@ -36,36 +36,15 @@ describe("SidebarNavItem", () => {
     expect(link.className).toContain("text-primary");
   });
 
-  it("applies normal styles when not active", () => {
+  it("applies normal styles when on non-matching route", () => {
     render(
-      <MemoryRouter>
-        <SidebarNavItem icon={<span>○</span>} label="Normal" to="/" />
+      <MemoryRouter initialEntries={["/other"]}>
+        <SidebarNavItem icon={<span>○</span>} label="Normal" to="/dashboard" />
       </MemoryRouter>,
     );
     const link = screen.getByRole("link", { name: /Normal/ });
-    expect(link.className).toContain("text-muted-foreground");
     expect(link.className).not.toContain("bg-primary/10");
-  });
-
-  it("renders as div with upcoming badge when isUpcoming", () => {
-    render(
-      <MemoryRouter>
-        <SidebarNavItem icon={<span>🔜</span>} isUpcoming label="Tính năng mới" to="/soon" />
-      </MemoryRouter>,
-    );
-    expect(screen.getByText("Tính năng mới")).toBeInTheDocument();
-    expect(screen.getByText("Sắp có")).toBeInTheDocument();
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
-  });
-
-  it("applies upcoming styles when isUpcoming", () => {
-    render(
-      <MemoryRouter>
-        <SidebarNavItem icon={<span>🔜</span>} isUpcoming label="Upcoming" to="/" />
-      </MemoryRouter>,
-    );
-    const container = screen.getByText("Upcoming").closest("div")?.parentElement;
-    expect(container?.className).toContain("text-muted-foreground/45");
+    expect(link.className).not.toContain("text-primary");
   });
 
   it("calls onClick when clicked", async () => {

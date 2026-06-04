@@ -1,8 +1,10 @@
 import { useRouteLoaderData } from "react-router";
 
+import type { AppLayoutData } from "~/shared/types";
+
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 
-import type { NoteRow } from "../../../types";
+import type { GetBusinessNotesResult } from "../../../queries.server";
 
 import { useNotesManager } from "../../../hooks/use-notes-manager";
 import { NoteInput } from "./note-input";
@@ -10,7 +12,7 @@ import { NoteItem } from "./note-item";
 
 interface NotesSectionProps {
   businessId: number;
-  initialNotes: NoteRow[];
+  initialNotes: GetBusinessNotesResult[];
 }
 
 export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
@@ -19,7 +21,6 @@ export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
     initialNotes,
   });
 
-  type AppLayoutData = { user: { email: string; image?: null | string; name: string } };
   const appLayoutData = useRouteLoaderData<AppLayoutData>("routes/app-layout");
   const currentUserEmail = appLayoutData?.user?.email;
 

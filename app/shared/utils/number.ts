@@ -72,7 +72,7 @@ export function getPageNumbers(currentPage: number, totalPages: number): (number
  * Safely parses an ID (string or number) into a valid number.
  * Returns null if the input is undefined, null, empty, or results in NaN.
  */
-export function parseId(id: number | string | undefined | null): null | number {
+export function parseId(id: null | number | string | undefined): null | number {
   if (id == null || id === "") return null;
   const num = typeof id === "string" ? Number.parseInt(id, 10) : id;
   if (Number.isNaN(num)) return null;

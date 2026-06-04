@@ -9,13 +9,21 @@ vi.mock("~/shared/hooks/use-theme", () => ({
   useTheme: () => ({ theme: "light", toggleTheme: vi.fn() }),
 }));
 
+vi.mock("~/shared/layouts/nav.constant", () => ({
+  NAV_ITEMS: [
+    { icon: "🏠", label: "Trang Quản Trị", to: "/" },
+    { icon: "🏢", label: "Doanh Nghiệp", to: "/businesses" },
+    { icon: "👤", label: "Mời Thành Viên", to: "/invite" },
+  ],
+}));
+
 describe("AdminSidebar", () => {
   const user = { email: "test@example.com", image: null, name: "Test User" };
 
   it("renders brand link", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     expect(screen.getByText("Quản lý Khách Hàng")).toBeInTheDocument();
@@ -24,7 +32,7 @@ describe("AdminSidebar", () => {
   it("renders dashboard nav item", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     expect(screen.getByText("Trang Quản Trị")).toBeInTheDocument();
@@ -33,26 +41,16 @@ describe("AdminSidebar", () => {
   it("renders invite nav item", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     expect(screen.getByText("Mời Thành Viên")).toBeInTheDocument();
   });
 
-  it("highlights dashboard when on root path", () => {
+  it("highlight active nav item on matching path", () => {
     render(
-      <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
-      </MemoryRouter>,
-    );
-    const dashboardLink = screen.getByRole("link", { name: /Trang Quản Trị/ });
-    expect(dashboardLink.className).toContain("bg-primary/10");
-  });
-
-  it("highlights dashboard when on business detail path", () => {
-    render(
-      <MemoryRouter>
-        <AdminSidebar currentPath="/businesses/123" onSignOut={vi.fn()} user={user} />
+      <MemoryRouter initialEntries={["/"]}>
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     const dashboardLink = screen.getByRole("link", { name: /Trang Quản Trị/ });
@@ -62,7 +60,7 @@ describe("AdminSidebar", () => {
   it("does not render close button when onClose is not provided", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     expect(screen.queryByRole("button", { name: /close/i })).not.toBeInTheDocument();
@@ -71,7 +69,7 @@ describe("AdminSidebar", () => {
   it("renders close button when onClose is provided", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onClose={vi.fn()} onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onClose={vi.fn()} onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     const closeButtons = screen.getAllByRole("button");
@@ -84,7 +82,7 @@ describe("AdminSidebar", () => {
     const userEvt = userEvent.setup();
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onClose={onClose} onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onClose={onClose} onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     const closeButtons = screen.getAllByRole("button");
@@ -98,7 +96,7 @@ describe("AdminSidebar", () => {
   it("renders user profile section", () => {
     render(
       <MemoryRouter>
-        <AdminSidebar currentPath="/" onSignOut={vi.fn()} user={user} />
+        <AdminSidebar onSignOut={vi.fn()} user={user} />
       </MemoryRouter>,
     );
     expect(screen.getByText("Test User")).toBeInTheDocument();

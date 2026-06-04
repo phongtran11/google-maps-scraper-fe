@@ -13,6 +13,7 @@ import {
 import { sessionContext } from "~/server/auth/require-auth.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import { validateMethod } from "~/server/http/request.server";
+import { parseId } from "~/shared/utils";
 
 const MAX_NOTE_LENGTH = 5000;
 
@@ -23,7 +24,9 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
   const session = context.get(sessionContext);
   const userEmail = session.user.email;
 
-  if (!params.id) {
+  const businessId = parseId(params.id);
+
+  if (!businessId) {
     return Response.json(
       {
         code: "business_id_required",
@@ -35,7 +38,7 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
   }
 
   try {
-    const businessExists = await checkBusinessExists(params.id);
+    const businessExists = await checkBusinessExists(businessId);
     if (!businessExists) {
       return Response.json(
         {
@@ -75,14 +78,14 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
         );
       }
 
-      await createBusinessNote(params.id, content, userEmail);
-      const notes = await getBusinessNotes(params.id);
+      await createBusinessNote(businessId, content, userEmail);
+      const notes = await getBusinessNotes(businessId);
       return Response.json({ note: notes[0], notes }, { headers: { "Cache-Control": "no-store" } });
     } else if (method === "PATCH") {
-      const noteId = formData.get("noteId")?.toString();
+      const noteId = parseId(formData.get("noteId")?.toString());
       const content = formData.get("content")?.toString()?.trim();
 
-      if (!noteId) {
+      if (noteId === null) {
         return Response.json(
           {
             code: "note_id_required",
@@ -141,9 +144,9 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
       await updateBusinessNote(noteId, content);
       return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
     } else if (method === "DELETE") {
-      const noteId = formData.get("noteId")?.toString();
+      const noteId = parseId(formData.get("noteId")?.toString());
 
-      if (!noteId) {
+      if (noteId === null) {
         return Response.json(
           {
             code: "note_id_required",
@@ -191,10 +194,11 @@ export async function action({ context, params, request }: ActionFunctionArgs) {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   try {
-    if (!params.id) {
+    const businessId = parseId(params.id);
+    if (!businessId) {
       return { notes: [] };
     }
-    const notes = await getBusinessNotes(params.id);
+    const notes = await getBusinessNotes(businessId);
     return Response.json(
       { notes },
       {

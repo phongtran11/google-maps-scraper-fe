@@ -1,12 +1,15 @@
+import type { useFetcher } from "react-router";
+
 import { useEffect, useState } from "react";
-import { useFetcher } from "react-router";
 
 import { Button, Textarea } from "~/shared/components";
+
+import type { NoteFetcherData } from "../../../queries.server";
 
 interface NoteInputProps {
   action: string;
   isSubmitting: boolean;
-  noteFetcher: ReturnType<typeof useFetcher>;
+  noteFetcher: ReturnType<typeof useFetcher<NoteFetcherData>>;
 }
 
 export function NoteInput({ action, isSubmitting, noteFetcher }: NoteInputProps) {

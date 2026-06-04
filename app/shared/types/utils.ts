@@ -11,8 +11,13 @@ export type GroupedDistrict = {
   name: string;
   wards: { id: number; name: string }[];
 };
+
+export interface RouteHandle {
+  breadcrumb?: (data: unknown) => string;
+}
+
 export type RouteMatch = {
-  handle?: unknown;
+  handle?: RouteHandle;
   id: string;
   loaderData: unknown;
   params: Record<string, string | undefined>;

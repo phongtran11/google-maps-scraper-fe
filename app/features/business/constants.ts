@@ -13,9 +13,9 @@ export const STATUS_MAP: Record<
     variant: "destructive" | "info" | "secondary" | "success" | "warning";
   }
 > = {
+  new: { label: "Mới", variant: "secondary" },
   approached: { label: "Đã tiếp cận", variant: "info" },
   contacted: { label: "Đã liên hệ", variant: "warning" },
-  new: { label: "Mới", variant: "secondary" },
   qualified: { label: "Tiềm năng", variant: "success" },
   rejected: { label: "Từ chối", variant: "destructive" },
 };

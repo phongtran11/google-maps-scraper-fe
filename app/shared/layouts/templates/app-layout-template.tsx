@@ -15,7 +15,6 @@ import { AdminSidebar } from "../organisms/admin-sidebar";
 export interface AppLayoutTemplateProps {
   breadcrumbs: BreadcrumbItem[];
   children: ReactNode;
-  currentPath: string;
   currentUser: {
     email: string;
     image: null | string;
@@ -28,7 +27,6 @@ export interface AppLayoutTemplateProps {
 export function AppLayoutTemplate({
   breadcrumbs,
   children,
-  currentPath,
   currentUser,
   isRoot,
   onSignOut,
@@ -48,7 +46,7 @@ export function AppLayoutTemplate({
     <div className="bg-background flex h-screen w-screen overflow-hidden">
       {/* Sidebar for Desktop */}
       <aside className="border-border bg-card text-card-foreground hidden shrink-0 border-r md:sticky md:top-0 md:flex md:h-screen md:w-64 md:flex-col">
-        <AdminSidebar currentPath={currentPath} onSignOut={onSignOut} user={currentUser} />
+        <AdminSidebar onSignOut={onSignOut} user={currentUser} />
       </aside>
 
       {/* Mobile Sidebar Drawer */}
@@ -75,7 +73,6 @@ export function AppLayoutTemplate({
           )}
         >
           <AdminSidebar
-            currentPath={currentPath}
             onClickItem={handleCloseMobile}
             onClose={handleCloseMobile}
             onSignOut={onSignOut}

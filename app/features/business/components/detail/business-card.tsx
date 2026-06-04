@@ -4,7 +4,7 @@ import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/s
 import { ROUTES } from "~/shared/constants";
 import { ExternalLinkIcon } from "~/shared/icons/external-link";
 
-import type { BusinessRow } from "../../types";
+import type { BusinessRow } from "../../queries.server";
 
 import { STATUS_MAP } from "../../constants";
 
