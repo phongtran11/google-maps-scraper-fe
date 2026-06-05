@@ -16,9 +16,6 @@ export type GetBusinessesResult = AwaitedReturn<typeof getBusinesses>[number];
 export type GetBusinessNoteResult = AwaitedReturn<typeof getBusinessNote>;
 export type GetBusinessNotesResult = AwaitedReturn<typeof getBusinessNotes>[number];
 
-/** Shape returned by the note fetcher (Form + loader). */
-export type NoteFetcherData = { error?: string; message?: string; notes?: NoteRow[] };
-
 /** Single note row — matches the columns returned by queries & mutations. */
 export type NoteRow = GetBusinessNotesResult;
 

@@ -15,86 +15,86 @@ import {
 // ── Better Auth Tables (camelCase columns in Postgres) ────────────────────────
 
 export const user = pgTable("user", {
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
-  id: text("id").primaryKey(),
   image: text("image"),
-  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
 });
 
 export const session = pgTable("session", {
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
   id: text("id").primaryKey(),
-  ipAddress: text("ip_address"),
-  token: text("token").notNull().unique(),
-  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
-  userAgent: text("user_agent"),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
 });
 
 export const account = pgTable("account", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
   accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
   accessTokenExpiresAt: timestamp("access_token_expires_at", {
     mode: "date",
     withTimezone: true,
   }),
-  accountId: text("account_id").notNull(),
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  id: text("id").primaryKey(),
-  idToken: text("id_token"),
-  password: text("password"),
-  providerId: text("provider_id").notNull(),
-  refreshToken: text("refresh_token"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
     mode: "date",
     withTimezone: true,
   }),
+  idToken: text("id_token"),
+  password: text("password"),
   scope: text("scope"),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
 });
 
 export const verification = pgTable("verification", {
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
-  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   value: text("value").notNull(),
+  expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
 });
 
 // ── Application Tables (snake_case columns in Postgres) ────────────────────────
 
 export const businesses = pgTable("businesses", {
-  address: text("address"),
+  id: serial("id").primaryKey(),
+  searchKeyword: text("search_keyword").notNull(),
   businessName: text("business_name"),
   category: text("category"),
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
-  id: serial("id").primaryKey(),
-  imageReviewCount: integer("image_review_count").default(0),
-  isCorrected: boolean("is_corrected").default(true),
-  mapsUrl: text("maps_url").notNull().unique(),
   phone: text("phone"),
-  rating: numeric("rating"),
+  website: text("website"),
+  address: text("address"),
   region: text("region"),
+  wardId: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
+  rating: numeric("rating"),
   reviewCount: integer("review_count"),
+  imageReviewCount: integer("image_review_count").default(0),
+  mapsUrl: text("maps_url").notNull().unique(),
   reviewImageUrls: text("review_image_urls")
     .array()
     .default(sql`'{}'::TEXT[]`),
-  scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  searchKeyword: text("search_keyword").notNull(),
   status: text("status").default("new").notNull(),
+  isCorrected: boolean("is_corrected").default(true),
+  scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  wardId: integer("ward_id").references(() => wards.id, { onDelete: "set null" }),
-  website: text("website"),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const districts = pgTable("districts", {
@@ -105,10 +105,10 @@ export const districts = pgTable("districts", {
 export const wards = pgTable(
   "wards",
   {
+    id: serial("id").primaryKey(),
     districtId: integer("district_id")
       .notNull()
       .references(() => districts.id, { onDelete: "cascade" }),
-    id: serial("id").primaryKey(),
     name: text("name").notNull(),
   },
   (table) => {
@@ -117,65 +117,65 @@ export const wards = pgTable(
 );
 
 export const scrapeRuns = pgTable("scrape_runs", {
-  durationMs: bigint("duration_ms", { mode: "bigint" })
-    .default(sql`0`)
-    .notNull(),
+  id: serial("id").primaryKey(),
+  keyword: text("keyword").notNull(),
+  status: text("status").default("running").notNull(),
+  totalScraped: integer("total_scraped").default(0).notNull(),
+  listingsFound: integer("listings_found").default(0).notNull(),
+  skippedDups: integer("skipped_dups").default(0).notNull(),
+  succeeded: integer("succeeded").default(0).notNull(),
+  failed: integer("failed").default(0).notNull(),
   errors: text("errors")
     .array()
     .default(sql`'{}'::TEXT[]`),
-  failed: integer("failed").default(0).notNull(),
-  finishedAt: timestamp("finished_at", { mode: "date", withTimezone: true }),
-  id: serial("id").primaryKey(),
-  keyword: text("keyword").notNull(),
-  listingsFound: integer("listings_found").default(0).notNull(),
-  skippedDups: integer("skipped_dups").default(0).notNull(),
+  durationMs: bigint("duration_ms", { mode: "bigint" })
+    .default(sql`0`)
+    .notNull(),
   startedAt: timestamp("started_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  status: text("status").default("running").notNull(),
-  succeeded: integer("succeeded").default(0).notNull(),
-  totalScraped: integer("total_scraped").default(0).notNull(),
+  finishedAt: timestamp("finished_at", { mode: "date", withTimezone: true }),
 });
 
 export const businessNotes = pgTable("business_notes", {
+  id: serial("id").primaryKey(),
   businessId: integer("business_id")
     .notNull()
     .references(() => businesses.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   createdBy: text("created_by").notNull(),
-  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
-  id: serial("id").primaryKey(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const userInvites = pgTable("user_invites", {
-  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
-  email: text("email").notNull().unique(),
   id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
   invitedAt: timestamp("invited_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const approachLists = pgTable("approach_lists", {
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-  createdBy: text("created_by").notNull(),
-  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const approachListItems = pgTable(
   "approach_list_items",
   {
-    addedAt: timestamp("added_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
-    businessId: integer("business_id")
-      .notNull()
-      .references(() => businesses.id, { onDelete: "cascade" }),
     id: serial("id").primaryKey(),
     listId: integer("list_id")
       .notNull()
       .references(() => approachLists.id, { onDelete: "cascade" }),
+    businessId: integer("business_id")
+      .notNull()
+      .references(() => businesses.id, { onDelete: "cascade" }),
     note: text("note"),
+    addedAt: timestamp("added_at", { mode: "date", withTimezone: true }).defaultNow().notNull(),
   },
   (table) => {
     return [unique("approach_list_items_list_business_unique").on(table.listId, table.businessId)];
@@ -185,24 +185,24 @@ export const approachListItems = pgTable(
 // ── Read-only View ────────────────────────────────────────────────────────────
 
 export const vBusinessesClassified = pgView("v_businesses_classified", {
-  address: text("address"),
+  id: integer("id"),
+  searchKeyword: text("search_keyword"),
   businessName: text("business_name"),
   category: text("category"),
-  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }),
-  districtCity: text("district_city"),
-  id: integer("id"),
-  isCorrected: boolean("is_corrected"),
-  mapsUrl: text("maps_url"),
   phone: text("phone"),
-  rating: numeric("rating"),
-  region: text("region"),
-  reviewCount: integer("review_count"),
-  reviewImageUrls: text("review_image_urls").array(),
-  scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }),
-  searchKeyword: text("search_keyword"),
-  status: text("status"),
-  wardCommune: text("ward_commune"),
   website: text("website"),
+  address: text("address"),
+  region: text("region"),
+  districtCity: text("district_city"),
+  wardCommune: text("ward_commune"),
+  rating: numeric("rating"),
+  reviewCount: integer("review_count"),
+  mapsUrl: text("maps_url"),
+  reviewImageUrls: text("review_image_urls").array(),
+  status: text("status"),
+  isCorrected: boolean("is_corrected"),
+  scrapedAt: timestamp("scraped_at", { mode: "date", withTimezone: true }),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }),
 }).as(sql`
   SELECT
     b.id,

@@ -1,15 +1,14 @@
 import type { ReactNode } from "react";
 
-import { ROUTES } from "~/shared/constants";
-import { Building } from "~/shared/icons/building";
-import { LayoutDashboard } from "~/shared/icons/layout-dashboard";
-import { UserCheck } from "~/shared/icons/user-check";
+import { Building, LayoutDashboard, UserCheck } from "lucide-react";
 
-export interface NavItem {
+import { ROUTES } from "~/shared/constants";
+
+export type NavItem = {
   icon: ReactNode;
   label: string;
   to: string;
-}
+};
 
 export const NAV_ITEMS: NavItem[] = [
   {

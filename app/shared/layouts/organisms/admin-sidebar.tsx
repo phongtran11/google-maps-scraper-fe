@@ -1,15 +1,15 @@
+import { X } from "lucide-react";
 import { memo } from "react";
 import { NavLink } from "react-router";
 
 import { Button } from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
-import { X } from "~/shared/icons/x";
 
 import { SidebarNavItem } from "../molecules/sidebar-nav-item";
 import { SidebarProfile } from "../molecules/sidebar-profile";
 import { NAV_ITEMS } from "../nav.constant";
 
-interface AdminSidebarProps {
+type AdminSidebarProps = {
   onClickItem?: () => void;
   onClose?: () => void;
   onSignOut: () => void;
@@ -18,7 +18,7 @@ interface AdminSidebarProps {
     image?: null | string;
     name: string;
   };
-}
+};
 
 export const AdminSidebar = memo(function AdminSidebar({
   onClickItem,

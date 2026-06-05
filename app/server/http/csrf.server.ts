@@ -1,3 +1,5 @@
+import { apiError } from "./responses.server";
+
 const ALLOWED_ORIGIN = (() => {
   try {
     return new URL(process.env.BETTER_AUTH_URL!).origin;
@@ -15,10 +17,10 @@ export function verifySameOrigin(request: Request) {
   const actualOrigin = origin || (referer ? new URL(referer).origin : null);
 
   if (!actualOrigin) {
-    throw new Response("Forbidden: Missing Origin and Referer headers", { status: 403 });
+    throw apiError("forbidden", "Forbidden: Missing Origin and Referer headers", 403);
   }
 
   if (actualOrigin !== ALLOWED_ORIGIN) {
-    throw new Response("Forbidden: Invalid Origin", { status: 403 });
+    throw apiError("forbidden", "Forbidden: Invalid Origin", 403);
   }
 }

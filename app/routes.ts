@@ -4,9 +4,7 @@ export default [
   route("login", "routes/login.tsx"),
   route("api/auth/*", "routes/api.auth.$.ts"),
 
-  layout("routes/app-layout.tsx", [
-    index("routes/dashboard.tsx"),
-    route("invite", "routes/invite.tsx"),
+  layout("routes/_protected.ts", [
     ...prefix("api", [
       ...prefix("businesses", [
         route("", "routes/api/businesses/index.ts"),
@@ -14,9 +12,14 @@ export default [
         route(":id/status", "routes/api/businesses/$id.status.ts"),
       ]),
     ]),
-    ...prefix("businesses", [
-      index("routes/businesses/index.tsx"),
-      route(":id", "routes/businesses/$id.tsx"),
+
+    layout("routes/authenticated-layout.tsx", [
+      index("routes/dashboard.tsx"),
+      route("invite", "routes/invite.tsx"),
+      ...prefix("businesses", [
+        index("routes/businesses/index.tsx"),
+        route(":id", "routes/businesses/$id.tsx"),
+      ]),
     ]),
   ]),
 ] satisfies RouteConfig;

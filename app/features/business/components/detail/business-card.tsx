@@ -1,16 +1,16 @@
+import { ExternalLink } from "lucide-react";
 import { Link } from "react-router";
 
 import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
-import { ExternalLinkIcon } from "~/shared/icons/external-link";
 
 import type { BusinessRow } from "../../queries.server";
 
 import { STATUS_MAP } from "../../constants";
 
-interface BusinessCardProps {
+type BusinessCardProps = {
   business: BusinessRow;
-}
+};
 
 export function BusinessCard({ business: b }: BusinessCardProps) {
   const s = STATUS_MAP[b.status ?? "new"] ?? {
@@ -20,10 +20,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
 
   return (
     <Link className="group block" to={ROUTES.businessDetail.buildPath(b.id)}>
-      <Card
-        className="flex h-full flex-col transition-shadow group-hover:shadow-xl"
-        variant="elevated"
-      >
+      <Card className="flex h-full flex-col transition-shadow group-hover:shadow-xl">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="group-hover:text-primary line-clamp-2 text-base transition-colors">
@@ -64,7 +61,7 @@ export function BusinessCard({ business: b }: BusinessCardProps) {
             tabIndex={0}
           >
             Xem trên Maps
-            <ExternalLinkIcon className="h-3.5 w-3.5" />
+            <ExternalLink className="h-3.5 w-3.5" />
           </span>
         </CardFooter>
       </Card>

@@ -23,6 +23,7 @@ Import alias: `~/*` → `./app/*`.
 
 1. UI Components / Routes / Hooks: kebab-case (e.g., `business-card.tsx`, `use-theme.ts`).
 2. Server files: Suffix `.server.ts`.
+3. Types: Always use `type` instead of `interface` for consistency.
 
 ### ❌ Architectural Constraints (STRICT)
 

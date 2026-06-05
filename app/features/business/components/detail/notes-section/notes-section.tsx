@@ -10,10 +10,10 @@ import { useNotesManager } from "../../../hooks/use-notes-manager";
 import { NoteInput } from "./note-input";
 import { NoteItem } from "./note-item";
 
-interface NotesSectionProps {
+type NotesSectionProps = {
   businessId: number;
   initialNotes: GetBusinessNotesResult[];
-}
+};
 
 export function NotesSection({ businessId, initialNotes }: NotesSectionProps) {
   const { action, isSubmitting, noteFetcher, notes } = useNotesManager({

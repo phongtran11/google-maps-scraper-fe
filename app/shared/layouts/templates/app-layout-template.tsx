@@ -1,18 +1,17 @@
 import type { ReactNode } from "react";
 
+import { ChevronLeft, Menu } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import type { BreadcrumbItem } from "~/shared/types";
 
 import { Button } from "~/shared/components";
-import { ChevronLeftIcon } from "~/shared/icons/chevron-left";
-import { Menu } from "~/shared/icons/menu";
 import { cn } from "~/shared/utils";
 
 import { AdminSidebar } from "../organisms/admin-sidebar";
 
-export interface AppLayoutTemplateProps {
+export type AppLayoutTemplateProps = {
   breadcrumbs: BreadcrumbItem[];
   children: ReactNode;
   currentUser: {
@@ -22,7 +21,7 @@ export interface AppLayoutTemplateProps {
   };
   isRoot: boolean;
   onSignOut: () => void;
-}
+};
 
 export function AppLayoutTemplate({
   breadcrumbs,
@@ -103,7 +102,7 @@ export function AppLayoutTemplate({
                 size="icon"
                 variant="ghost"
               >
-                <ChevronLeftIcon className="h-4 w-4" />
+                <ChevronLeft className="h-5 w-5" />
               </Button>
               <span className="text-muted-foreground/45 shrink-0 select-none">|</span>
             </>

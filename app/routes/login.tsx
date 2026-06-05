@@ -1,16 +1,8 @@
-import type { MetaFunction } from "react-router";
-
+import { Loader2, LogIn } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
 
-import { Google } from "~/shared/icons/google";
-import { Spinner } from "~/shared/icons/spinner";
 import { authClient } from "~/shared/utils";
-
-export const meta: MetaFunction = () => [
-  { title: "Đăng Nhập - Bảng Điều Khiển" },
-  { content: "Đăng nhập để truy cập bảng điều khiển", name: "description" },
-];
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -46,10 +38,17 @@ export default function Login() {
           disabled={loading}
           onClick={handleGoogleSignIn}
         >
-          {loading ? <Spinner className="h-5 w-5" /> : <Google className="h-5 w-5" />}
+          {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5" />}
           Đăng nhập với Google
         </button>
       </div>
     </div>
   );
+}
+
+export function meta() {
+  return [
+    { title: "Đăng Nhập - Bảng Điều Khiển" },
+    { content: "Đăng nhập để truy cập bảng điều khiển", name: "description" },
+  ];
 }

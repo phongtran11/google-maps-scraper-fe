@@ -1,4 +1,5 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { z } from "zod";
+import { zfd } from "zod-form-data";
 
 import {
   createBusinessNote,
@@ -13,204 +14,143 @@ import {
 import { sessionContext } from "~/server/auth/require-auth.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import { validateMethod } from "~/server/http/request.server";
+import { apiError, apiNotFound, apiServerError, apiSuccess } from "~/server/http/responses.server";
 import { parseId } from "~/shared/utils";
+
+import type { Route } from "./+types/$id.notes";
 
 const MAX_NOTE_LENGTH = 5000;
 
-export async function action({ context, params, request }: ActionFunctionArgs) {
+const DeleteNoteSchema = zfd.formData({
+  noteId: zfd.numeric(z.number({ message: "Thiếu mã ghi chú" })),
+});
+
+const PatchNoteSchema = zfd.formData({
+  noteId: zfd.numeric(z.number({ message: "Thiếu mã ghi chú" })),
+  content: zfd.text(
+    z
+      .string({ message: "Nội dung không được để trống" })
+      .min(1, "Nội dung không được để trống")
+      .max(MAX_NOTE_LENGTH, "Nội dung vượt quá độ dài cho phép"),
+  ),
+});
+
+const PostNoteSchema = zfd.formData({
+  content: zfd.text(
+    z
+      .string({ message: "Nội dung không được để trống" })
+      .min(1, "Nội dung không được để trống")
+      .max(MAX_NOTE_LENGTH, "Nội dung vượt quá độ dài cho phép"),
+  ),
+});
+
+export async function action({ context, params, request }: Route.ActionArgs) {
   validateMethod(request, ["POST", "PATCH", "DELETE"]);
   verifySameOrigin(request);
 
-  const session = context.get(sessionContext);
+  const session = context.get(sessionContext)!;
   const userEmail = session.user.email;
-
   const businessId = parseId(params.id);
 
   if (!businessId) {
-    return Response.json(
-      {
-        code: "business_id_required",
-        error: "business_id_required",
-        message: "Thiếu mã doanh nghiệp",
-      },
-      { status: 400 },
-    );
+    return apiError("business_id_required", "Thiếu mã doanh nghiệp");
   }
 
   try {
     const businessExists = await checkBusinessExists(businessId);
     if (!businessExists) {
-      return Response.json(
-        {
-          code: "business_not_found",
-          error: "business_not_found",
-          message: "Không tìm thấy doanh nghiệp",
-        },
-        { status: 404 },
-      );
+      return apiNotFound("Không tìm thấy doanh nghiệp");
     }
 
     const method = request.method.toUpperCase();
     const formData = await request.formData();
 
-    if (method === "POST") {
-      const content = formData.get("content")?.toString()?.trim();
-
-      if (!content) {
-        return Response.json(
-          {
-            code: "content_required",
-            error: "content_required",
-            message: "Nội dung không được để trống",
-          },
-          { status: 400 },
-        );
-      }
-
-      if (content.length > MAX_NOTE_LENGTH) {
-        return Response.json(
-          {
-            code: "content_too_long",
-            error: "content_too_long",
-            message: "Nội dung vượt quá độ dài cho phép",
-          },
-          { status: 400 },
-        );
-      }
-
-      await createBusinessNote(businessId, content, userEmail);
-      const notes = await getBusinessNotes(businessId);
-      return Response.json({ note: notes[0], notes }, { headers: { "Cache-Control": "no-store" } });
-    } else if (method === "PATCH") {
-      const noteId = parseId(formData.get("noteId")?.toString());
-      const content = formData.get("content")?.toString()?.trim();
-
-      if (noteId === null) {
-        return Response.json(
-          {
-            code: "note_id_required",
-            error: "note_id_required",
-            message: "Thiếu mã ghi chú",
-          },
-          { status: 400 },
-        );
-      }
-
-      if (!content) {
-        return Response.json(
-          {
-            code: "content_required",
-            error: "content_required",
-            message: "Nội dung không được để trống",
-          },
-          { status: 400 },
-        );
-      }
-
-      if (content.length > MAX_NOTE_LENGTH) {
-        return Response.json(
-          {
-            code: "content_too_long",
-            error: "content_too_long",
-            message: "Nội dung vượt quá độ dài cho phép",
-          },
-          { status: 400 },
-        );
-      }
-
-      const note = await getBusinessNote(noteId);
-      if (!note) {
-        return Response.json(
-          {
-            code: "note_not_found",
-            error: "note_not_found",
-            message: "Không tìm thấy ghi chú",
-          },
-          { status: 404 },
-        );
-      }
-
-      if (note.createdBy !== userEmail) {
-        return Response.json(
-          {
-            code: "permission_denied",
-            error: "permission_denied",
-            message: "Bạn không có quyền thực hiện hành động này",
-          },
-          { status: 403 },
-        );
-      }
-
-      await updateBusinessNote(noteId, content);
-      return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
-    } else if (method === "DELETE") {
-      const noteId = parseId(formData.get("noteId")?.toString());
-
-      if (noteId === null) {
-        return Response.json(
-          {
-            code: "note_id_required",
-            error: "note_id_required",
-            message: "Thiếu mã ghi chú",
-          },
-          { status: 400 },
-        );
-      }
-
-      const note = await getBusinessNote(noteId);
-      if (!note) {
-        return Response.json(
-          {
-            code: "note_not_found",
-            error: "note_not_found",
-            message: "Không tìm thấy ghi chú",
-          },
-          { status: 404 },
-        );
-      }
-
-      if (note.createdBy !== userEmail) {
-        return Response.json(
-          {
-            code: "permission_denied",
-            error: "permission_denied",
-            message: "Bạn không có quyền thực hiện hành động này",
-          },
-          { status: 403 },
-        );
-      }
-
-      await deleteBusinessNote(noteId);
-      return Response.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
+    switch (method) {
+      case "DELETE":
+        return await handleDelete(userEmail, formData);
+      case "PATCH":
+        return await handlePatch(userEmail, formData);
+      case "POST":
+        return await handlePost(businessId, userEmail, formData);
+      default:
+        return apiServerError(); // Should be caught by validateMethod anyway
     }
   } catch (err) {
     console.error("Notes action error:", err);
-    return Response.json(
-      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau." },
-      { status: 500 },
-    );
+    return apiServerError();
   }
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params }: Route.LoaderArgs) {
   try {
     const businessId = parseId(params.id);
     if (!businessId) {
       return { notes: [] };
     }
     const notes = await getBusinessNotes(businessId);
-    return Response.json(
-      { notes },
-      {
-        headers: { "Cache-Control": "private, max-age=10" },
-        status: 200,
-      },
-    );
+    return apiSuccess(notes, "success", { headers: { "Cache-Control": "private, max-age=10" } });
   } catch (err) {
     console.error("Notes loader error:", err);
-    return Response.json(
-      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau.", notes: [] },
-      { status: 500 },
-    );
+    return apiServerError("Lỗi máy chủ. Vui lòng thử lại sau.", "server_error");
   }
+}
+
+async function handleDelete(userEmail: string, formData: FormData) {
+  const parsed = DeleteNoteSchema.safeParse(formData);
+
+  if (!parsed.success) {
+    return apiError("note_id_required", parsed.error.issues[0].message);
+  }
+
+  const { noteId } = parsed.data;
+
+  const note = await getBusinessNote(noteId);
+  if (!note) {
+    return apiNotFound("Không tìm thấy ghi chú");
+  }
+
+  if (note.createdBy !== userEmail) {
+    return apiError("permission_denied", "Bạn không có quyền thực hiện hành động này", 403);
+  }
+
+  await deleteBusinessNote(noteId);
+  return apiSuccess({ success: true }, "success", { headers: { "Cache-Control": "no-store" } });
+}
+
+async function handlePatch(userEmail: string, formData: FormData) {
+  const parsed = PatchNoteSchema.safeParse(formData);
+
+  if (!parsed.success) {
+    return apiError("invalid_data", parsed.error.issues[0].message);
+  }
+
+  const { content, noteId } = parsed.data;
+
+  const note = await getBusinessNote(noteId);
+  if (!note) {
+    return apiNotFound("Không tìm thấy ghi chú");
+  }
+
+  if (note.createdBy !== userEmail) {
+    return apiError("permission_denied", "Bạn không có quyền thực hiện hành động này", 403);
+  }
+
+  await updateBusinessNote(noteId, content);
+  return apiSuccess({ success: true }, "success", { headers: { "Cache-Control": "no-store" } });
+}
+
+async function handlePost(businessId: number, userEmail: string, formData: FormData) {
+  const parsed = PostNoteSchema.safeParse(formData);
+
+  if (!parsed.success) {
+    return apiError("invalid_data", parsed.error.issues[0].message);
+  }
+
+  const { content } = parsed.data;
+
+  await createBusinessNote(businessId, content, userEmail);
+  const notes = await getBusinessNotes(businessId);
+  return apiSuccess({ note: notes[0], notes }, "success", {
+    headers: { "Cache-Control": "no-store" },
+  });
 }

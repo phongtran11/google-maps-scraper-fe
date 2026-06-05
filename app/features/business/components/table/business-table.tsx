@@ -2,20 +2,20 @@ import { useSearchParams } from "react-router";
 
 import type { GroupedDistrict } from "~/shared/types";
 
-import { DataTable, Pagination } from "~/shared/components";
+import { AppPagination, DataTable } from "~/shared/components";
 import { getStringParams } from "~/shared/utils";
 
 import type { GetBusinessesResult } from "../../queries.server";
 
 import { columns } from "./business-table-config";
 
-export interface BusinessTableProps {
+export type BusinessTableProps = {
   businesses: GetBusinessesResult[];
   districtsWithWard: GroupedDistrict[];
   page: number;
   pageSize: number;
   totalCount: number;
-}
+};
 
 export function BusinessTable({
   businesses,
@@ -62,15 +62,16 @@ export function BusinessTable({
   };
 
   return (
-    <div>
+    <>
       <DataTable
         columns={columns}
         data={businesses}
         emptyMessage={emptyMessage}
         keyExtractor={(b) => b.id}
-        stickyHeader={true}
+        stickyHeader
+        wrapperClassName="max-h-[calc(100vh-280px)] overflow-y-auto"
       />
-      <Pagination
+      <AppPagination
         getPageUrl={getPageUrl}
         onPageSizeChange={onPageSizeChange}
         page={page}
@@ -78,6 +79,6 @@ export function BusinessTable({
         totalCount={totalCount}
         totalPages={totalPages}
       />
-    </div>
+    </>
   );
 }

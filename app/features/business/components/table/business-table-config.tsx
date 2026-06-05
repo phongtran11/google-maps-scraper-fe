@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { Link } from "react-router";
 
 import type { DataTableColumn } from "~/shared/components";
@@ -5,13 +6,13 @@ import type { DataTableColumn } from "~/shared/components";
 import {
   Badge,
   Button,
-  buttonBase,
   ButtonLink,
   buttonVariants,
   Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
-import { ExternalLinkIcon } from "~/shared/icons";
 import { cn, formatZaloPhone } from "~/shared/utils";
 
 import type { GetBusinessesResult } from "../../queries.server";
@@ -22,13 +23,16 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
   {
     cell: (b) => (
       <div className="space-y-1">
-        <Tooltip content={b.businessName}>
-          <Link
-            className="text-primary block max-w-60 truncate font-semibold hover:underline md:max-w-[320px]"
-            to={ROUTES.businessDetail.buildPath(b.id)}
-          >
-            {b.businessName}
-          </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              className="text-primary block max-w-60 truncate font-semibold hover:underline md:max-w-[320px]"
+              to={ROUTES.businessDetail.buildPath(b.id)}
+            >
+              {b.businessName}
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>{b.businessName}</TooltipContent>
         </Tooltip>
       </div>
     ),
@@ -44,8 +48,11 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
   },
   {
     cell: (b) => (
-      <Tooltip content={b.address}>
-        <p className="text-muted-foreground max-w-3xs truncate text-sm">{b.address || "-"}</p>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <p className="text-muted-foreground max-w-3xs truncate text-sm">{b.address || "-"}</p>
+        </TooltipTrigger>
+        <TooltipContent>{b.address}</TooltipContent>
       </Tooltip>
     ),
     header: "Địa Chỉ",
@@ -77,7 +84,7 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
           </ButtonLink>
           {zaloPhone ? (
             <a
-              className={cn(buttonBase, buttonVariants.size.sm, buttonVariants.variant.outline)}
+              className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
               href={`https://zalo.me/${zaloPhone}`}
               rel="noopener noreferrer"
               target="_blank"
@@ -90,12 +97,12 @@ export const columns: DataTableColumn<GetBusinessesResult>[] = [
             </Button>
           )}
           <a
-            className={cn(buttonBase, buttonVariants.size.sm, buttonVariants.variant.outline)}
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
             href={b.mapsUrl}
             rel="noopener noreferrer"
             target="_blank"
           >
-            <ExternalLinkIcon className="h-4 w-4" />
+            <ExternalLink className="h-4 w-4" />
           </a>
         </div>
       );

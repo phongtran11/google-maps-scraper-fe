@@ -4,13 +4,13 @@ import { NavLink } from "react-router";
 
 import { cn } from "~/shared/utils";
 
-interface SidebarNavItemProps {
+type SidebarNavItemProps = {
   icon: ReactNode;
   isActive?: boolean;
   label: string;
   onClick?: () => void;
   to: string;
-}
+};
 
 export function SidebarNavItem({ icon, label, onClick, to }: SidebarNavItemProps) {
   return (

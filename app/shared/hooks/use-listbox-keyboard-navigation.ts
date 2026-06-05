@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 
-export interface UseListboxKeyboardNavigationOptions<T> {
+export type UseListboxKeyboardNavigationOptions<T> = {
   enabled: boolean;
   focusIndex: number;
   onClose: () => void;
   onFocusIndexChange: (index: number) => void;
   onSelect: (option: T) => void;
   options: T[];
-}
+};
 
 export function useListboxKeyboardNavigation<T extends { disabled?: boolean; key: string }>({
   enabled,

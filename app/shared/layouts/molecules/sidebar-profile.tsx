@@ -1,16 +1,16 @@
+import { LogOut } from "lucide-react";
 import { memo } from "react";
 
 import { Button, ThemeToggle } from "~/shared/components";
-import { LogOut } from "~/shared/icons/log-out";
 
-interface SidebarProfileProps {
+type SidebarProfileProps = {
   onSignOut: () => void;
   user: {
     email: string;
     image?: null | string;
     name: string;
   };
-}
+};
 
 export const SidebarProfile = memo(function SidebarProfile({
   onSignOut,
@@ -39,10 +39,10 @@ export const SidebarProfile = memo(function SidebarProfile({
       <div className="flex items-center justify-between gap-2 pt-2">
         <ThemeToggle />
         <Button
-          className="cursor-pointer text-xs font-medium"
+          className="text-destructive cursor-pointer text-xs font-medium"
           onClick={onSignOut}
           size="sm"
-          variant="destructiveOutline"
+          variant="outline"
         >
           <LogOut className="h-4 w-4" />
           Đăng Xuất

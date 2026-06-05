@@ -1,15 +1,15 @@
+import { Search } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useSearchParams } from "react-router";
 
 import type { GroupedDistrict } from "~/shared/types";
 
 import { Button, GroupedSelectCheckbox, Input } from "~/shared/components";
-import { SearchIcon } from "~/shared/icons/search";
 import { getStringParams } from "~/shared/utils";
 
-interface FilterBarProps {
+type FilterBarProps = {
   districtsWithWard: GroupedDistrict[];
-}
+};
 
 export function FilterBar({ districtsWithWard }: FilterBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,16 +52,17 @@ export function FilterBar({ districtsWithWard }: FilterBarProps) {
 
   return (
     <form className="flex flex-col gap-3 sm:flex-row sm:items-center" onSubmit={handleSubmit}>
-      <Input
-        className="w-full sm:w-72 sm:max-w-xs"
-        disabled={pending}
-        inputSize="md"
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Tìm tên doanh nghiệp…"
-        prefixIcon={<SearchIcon />}
-        type="search"
-        value={search}
-      />
+      <div className="relative w-full sm:w-72 sm:max-w-xs">
+        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Input
+          className="w-full pl-9"
+          disabled={pending}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Tìm tên doanh nghiệp…"
+          type="search"
+          value={search}
+        />
+      </div>
 
       <GroupedSelectCheckbox
         aria-label="Lọc theo khu vực"

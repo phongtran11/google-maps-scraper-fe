@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import { ToastProvider } from "~/shared/components";
+import { Toaster, TooltipProvider } from "~/shared/components";
 
 import type { Route } from "./+types/root";
 
@@ -29,9 +29,10 @@ export const links: Route.LinksFunction = () => [
 
 export default function App() {
   return (
-    <ToastProvider>
+    <TooltipProvider>
       <Outlet />
-    </ToastProvider>
+      <Toaster position="top-right" richColors />
+    </TooltipProvider>
   );
 }
 

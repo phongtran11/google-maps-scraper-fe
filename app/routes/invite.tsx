@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, MetaFunction } from "react-router";
 
+import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Form, useActionData, useNavigation } from "react-router";
 
@@ -15,9 +16,8 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  useToast,
+  toast,
 } from "~/shared/components";
-import { Spinner } from "~/shared/icons/spinner";
 
 export const handle: RouteHandle = {
   breadcrumb: () => "Mời Thành Viên",
@@ -28,27 +28,35 @@ export const meta: MetaFunction = () => [
   { content: "Mời thành viên mới tham gia quản trị", name: "description" },
 ];
 
-interface ActionData {
+type ActionData = {
   email?: string;
   error?: string;
   success?: boolean;
-}
+};
+
+import { z } from "zod";
+import { zfd } from "zod-form-data";
+
+const InviteSchema = zfd.formData({
+  email: zfd.text(
+    z
+      .string({ message: "Email không được để trống." })
+      .min(1, "Email không được để trống.")
+      .email("Địa chỉ email không hợp lệ."),
+  ),
+});
 
 export async function action({ request }: ActionFunctionArgs) {
   verifySameOrigin(request);
 
   const formData = await request.formData();
-  const email = formData.get("email")?.toString()?.trim();
+  const parsed = InviteSchema.safeParse(formData);
 
-  if (!email) {
-    return Response.json({ error: "Email không được để trống." }, { status: 400 });
+  if (!parsed.success) {
+    return Response.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  // Basic email regex validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return Response.json({ error: "Địa chỉ email không hợp lệ." }, { status: 400 });
-  }
+  const { email } = parsed.data;
 
   try {
     const exists = await checkInviteExists(email);
@@ -73,21 +81,18 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function InviteUser() {
   const actionData = useActionData<typeof action>() as ActionData | undefined;
   const navigation = useNavigation();
-  const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
   const isSubmitting = navigation.state === "submitting";
 
   useEffect(() => {
     if (actionData?.success && actionData.email) {
-      toast({
+      toast.success("Thành công", {
         description: `Đã mời thành công email ${actionData.email}`,
-        title: "Thành công",
-        variant: "success",
       });
       formRef.current?.reset();
     }
-  }, [actionData, toast]);
+  }, [actionData]);
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-start justify-center pt-8">
@@ -121,7 +126,7 @@ export default function InviteUser() {
             <Button className="w-full" disabled={isSubmitting} type="submit">
               {isSubmitting ? (
                 <>
-                  <Spinner className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Đang gửi lời mời...
                 </>
               ) : (

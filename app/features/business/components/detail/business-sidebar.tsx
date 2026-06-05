@@ -1,12 +1,6 @@
-import {
-  buttonBase,
-  buttonVariants,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/shared/components";
-import { ExternalLinkIcon } from "~/shared/icons/external-link";
+import { ExternalLink } from "lucide-react";
+
+import { buttonVariants, Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 import { cn, formatZaloPhone } from "~/shared/utils";
 
 import { StatusCard } from "./status-card";
@@ -42,17 +36,13 @@ function LinkCard({ href, label, title }: { href: string; label: string; title: 
       </CardHeader>
       <CardContent>
         <a
-          className={cn(
-            buttonBase,
-            buttonVariants["size"]["default"],
-            buttonVariants["variant"]["outline"],
-          )}
+          className={cn(buttonVariants({ variant: "outline" }), "w-full justify-between")}
           href={href}
           rel="noopener noreferrer"
           target="_blank"
         >
           {label}
-          <ExternalLinkIcon className="h-3.5 w-3.5" />
+          <ExternalLink className="h-3.5 w-3.5" />
         </a>
       </CardContent>
     </Card>

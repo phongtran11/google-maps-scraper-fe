@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/shared/components";
 
-interface ReviewImagesProps {
+type ReviewImagesProps = {
   urls: string[];
-}
+};
 
 export function ReviewImages({ urls }: ReviewImagesProps) {
   return (

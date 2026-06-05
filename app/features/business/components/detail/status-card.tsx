@@ -1,27 +1,31 @@
 import { useFetcher } from "react-router";
 
-import { Card, CardContent, CardHeader, CardTitle, Select } from "~/shared/components";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/shared/components";
 import { ROUTES } from "~/shared/constants";
 
-import { NEXT_STATUS, STATUS_MAP } from "../../constants";
+import { STATUS_MAP } from "../../constants";
 
-interface StatusCardProps {
+type StatusCardProps = {
   businessId: number;
   status: string;
-}
+};
 
 export function StatusCard({ businessId, status }: StatusCardProps) {
   const fetcher = useFetcher();
 
   const optimisticStatus = fetcher.formData?.get("status")?.toString() ?? status;
 
-  const next = NEXT_STATUS[optimisticStatus] ?? [];
-  const hasNoTransitions = next.length === 0;
-
   const options = Object.entries(STATUS_MAP).map(([key, value]) => {
-    const isCurrent = key === optimisticStatus;
-    const isNext = next.includes(key);
-
     const dotColorClass =
       {
         new: "bg-muted-foreground/80",
@@ -32,7 +36,6 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
       }[key] || "bg-muted-foreground";
 
     return {
-      disabled: !isCurrent && !isNext,
       key,
       label: (
         <span className="flex items-center gap-2 font-medium">
@@ -62,19 +65,21 @@ export function StatusCard({ businessId, status }: StatusCardProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         <Select
-          aria-label="Chọn trạng thái doanh nghiệp"
-          className="w-full"
-          disabled={fetcher.state === "submitting" || hasNoTransitions}
-          onChange={handleStatusChange}
-          options={options}
+          disabled={fetcher.state === "submitting"}
+          onValueChange={handleStatusChange}
           value={optimisticStatus}
-        />
-
-        {optimisticStatus === "rejected" && (
-          <p className="text-muted-foreground text-xs">
-            Doanh nghiệp này đã bị từ chối và không thể thay đổi trạng thái.
-          </p>
-        )}
+        >
+          <SelectTrigger aria-label="Chọn trạng thái doanh nghiệp" className="w-full">
+            <SelectValue placeholder="Chọn trạng thái" />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((opt) => (
+              <SelectItem key={opt.key} value={opt.key}>
+                {opt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </CardContent>
     </Card>
   );

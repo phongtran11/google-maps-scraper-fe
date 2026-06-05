@@ -5,14 +5,15 @@ import { memo, useEffect, useState } from "react";
 import { Button, Textarea } from "~/shared/components";
 import { relativeTime } from "~/shared/utils";
 
-import type { GetBusinessNotesResult, NoteFetcherData } from "../../../queries.server";
+import type { NoteFetcherData } from "../../../hooks/use-notes-manager";
+import type { GetBusinessNotesResult } from "../../../queries.server";
 
-interface NoteItemProps {
+type NoteItemProps = {
   action: string;
   currentUserEmail: string | undefined;
   note: GetBusinessNotesResult;
   noteFetcher: ReturnType<typeof useFetcher<NoteFetcherData>>;
-}
+};
 
 export const NoteItem = memo(function NoteItem({
   action,

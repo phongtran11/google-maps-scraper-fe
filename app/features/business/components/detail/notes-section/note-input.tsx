@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 
 import { Button, Textarea } from "~/shared/components";
 
-import type { NoteFetcherData } from "../../../queries.server";
+import type { NoteFetcherData } from "../../../hooks/use-notes-manager";
 
-interface NoteInputProps {
+type NoteInputProps = {
   action: string;
   isSubmitting: boolean;
   noteFetcher: ReturnType<typeof useFetcher<NoteFetcherData>>;
-}
+};
 
 export function NoteInput({ action, isSubmitting, noteFetcher }: NoteInputProps) {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    if (noteFetcher.state === "idle" && noteFetcher.data) {
+    if (noteFetcher.state === "idle" && noteFetcher.data?.data) {
       setContent(""); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [noteFetcher.state, noteFetcher.data]);

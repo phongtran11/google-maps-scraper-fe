@@ -1,78 +1,67 @@
-import type { ActionFunctionArgs } from "react-router";
+import { z } from "zod";
+import { zfd } from "zod-form-data";
 
-import { NEXT_STATUS } from "~/features/business";
 import { updateBusinessStatus } from "~/features/business/mutations.server";
 import { getBusinessById } from "~/features/business/queries.server";
-import { sessionContext } from "~/server/auth/require-auth.server";
 import { verifySameOrigin } from "~/server/http/csrf.server";
 import { validateMethod } from "~/server/http/request.server";
+import { apiError, apiNotFound, apiServerError, apiSuccess } from "~/server/http/responses.server";
 import { parseId } from "~/shared/utils";
 
-const ALLOWED = ["new", "approached", "contacted", "qualified", "rejected"];
+import type { Route } from "./+types/$id.status";
 
-export async function action({ context, params, request }: ActionFunctionArgs) {
+const ALLOWED_STATUSES = ["new", "approached", "contacted", "qualified", "rejected"] as const;
+
+const StatusSchema = zfd.formData({
+  status: zfd.text(
+    z.enum(ALLOWED_STATUSES, {
+      message: "Trạng thái không hợp lệ",
+    }),
+  ),
+});
+
+export async function action({ params, request }: Route.ActionArgs) {
   validateMethod(request, "PATCH");
   verifySameOrigin(request);
 
-  const session = context.get(sessionContext);
-  if (!session) {
-    return Response.json(
-      { error: "unauthorized", message: "Không có quyền truy cập" },
-      { headers: { "Cache-Control": "no-store" }, status: 401 },
-    );
-  }
-
   try {
+    const method = request.method.toUpperCase();
     const formData = await request.formData();
-    const status = formData.get("status")?.toString();
 
-    if (!status || !ALLOWED.includes(status)) {
-      return Response.json(
-        { error: "invalid_status", message: "Trạng thái không hợp lệ" },
-        { headers: { "Cache-Control": "no-store" }, status: 400 },
-      );
+    switch (method) {
+      case "PATCH":
+        return await handlePatch(params, formData);
+      default:
+        return apiServerError();
     }
-
-    const numId = parseId(params.id);
-    if (numId === null) {
-      return Response.json(
-        { error: "invalid_id", message: "ID không hợp lệ" },
-        { headers: { "Cache-Control": "no-store" }, status: 400 },
-      );
-    }
-
-    const business = await getBusinessById(numId);
-    if (!business) {
-      return Response.json(
-        { error: "business_not_found", message: "Không tìm thấy doanh nghiệp" },
-        { headers: { "Cache-Control": "no-store" }, status: 404 },
-      );
-    }
-
-    const currentStatus = business.status ?? "new";
-    const allowedTransitions = NEXT_STATUS[currentStatus] ?? [];
-
-    if (currentStatus !== status && !allowedTransitions.includes(status)) {
-      return Response.json(
-        {
-          error: "invalid_transition",
-          message: `Không thể chuyển từ ${currentStatus} sang ${status}`,
-        },
-        { headers: { "Cache-Control": "no-store" }, status: 400 },
-      );
-    }
-
-    const result = await updateBusinessStatus(numId, status);
-
-    return Response.json(
-      { data: result, message: "Status updated successfully" },
-      { headers: { "Cache-Control": "no-store" }, status: 200 },
-    );
   } catch (err) {
     console.error("Status action error:", err);
-    return Response.json(
-      { error: "server_error", message: "Lỗi máy chủ. Vui lòng thử lại sau." },
-      { headers: { "Cache-Control": "no-store" }, status: 500 },
-    );
+    return apiServerError();
   }
+}
+
+async function handlePatch(params: Route.ActionArgs["params"], formData: FormData) {
+  const parsed = StatusSchema.safeParse(formData);
+
+  if (!parsed.success) {
+    return apiError("invalid_status", parsed.error.issues[0].message);
+  }
+
+  const { status } = parsed.data;
+
+  const numId = parseId(params.id);
+  if (numId === null) {
+    return apiError("invalid_id", "ID không hợp lệ");
+  }
+
+  const business = await getBusinessById(numId);
+  if (!business) {
+    return apiNotFound("Không tìm thấy doanh nghiệp");
+  }
+
+  const result = await updateBusinessStatus(numId, status);
+
+  return apiSuccess(result, "Status updated successfully", {
+    headers: { "Cache-Control": "no-store" },
+  });
 }

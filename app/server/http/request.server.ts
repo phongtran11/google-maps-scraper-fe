@@ -1,3 +1,5 @@
+import { apiMethodNotAllowed } from "./responses.server";
+
 type HTTPMethod = "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
 
 /**
@@ -10,13 +12,8 @@ export function validateMethod(request: Request, allowedMethods: HTTPMethod | HT
   const upperCaseMethods = methods.map((m) => m.toUpperCase());
 
   if (!upperCaseMethods.includes(method)) {
-    throw Response.json(
-      {
-        code: "method_not_allowed",
-        error: `Method ${request.method} is not allowed. Only ${methods.join(", ")} is supported.`,
-        message: "Method not allowed",
-      },
-      { status: 405 },
+    throw apiMethodNotAllowed(
+      `Method ${request.method} is not allowed. Only ${methods.join(", ")} is supported.`,
     );
   }
 }
